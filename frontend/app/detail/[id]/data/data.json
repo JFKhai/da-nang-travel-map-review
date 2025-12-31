@@ -1,0 +1,41 @@
+{
+    "1": {
+        "title": "Cầu rồng",
+        "description": "Cầu rồng phun lửa ở Đà Nẵng",
+        "images": [
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+            "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+        ],
+        "prices": [
+            {
+                "child": {
+                    "price": 100000,
+                    "description": "Trẻ em dưới 12 tuổi"   
+                }
+            },
+            {
+                "adult": {
+                    "price": 200000,
+                    "description": "Người lớn trên 12 tuổi"
+                }   
+            }
+        ],
+        "location": "Đà Nẵng",
+        "rating": 4.5,
+        "reviews": [
+            {
+                "name": "John Doe",
+                "avatar": "https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png",
+                "rating": 5,
+                "comment": "Cầu rồng rất đẹp"
+            }
+        ]
+    }
+}

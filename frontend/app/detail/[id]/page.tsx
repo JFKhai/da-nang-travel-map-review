@@ -6,7 +6,6 @@ import ReviewsSection from "./components/ReviewsSection";
 export default async function DetailPage({params} : Props) {
   const {id} = await params;
   const locationData = data[id as keyof typeof data];
-
   if (!locationData) {
     return (
       <div className="min-h-screen flex items-center justify-center">

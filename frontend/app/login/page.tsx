@@ -1,18 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+const INIT_DATA = {
+  email: "",
+  password: "",
+  rememberMe: false,
+};
 
 export default function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const router = useRouter();
+  const [formData, setFormData] = useState(INIT_DATA);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Login data:", formData);
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      if (
+        formData.email === "test@example.com" &&
+        formData.password === "password"
+      ) {
+        console.log("Simulated login successful with data:", formData);
+        router.push("/");
+      } else {
+        setError("Email hoặc mật khẩu không chính xác. Vui lòng thử lại.");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {}, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
@@ -23,6 +52,16 @@ export default function LoginPage() {
             <p className="text-gray-600">Chào mừng bạn trở lại!</p>
           </div>
 
+          {error && (
+            <div
+              className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 relative"
+              role="alert"
+            >
+              <strong className="font-bold">Lỗi!</strong>
+              <span className="block sm:inline ml-2">{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -32,8 +71,11 @@ export default function LoginPage() {
                 type="email"
                 required
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                disabled={isLoading}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
                 placeholder="Nhập email của bạn"
               />
             </div>
@@ -46,8 +88,11 @@ export default function LoginPage() {
                 type="password"
                 required
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                disabled={isLoading}
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
                 placeholder="Nhập mật khẩu"
               />
             </div>
@@ -57,29 +102,44 @@ export default function LoginPage() {
                 <input
                   type="checkbox"
                   id="remember"
-                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  checked={formData.rememberMe}
+                  onChange={(e) =>
+                    setFormData({ ...formData, rememberMe: e.target.checked })
+                  }
+                  disabled={isLoading}
+                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 disabled:opacity-50"
                 />
-                <label htmlFor="remember" className="ml-2 text-sm text-gray-600">
+                <label
+                  htmlFor="remember"
+                  className="ml-2 text-sm text-gray-600"
+                >
                   Ghi nhớ đăng nhập
                 </label>
               </div>
-              <Link href="#" className="text-sm text-blue-600 hover:text-blue-700">
+              <Link
+                href="#"
+                className="text-sm text-blue-600 hover:text-blue-700 disabled:text-gray-400"
+              >
                 Quên mật khẩu?
               </Link>
             </div>
 
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={isLoading}
+              className="w-full bg-blue-600 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400 disabled:cursor-not-allowed"
             >
-              Đăng nhập
+              {isLoading ? "Đang xử lý..." : "Đăng nhập"}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Chưa có tài khoản?{" "}
-              <Link href="/register" className="text-blue-600 font-semibold hover:text-blue-700">
+              <Link
+                href="/register"
+                className="text-blue-600 font-semibold hover:text-blue-700"
+              >
                 Đăng ký ngay
               </Link>
             </p>

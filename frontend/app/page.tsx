@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { ArrowRight, Calendar, MapPin, Users } from "lucide-react";
 import { cn } from "@/lib/cn";
+import LanguageDropdown from "@/app/components/LanguageDropdown";
 const items = [
   {
     bg: "bg-brand-light",
@@ -52,6 +52,8 @@ export default function Home() {
         {/* Logo */}
         <Image src="/images/logo.svg" alt="Logo" width={120} height={40} />
         <nav className="flex items-center gap-[52px] text-lg text-gray-700">
+          <LanguageDropdown />
+
           <a className="hover:text-teal-700" href="#">
             Home
           </a>

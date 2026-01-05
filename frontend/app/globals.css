@@ -10,6 +10,44 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
+  /* Custom colors */
+  --color-primary-1: #2898C8;
+  --color-primary-2: #64B8DC;
+  --color-primary-3: #64CCDC;
+  
+  --color-secondary-0: #49ad91;
+  --color-secondary-1: #52B69A;
+  --color-secondary-2: #76C893;
+  
+  --color-tertiary-1: #E75A51;
+  --color-tertiary-2: #ee685e;
+  --color-tertiary-3: #ff9f86;
+  
+  --color-bgCol-1: #F6FAF9;
+  --color-bgCol-2: #FFFFFF;
+  --color-bgCol-3: #F8F8F8;
+  
+  --color-txtCol-1: #0C0C20;
+  --color-txtCol-2: #555555;
+  --color-txtCol-3: #999999;
+  --color-txtCol-4: #d3d3d3;
+  
+  --color-borderCol-1: #D4D4D4;
+  --color-borderCol-2: #F4F4F4;
+  
+  /* Custom fonts */
+  --font-poppins: 'Poppins', sans-serif;
+  --font-lora: 'Lora', serif;
+  
+  /* Custom width/spacing for components (Tailwind v4) */
+  --width-25: 100px;
+  --width-45: 180px;
+  --width-53: 212px;
+  --width-75: 300px;
+  --height-3-5: 14px;
+  --height-4-5: 18px;
+  --height-7-5: 30px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +60,30 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-poppins);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-poppins);
+}
+
+/* Skeleton loading animation */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.2) 50%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

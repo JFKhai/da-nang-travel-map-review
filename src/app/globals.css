@@ -17,6 +17,10 @@
   --color-brand-bg: #eef4f7;
 
   --font-sans: RomanaBT, serif;
+
+  --animate-marquee: marquee 20s linear infinite;
+  --animate-float-scale: float-scale 5s ease-in-out infinite;
+  --animate-float-scale-delayed: float-scale 7s ease-in-out infinite 1s;
 }
 
 html {
@@ -41,4 +45,25 @@ body {
 
 .animate-fade-in {
   animation: fade-in 0.8s ease-out;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes float-scale {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(10px, -10px) scale(1.05);
+  }
 }

@@ -1,193 +1,179 @@
-import Footer from '@/components/footer'
-import Navbar from '@/components/navbar'
-import Link from 'next/link'
+import { cn } from '@/lib/utils'
+
+const items = [
+  {
+    bg: 'bg-brand-light',
+    src: 'https://i.pinimg.com/1200x/ef/69/c5/ef69c56e319d6db337527303f3501ee1.jpg',
+    roundedContainer: ' rounded-tl-[13.5px] rounded-tr-[80px] rounded-br-[13.5px] rounded-bl-none',
+    roundedImage: 'rounded-tl-[12px] rounded-tr-[80px] rounded-bl-[50px] rounded-br-[12px]',
+    title: 'Beach Walking',
+    people: 60,
+  },
+  {
+    bg: 'bg-brand-dark',
+    src: 'https://i.pinimg.com/1200x/bf/8a/2e/bf8a2efd2e72a2a39e844648e22e91b3.jpg',
+    roundedContainer: ' rounded-tl-[13.5px] rounded-br-[80px] rounded-tr-[13.5px] rounded-bl-none',
+    roundedImage: ' rounded-tl-[12px] rounded-tr-none rounded-br-[80px] rounded-bl-[12px]',
+    title: 'Beach Walking',
+    people: 60,
+  },
+  {
+    bg: 'bg-brand-light',
+    src: 'https://i.pinimg.com/736x/e7/3d/4a/e73d4a13a9db14eaca53cfb89c928330.jpg',
+    roundedContainer: ' rounded-tr-[13.5px] rounded-tl-[80px] rounded-bl-[13.5px] rounded-br-none',
+    roundedImage: ' rounded-tl-[80px] rounded-tr-[12px] rounded-br-[80px] rounded-bl-[12px]',
+    title: 'Beach Walking',
+    people: 60,
+  },
+  {
+    bg: 'bg-brand-dark',
+    src: 'https://i.pinimg.com/1200x/a9/d3/d6/a9d3d6bd5a86724df02271c42f2791cf.jpg',
+    roundedContainer: ' rounded-tl-[13.5px] rounded-tr-[13.5px] rounded-br-[80px] rounded-bl-none',
+    roundedImage: ' rounded-tl-[12px] rounded-tr-none rounded-br-[80px] rounded-bl-[12px]',
+    title: 'Beach Walking',
+    people: 60,
+  },
+  {
+    bg: 'bg-brand-dark',
+    src: 'https://i.pinimg.com/1200x/38/88/b4/3888b4278a0c94d56e88e6326dcb779e.jpg',
+    roundedContainer: ' rounded-tl-[13.5px] rounded-tr-[80px] rounded-br-none rounded-bl-[13.5px]',
+    roundedImage: 'rounded-tl-[12px] rounded-tr-[80px] rounded-bl-[50px] rounded-br-[12px]',
+    title: 'Beach Walking',
+    people: 60,
+  },
+]
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Navbar />
-
-      <main className="flex-grow">
-        {/* HERO SECTION */}
-        <section className="relative h-screen flex items-center justify-center overflow-hidden">
-          <div
-            className="absolute inset-0 z-0 bg-cover bg-center bg-fixed"
-            style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1559592413-7ece35b4922e?q=80&w=2070&auto=format&fit=crop')",
-            }}
-          >
-            <div className="absolute inset-0 bg-black/40"></div>
-          </div>
-
-          <div className="relative z-10 text-center text-white px-4 max-w-4xl">
-            <h1 className="text-5xl md:text-7xl font-bold mb-6 drop-shadow-lg">Khám Phá Đà Nẵng</h1>
-            <p className="text-xl md:text-2xl mb-8 drop-shadow-md font-light">
-              Thành phố của những cây cầu và vẻ đẹp bất tận. Chia sẻ trải nghiệm, tìm kiếm điểm đến và lên kế hoạch cho
-              chuyến đi hoàn hảo.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/review"
-                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:scale-105"
-              >
-                Xem Review
-              </Link>
-              <Link
-                href="/map"
-                className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/50 px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105"
-              >
-                Khám Phá Bản Đồ
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* WHY DA NANG SECTION */}
-        <section className="py-24 bg-white px-4">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Tại sao lại là Đà Nẵng?</h2>
-              <div className="w-20 h-1 bg-orange-500 mb-8"></div>
-              <p className="text-gray-600 text-lg leading-relaxed mb-6">
-                Đà Nẵng không chỉ là một trung tâm kinh tế, mà còn là thiên đường du lịch tại miền Trung Việt Nam. Với
-                sự kết hợp hoàn hảo giữa núi rừng, sông ngòi và biển cả, nơi đây luôn biết cách làm say đắm lòng người.
+    <>
+      {/* Line decorate */}
+      <section className="px-10">
+        <hr className="border-t-2 border-dashed border-gray-300" />
+      </section>
+      {/* Hero */}
+      <section className="relative  px-10 py-4">
+        <div className="grid grid-cols-2 gap-0 bg-[url('/images/map-bg-image.png')] bg-contain bg-center bg-no-repeat">
+          {/* Left */}
+          <div className="">
+            <div className="pr-3">
+              <p className="mb-2 text-[18px] uppercase font-bold tracking-widest text-[#81949D]">
+                Mountains | Plains | Beaches
               </p>
-              <p className="text-gray-600 text-lg leading-relaxed">
-                Từ đỉnh Bà Nà quanh năm mây phủ đến bãi biển Mỹ Khê cát trắng mịn màng, mỗi góc phố, mỗi món ăn tại Đà
-                Nẵng đều mang một câu chuyện riêng chờ bạn khám phá.
+              <h2 className="mb-2 text-[64px] leading-tight text-brand-teal font-bold">
+                Spend your vacation with our activities & places
+              </h2>
+              <p className="pr-3 text-[20px] text-[#81949D]">
+                The traveller where you can select your desired activity and destinations of your choice for vacations.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <img
-                src="https://images.unsplash.com/photo-1599708153386-62e252701445?q=80&w=1000&auto=format&fit=crop"
-                alt="Da Nang City"
-                className="rounded-2xl shadow-lg hover:scale-105 transition-transform duration-500"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1559592413-7ece35b4922e?q=80&w=1000&auto=format&fit=crop"
-                alt="Golden Bridge"
-                className="rounded-2xl shadow-lg mt-8 hover:scale-105 transition-transform duration-500"
-              />
-            </div>
-          </div>
-        </section>
 
-        {/* HIGHLIGHTS SECTION */}
-        <section className="relative py-32 flex items-center justify-center overflow-hidden">
-          <div
-            className="absolute inset-0 z-0 bg-cover bg-center bg-fixed"
-            style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop')",
-            }}
-          >
-            <div className="absolute inset-0 bg-blue-900/40"></div>
-          </div>
-
-          <div className="relative z-10 max-w-7xl mx-auto px-4 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-16 drop-shadow-md">Địa Điểm Nổi Bật</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[
-                {
-                  title: 'Bán Đảo Sơn Trà',
-                  desc: 'Lá phổi xanh của thành phố với đỉnh Bàn Cờ và Chùa Linh Ứng.',
-                  img: 'https://images.unsplash.com/photo-1623594132049-537446549c63?q=80&w=500&auto=format&fit=crop',
-                },
-                {
-                  title: 'Bà Nà Hills',
-                  desc: 'Chốn bồng lai tiên cảnh với Cầu Vàng nổi tiếng thế giới.',
-                  img: 'https://images.unsplash.com/photo-1559592413-7ece35b4922e?q=80&w=500&auto=format&fit=crop',
-                },
-                {
-                  title: 'Biển Mỹ Khê',
-                  desc: 'Một trong 6 bãi biển quyến rũ nhất hành tinh do Forbes bình chọn.',
-                  img: 'https://images.unsplash.com/photo-1518391846015-55a9cc003b25?q=80&w=500&auto=format&fit=crop',
-                },
-              ].map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl hover:-translate-y-2 transition-all duration-300"
-                >
-                  <img src={item.img} alt={item.title} className="w-full h-48 object-cover rounded-2xl mb-6" />
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{item.title}</h3>
-                  <p className="text-gray-600">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* REVIEWS SECTION */}
-        <section className="py-24 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Review Mới Nhất</h2>
-              <p className="text-gray-600 text-lg">Cùng xem cộng đồng nói gì về hành trình của họ tại Đà Nẵng</p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  <div className="h-48 bg-gray-200 relative">
-                    <img
-                      src={`https://picsum.photos/seed/${i + 10}/500/300`}
-                      alt="Review"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                      4.8 ★
+            {/* Activity list */}
+            <div className="mt-2">
+              <p className="mb-4 text-sm font-bold text-[#81949D]">ACTIVITY LIST</p>
+              <div className="relative w-full overflow-hidden">
+                <div className="flex gap-[32px] animate-marquee will-change-transform hover:[animation-play-state:paused]">
+                  {[...items, ...items].map((item, i) => (
+                    <div
+                      key={i}
+                      className={cn('w-[198px] overflow-hidden shrink-0 p-4', item.roundedContainer, item.bg)}
+                    >
+                      <div className={cn('aspect-square w-full overflow-hidden', item.roundedImage)}>
+                        <img src={item.src} className="w-full h-full object-cover" />
+                      </div>
+                      <h3 className="mt-3 text-sm font-semibold">Beach Walking</h3>
+                      <p className="text-xs opacity-80">60 people going</p>
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <h4 className="font-bold text-lg mb-2 line-clamp-1">Ăn sập chợ Cồn chỉ với 100k</h4>
-                    <p className="text-gray-500 text-sm mb-4 line-clamp-2">
-                      Trải nghiệm ẩm thực phong phú tại Đà Nẵng không thể bỏ qua Chợ Cồn...
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-gray-400">2 giờ trước</span>
-                      <Link href={`/review/${i}`} className="text-blue-600 text-sm font-semibold hover:underline">
-                        Đọc tiếp
-                      </Link>
-                    </div>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
-        </section>
 
-        {/* CTA SECTION */}
-        <section className="relative py-48 flex items-center justify-center overflow-hidden">
-          <div
-            className="absolute inset-0 z-0 bg-cover bg-center bg-fixed"
-            style={{
-              backgroundImage:
-                "url('https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=2070&auto=format&fit=crop')",
-            }}
-          >
-            <div className="absolute inset-0 bg-orange-600/60"></div>
-          </div>
+          {/* Right */}
+          <div className="relative w-full h-full overflow-hidden">
+            <div
+              className=" relative w-full h-full
+    bg-cover bg-center
 
-          <div className="relative z-10 text-center text-white px-4">
-            <h2 className="text-4xl md:text-6xl font-bold mb-8 drop-shadow-lg">Sẵn sàng cho chuyến đi của bạn?</h2>
-            <p className="text-xl md:text-2xl mb-12 max-w-2xl mx-auto font-light">
-              Đăng ký ngay để nhận những gợi ý du lịch được cá nhân hóa và khám phá bản đồ các địa điểm ăn uống
-              rẻ-đẹp-chất.
-            </p>
-            <Link
-              href="/register"
-              className="bg-white text-orange-600 px-12 py-5 rounded-full text-xl font-bold hover:bg-gray-100 transition-all shadow-2xl hover:scale-105"
+    mask-[url('/images/mask.png')]
+    mask-contain
+    mask-no-repeat
+    mask-center
+
+    [-webkit-mask-image:url('/images/mask.png')]
+    [-webkit-mask-size:contain]
+    [-webkit-mask-repeat:no-repeat]
+    [-webkit-mask-position:center]"
             >
-              Bắt Đầu Ngay
-            </Link>
+              <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover">
+                <source src="/videos/mask.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <img src="/images/circle-big.png" alt="" className="absolute z-10 top-10 left-2 animate-float-scale" />
+            <img
+              src="/images/circle-small.png"
+              alt=""
+              className="absolute z-10 -bottom-40 -right-40 animate-float-scale-delayed"
+            />
           </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+        </div>
+
+        {/* Search bar */}
+        <div className="px-10 pt-10 pb-16 w-full">
+          <div className="mx-auto flex max-w-5xl items-center gap-6 rounded-2xl bg-white p-6 shadow-lg">
+            {/* Location */}
+            <div className="flex flex-1 flex-col gap-1">
+              <label className="text-xs font-semibold uppercase text-[#81949D]">Location</label>
+              <input
+                type="text"
+                placeholder="Where are you going?"
+                className="w-full text-sm outline-none placeholder:text-gray-400"
+              />
+            </div>
+
+            <div className="h-10 w-px bg-gray-200" />
+
+            {/* Activity */}
+            <div className="flex flex-1 flex-col gap-1">
+              <label className="text-xs font-semibold uppercase text-[#81949D]">Activity</label>
+              <input
+                type="text"
+                placeholder="Choose activity"
+                className="w-full text-sm outline-none placeholder:text-gray-400"
+              />
+            </div>
+
+            <div className="h-10 w-px bg-gray-200" />
+
+            {/* Date */}
+            <div className="flex flex-1 flex-col gap-1">
+              <label className="text-xs font-semibold uppercase text-[#81949D]">Date</label>
+              <input type="date" className="w-full text-sm outline-none text-gray-600" />
+            </div>
+
+            <div className="h-10 w-px bg-gray-200" />
+
+            {/* Guests */}
+            <div className="flex flex-1 flex-col gap-1">
+              <label className="text-xs font-semibold uppercase text-[#81949D]">Guests</label>
+              <input
+                type="number"
+                placeholder="2"
+                min={1}
+                className="w-full text-sm outline-none placeholder:text-gray-400"
+              />
+            </div>
+
+            {/* Search button */}
+            <button className="ml-2 flex px-4 py-2 items-center justify-center rounded-2xl bg-brand-teal text-white hover:opacity-90">
+              SEARCH
+            </button>
+          </div>
+        </div>
+
+        <img src="/images/boat.png" alt="" className="absolute z-10 bottom-0 right-0" />
+      </section>
+      <section className="h-[1000px]"></section>
+    </>
   )
 }

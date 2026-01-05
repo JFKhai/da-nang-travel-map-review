@@ -21,6 +21,24 @@ const nextConfig: NextConfig = {
                 port: "",
                 pathname: "/**",
             },
+            {
+                protocol: "https",
+                hostname: "tophomestay.vn",
+                port: "",
+                pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "benduthuyendanang.com",
+                port: "",
+                pathname: "/**",
+            },
+            {
+                protocol: "https",
+                hostname: "www.vietfuntravel.com.vn",
+                port: "",
+                pathname: "/**",
+            },
         ],
     },
 };

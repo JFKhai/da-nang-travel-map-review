@@ -1,49 +1,95 @@
 {
     "1": {
-        "title": "Cầu rồng",
-        "description": "Cầu rồng phun lửa ở Đà Nẵng",
+        "title": "Cầu Rồng",
+        "description": "Biểu tượng hiện đại của Đà Nẵng với khả năng phun lửa và nước vào cuối tuần.",
         "images": [
             "https://tophomestay.vn/upload/img/9fba44d71932a89fa06a21703c0bfbed/2021/10/19/cau_rong_da_nang_tophomestay_1_1634644765.jpg",
             "https://benduthuyendanang.com/wp-content/uploads/Lich-Cau-rong-phun-lua.jpg",
-            "https://www.vietfuntravel.com.vn/image/data/Blog/DiaDiem/Du-lich-cau-rong-da-nang-chiec-cau-co-kha-nang-phun-lua/Du-lich-cau-rong-da-nang-chiec-cau-co-kha-nang-phun-lua-1.jpg",
-            "https://vietluxtour.com/Upload/images/2024/khamphatrongnuoc/C%E1%BA%A7u%20R%E1%BB%93ng%20%C4%90%C3%A0%20N%E1%BA%B5ng/cau-rong-da-nang%20(1)-min.jpg",
-            "https://d2e5ushqwiltxm.cloudfront.net/wp-content/uploads/sites/86/2020/02/18085024/dragon-bridge-and-firework-ph%C3%A1o-hoa-tr%C3%AAn-c%E1%BA%A7u-r%E1%BB%93ng-Danang-Discovery-4-famous-bridge-in-danang-Restaurant-near-me-dragon-bridge-history-a-new-iconic-image-of-danang.jpg"
-            
+            "https://www.vietfuntravel.com.vn/image/data/Blog/DiaDiem/Du-lich-cau-rong-da-nang-chiec-cau-co-kha-nang-phun-lua/Du-lich-cau-rong-da-nang-chiec-cau-co-kha-nang-phun-lua-1.jpg"
         ],
-        "prices": [
+        "location": "Sông Hàn, Đà Nẵng",
+        "rating": 5,
+        "reviews": [
             {
-                "child": {
-                    "price": 100000,
-                    "description": "Trẻ em dưới 12 tuổi"   
-                }
+                "name": "Thân Ánh Thiện",
+                "avatar": "https://ui-avatars.com/api/?name=TAT&background=3D8E95&color=fff",
+                "rating": 5,
+                "comment": "Cầu Rồng thật sự rất hùng vĩ, đặc biệt là vào buổi đêm khi ánh đèn lên."
             },
             {
-                "adult": {
-                    "price": 200000,
-                    "description": "Người lớn trên 12 tuổi"
-                }   
+                "name": "Nguyễn Văn An",
+                "avatar": "https://ui-avatars.com/api/?name=VA&background=246E79&color=fff",
+                "rating": 4,
+                "comment": "Rất đông vui vào tối thứ 7 và chủ nhật."
             }
+        ]
+    },
+    "2": {
+        "title": "Bà Nà Hills",
+        "description": "Chốn bồng lai tiên cảnh với khí hậu 4 mùa trong một ngày và Cầu Vàng nổi tiếng.",
+        "images": [
+            "https://images.unsplash.com/photo-1559592413-7ece35b4922e?q=80&w=2070&auto=format&fit=crop",
+            "https://images.unsplash.com/photo-1599708153386-62e252701445?q=80&w=1000&auto=format&fit=crop"
         ],
-        "location": "Đà Nẵng",
+        "location": "Hòa Vang, Đà Nẵng",
+        "rating": 5,
+        "reviews": [
+            {
+                "name": "Hoàng My",
+                "avatar": "https://ui-avatars.com/api/?name=HM&background=D9ED82&color=1B485A",
+                "rating": 5,
+                "comment": "Cầu Vàng nhìn ngoài đời đẹp hơn trên ảnh nhiều, không khí rất trong lành."
+            }
+        ]
+    },
+    "3": {
+        "title": "Bán Đảo Sơn Trà",
+        "description": "Lá phổi xanh của Đà Nẵng với những cung đường biển tuyệt đẹp và chùa Linh Ứng.",
+        "images": [
+            "https://images.unsplash.com/photo-1623594132049-537446549c63?q=80&w=1000&auto=format&fit=crop"
+        ],
+        "location": "Sơn Trà, Đà Nẵng",
         "rating": 4,
         "reviews": [
             {
-                "name": "Pika",
-                "avatar": "https://vcdn1-giaitri.vnecdn.net/2023/07/20/05-1-1689824978-5443-1689824995.jpg?w=500&h=300&q=100&dpr=1&fit=crop&s=zp8W6T8--vXRrcGGbl-Ecg",
-                "rating": 5,
-                "comment": "Cầu rồng rất đẹp"
-            },
-            {
-                "name": "Meow",
-                "avatar": "https://file.hstatic.net/200000108863/file/3_33cbf6a0308e40ca8962af5e0460397c_grande.png",
-                "rating": 2,
-                "comment": "Cầu rồng rất đẹp là đằng khác"
-            },
-            {
-                "name": "Gừ Gừ",
-                "avatar": "https://ichef.bbci.co.uk/news/480/cpsprodpb/17638/production/_124800859_gettyimages-817514614.jpg.webp",
+                "name": "Lê Văn Lộc",
+                "avatar": "https://ui-avatars.com/api/?name=LL&background=3D8E95&color=fff",
                 "rating": 4,
-                "comment": "Cầu rồng rất đẹp quá trời ơi luôn, hôm nay countdown chắc vui lắm nhỉ, huhu"
+                "comment": "Đường lên đỉnh Bàn Cờ hơi dốc nhưng view nhìn xuống thành phố rất tuyệt."
+            }
+        ]
+    },
+    "4": {
+        "title": "Biển Mỹ Khê",
+        "description": "Một trong những bãi biển quyến rũ nhất hành tinh với bãi cát trắng mịn.",
+        "images": [
+            "https://images.unsplash.com/photo-1518391846015-55a9cc003b25?q=80&w=1000&auto=format&fit=crop"
+        ],
+        "location": "Ngũ Hành Sơn, Đà Nẵng",
+        "rating": 5,
+        "reviews": [
+            {
+                "name": "Minh Thư",
+                "avatar": "https://ui-avatars.com/api/?name=MT&background=246E79&color=fff",
+                "rating": 5,
+                "comment": "Biển rất sạch và sóng êm, thích hợp cho cả gia đình nghỉ dưỡng."
+            }
+        ]
+    },
+    "5": {
+        "title": "Ngũ Hành Sơn",
+        "description": "Quần thể 5 ngọn núi đá vôi với hệ thống hang động và chùa chiền cổ kính.",
+        "images": [
+            "https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=1000&auto=format&fit=crop"
+        ],
+        "location": "Ngũ Hành Sơn, Đà Nẵng",
+        "rating": 4,
+        "reviews": [
+            {
+                "name": "Quốc Bảo",
+                "avatar": "https://ui-avatars.com/api/?name=QB&background=D9ED82&color=1B485A",
+                "rating": 4,
+                "comment": "Leo núi hơi mệt nhưng vào hang động thì rất mát mẻ và thanh tịnh."
             }
         ]
     }

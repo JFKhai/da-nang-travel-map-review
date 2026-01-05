@@ -8,14 +8,14 @@ export default function Home() {
       <Navbar />
 
       <main className="flex-grow">
+        {/* HERO SECTION */}
         <section className="relative h-screen flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 z-0 bg-cover bg-center bg-fixed"
             style={{
               backgroundImage:
                 "url('https://images.unsplash.com/photo-1559592413-7ece35b4922e?q=80&w=2070&auto=format&fit=crop')",
-            }}
-          >
+            }}>
             <div className="absolute inset-0 bg-black/40"></div>
           </div>
 
@@ -30,20 +30,19 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/review"
-                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:scale-105"
-              >
+                className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-full text-lg font-semibold transition-all shadow-lg hover:scale-105">
                 Xem Review
               </Link>
               <Link
                 href="/map"
-                className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/50 px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105"
-              >
+                className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/50 px-8 py-4 rounded-full text-lg font-semibold transition-all hover:scale-105">
                 Khám Phá Bản Đồ
               </Link>
             </div>
           </div>
         </section>
 
+        {/* WHY DA NANG SECTION */}
         <section className="py-24 bg-white px-4">
           <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
             <div>
@@ -78,14 +77,14 @@ export default function Home() {
           </div>
         </section>
 
+        {/* HIGHLIGHTS SECTION */}
         <section className="relative py-32 flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 z-0 bg-cover bg-center bg-fixed"
             style={{
               backgroundImage:
                 "url('https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=2073&auto=format&fit=crop')",
-            }}
-          >
+            }}>
             <div className="absolute inset-0 bg-blue-900/40"></div>
           </div>
 
@@ -113,8 +112,7 @@ export default function Home() {
               ].map((item, index) => (
                 <div
                   key={index}
-                  className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl hover:-translate-y-2 transition-all duration-300"
-                >
+                  className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 shadow-xl hover:-translate-y-2 transition-all duration-300">
                   <img
                     src={item.img}
                     alt={item.title}
@@ -130,6 +128,7 @@ export default function Home() {
           </div>
         </section>
 
+        {/* REVIEWS SECTION */}
         <section className="py-24 bg-gray-50">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center mb-16">
@@ -145,8 +144,7 @@ export default function Home() {
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                >
+                  className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="h-48 bg-gray-200 relative">
                     <img
                       src={`https://picsum.photos/seed/${i + 10}/500/300`}
@@ -169,8 +167,7 @@ export default function Home() {
                       <span className="text-xs text-gray-400">2 giờ trước</span>
                       <Link
                         href={`/review/${i}`}
-                        className="text-blue-600 text-sm font-semibold hover:underline"
-                      >
+                        className="text-blue-600 text-sm font-semibold hover:underline">
                         Đọc tiếp
                       </Link>
                     </div>
@@ -181,14 +178,14 @@ export default function Home() {
           </div>
         </section>
 
+        {/* CTA SECTION */}
         <section className="relative py-48 flex items-center justify-center overflow-hidden">
           <div
             className="absolute inset-0 z-0 bg-cover bg-center bg-fixed"
             style={{
               backgroundImage:
                 "url('https://images.unsplash.com/photo-1583417319070-4a69db38a482?q=80&w=2070&auto=format&fit=crop')",
-            }}
-          >
+            }}>
             <div className="absolute inset-0 bg-orange-600/60"></div>
           </div>
 
@@ -202,67 +199,12 @@ export default function Home() {
             </p>
             <Link
               href="/register"
-              className="bg-white text-orange-600 px-12 py-5 rounded-full text-xl font-bold hover:bg-gray-100 transition-all shadow-2xl hover:scale-105"
-            >
+              className="bg-white text-orange-600 px-12 py-5 rounded-full text-xl font-bold hover:bg-gray-100 transition-all shadow-2xl hover:scale-105">
               Bắt Đầu Ngay
             </Link>
           </div>
         </section>
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50">
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50">
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer">
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer">
-            Documentation
-          </a>
-        </div>
       </main>
-
       <Footer />
     </div>
   );

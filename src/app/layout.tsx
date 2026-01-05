@@ -1,16 +1,12 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
-import './globals.css'
+import { Roboto } from 'next/font/google'
 import { PrimeReactProvider } from 'primereact/api'
 import 'primereact/resources/themes/saga-blue/theme.css'
+import './globals.css'
+import { Header } from '@/components/header'
+import Footer from '@/components/footer'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-})
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const roboto = Roboto({
   subsets: ['latin'],
 })
 
@@ -26,8 +22,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <PrimeReactProvider>{children}</PrimeReactProvider>
+      <body className={roboto.className}>
+        <main className="min-h-screen bg-gradient-to-br from-[#f7fce8] to-[#e9f4fb]">
+          <PrimeReactProvider>
+            <Header isAuthenticated={false} />
+            {children}
+            <Footer />
+          </PrimeReactProvider>
+        </main>
       </body>
     </html>
   )

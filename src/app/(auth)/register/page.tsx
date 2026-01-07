@@ -29,12 +29,12 @@ export default function RegisterPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-brand-border/10">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-brand-border mb-2">Đăng ký</h1>
-            <p className="text-gray-600">Tạo tài khoản mới của bạn</p>
+            <p className="text-brand-dark">Tạo tài khoản mới của bạn</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Họ và tên</label>
+              <label className="block text-sm font-medium text-brand-border mb-2">Họ và tên</label>
               <input
                 type="text"
                 required
@@ -45,13 +45,13 @@ export default function RegisterPage() {
                     fullName: e.target.value,
                   })
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                 placeholder="Nhập họ và tên"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-sm font-medium text-brand-border mb-2">Email</label>
               <input
                 type="email"
                 required
@@ -62,13 +62,13 @@ export default function RegisterPage() {
                     email: e.target.value,
                   })
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                 placeholder="Nhập email của bạn"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+              <label className="block text-sm font-medium text-brand-border mb-2">Số điện thoại</label>
               <input
                 type="tel"
                 required
@@ -79,13 +79,13 @@ export default function RegisterPage() {
                     phone: e.target.value,
                   })
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                 placeholder="Nhập số điện thoại"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu</label>
+              <label className="block text-sm font-medium text-brand-border mb-2">Mật khẩu</label>
               <input
                 type="password"
                 required
@@ -96,13 +96,13 @@ export default function RegisterPage() {
                     password: e.target.value,
                   })
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                 placeholder="Nhập mật khẩu"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Xác nhận mật khẩu</label>
+              <label className="block text-sm font-medium text-brand-border mb-2">Xác nhận mật khẩu</label>
               <input
                 type="password"
                 required
@@ -113,7 +113,7 @@ export default function RegisterPage() {
                     confirmPassword: e.target.value,
                   })
                 }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
+                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
                 placeholder="Nhập lại mật khẩu"
               />
             </div>
@@ -123,9 +123,9 @@ export default function RegisterPage() {
                 type="checkbox"
                 id="terms"
                 required
-                className="w-4 h-4 text-brand-teal border-gray-300 rounded focus:ring-brand-teal"
+                className="w-4 h-4 text-brand-teal border-brand-border/20 rounded focus:ring-brand-teal"
               />
-              <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
+              <label htmlFor="terms" className="ml-2 text-sm text-brand-dark">
                 Tôi đồng ý với{' '}
                 <Link href="#" className="text-brand-teal hover:text-brand-dark">
                   điều khoản
@@ -146,7 +146,7 @@ export default function RegisterPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-brand-dark">
               Đã có tài khoản?{' '}
               <Link href="/login" className="text-brand-teal font-semibold hover:text-brand-dark">
                 Đăng nhập ngay

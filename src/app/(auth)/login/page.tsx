@@ -46,7 +46,7 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8 border border-brand-border/10">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-brand-border mb-2">Đăng nhập</h1>
-            <p className="text-gray-600">Chào mừng bạn trở lại!</p>
+            <p className="text-brand-dark">Chào mừng bạn trở lại!</p>
           </div>
 
           {error && (
@@ -58,7 +58,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label className="block text-sm font-medium text-brand-border mb-2">Email</label>
               <input
                 type="email"
                 required
@@ -70,13 +70,13 @@ export default function LoginPage() {
                   })
                 }
                 disabled={isLoading}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
+                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent disabled:bg-brand-bg disabled:text-brand-border/50"
                 placeholder="Nhập email của bạn"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu</label>
+              <label className="block text-sm font-medium text-brand-border mb-2">Mật khẩu</label>
               <input
                 type="password"
                 required
@@ -88,7 +88,7 @@ export default function LoginPage() {
                   })
                 }
                 disabled={isLoading}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
+                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent disabled:bg-brand-bg disabled:text-brand-border/50"
                 placeholder="Nhập mật khẩu"
               />
             </div>
@@ -106,13 +106,13 @@ export default function LoginPage() {
                     })
                   }
                   disabled={isLoading}
-                  className="w-4 h-4 text-brand-teal border-gray-300 rounded focus:ring-brand-teal disabled:opacity-50"
+                  className="w-4 h-4 text-brand-teal border-brand-border/20 rounded focus:ring-brand-teal disabled:opacity-50"
                 />
-                <label htmlFor="remember" className="ml-2 text-sm text-gray-600">
+                <label htmlFor="remember" className="ml-2 text-sm text-brand-dark">
                   Ghi nhớ đăng nhập
                 </label>
               </div>
-              <Link href="#" className="text-sm text-brand-teal hover:text-brand-dark disabled:text-gray-400">
+              <Link href="#" className="text-sm text-brand-teal hover:text-brand-dark disabled:text-brand-border/40">
                 Quên mật khẩu?
               </Link>
             </div>
@@ -127,7 +127,7 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-brand-dark">
               Chưa có tài khoản?{' '}
               <Link href="/register" className="text-brand-teal font-semibold hover:text-brand-dark">
                 Đăng ký ngay

@@ -4,6 +4,7 @@ import 'primereact/resources/themes/saga-blue/theme.css'
 import './globals.css'
 import { Header } from '@/components/header'
 import Footer from '@/components/footer'
+import { AuthProvider } from '@/context/AuthContext'
 
 export const metadata: Metadata = {
   title: 'Travelopia - Khám phá Đà Nẵng',
@@ -18,13 +19,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main className="min-h-screen bg-brand-bg">
+        <AuthProvider>
           <PrimeReactProvider>
+            {/* TODO: Sau này sửa component Header để dùng useAuth() thay vì truyền props cứng */}
             <Header isAuthenticated={false} />
-            {children}
+            {/*main chỉ chứa nội dung chính thay đổi */}
+            <main className="min-h-screen bg-brand-bg">{children}</main>
             <Footer />
           </PrimeReactProvider>
-        </main>
+        </AuthProvider>
       </body>
     </html>
   )

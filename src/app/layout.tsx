@@ -18,13 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <main className="min-h-screen bg-brand-bg">
-          <PrimeReactProvider>
-            <Header isAuthenticated={false} />
-            {children}
-            <Footer />
-          </PrimeReactProvider>
-        </main>
+        <PrimeReactProvider>
+          <main className="min-h-screen bg-brand-bg">{children}</main>
+        </PrimeReactProvider>
       </body>
     </html>
   )

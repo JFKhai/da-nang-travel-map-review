@@ -1,3 +1,5 @@
+@import url('https://fonts.cdnfonts.com/css/emotional-rescue-personal-use');
+@import url('https://fonts.cdnfonts.com/css/cabinet-grotesk');
 @import 'tailwindcss';
 
 /* ===== Font Face ===== */
@@ -17,18 +19,27 @@
   --color-brand-bg: #eef4f7;
 
   --font-sans: RomanaBT, serif;
+  --font-emotional: 'Emotional Rescue Personal Use', sans-serif;
+  --font-cabinet-grotesk: 'Cabinet Grotesk', sans-serif;
 
   --animate-marquee: marquee 20s linear infinite;
   --animate-float-scale: float-scale 5s ease-in-out infinite;
   --animate-float-scale-delayed: float-scale 7s ease-in-out infinite 1s;
 }
 
-html {
-  scroll-behavior: smooth;
-}
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
 
-body {
-  font-family: var(--font-sans);
+  body {
+    font-family: var(--font-sans);
+  }
+
+  button:hover,
+  a:hover {
+    cursor: pointer;
+  }
 }
 
 @keyframes fade-in {

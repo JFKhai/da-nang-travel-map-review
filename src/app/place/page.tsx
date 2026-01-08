@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import Navbar from '@/components/navbar'
+import Footer from '@/components/footer'
 import Image from 'next/image'
 import Link from 'next/link'
-import data from '../detail/[id]/data/data.json'
+import data from '@/app/detail/[id]/data/data.json'
 
 export default function PlacesPage() {
   // Convert the data object to an array for mapping

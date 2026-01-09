@@ -1,9 +1,6 @@
 import type { Metadata } from 'next'
 import { PrimeReactProvider } from 'primereact/api'
-import 'primereact/resources/themes/saga-blue/theme.css'
 import './globals.css'
-import { Header } from '@/components/header'
-import Footer from '@/components/footer'
 
 export const metadata: Metadata = {
   title: 'Travelopia - Khám phá Đà Nẵng',

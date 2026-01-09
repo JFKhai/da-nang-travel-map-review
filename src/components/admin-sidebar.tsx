@@ -117,7 +117,7 @@ export default function AdminSidebar() {
   return (
     <div
       className={cn(
-        'flex flex-col h-screen relative bg-[#6AE2B2] transition-all duration-300 overflow-hidden',
+        'flex flex-col h-screen relative bg-[#6AE2B2] transition-all duration-300 overflow-hidden shrink-0',
         isCollapsed ? 'w-[120px]' : 'w-[215px]',
       )}
     >
@@ -130,13 +130,19 @@ export default function AdminSidebar() {
         )}
         <Button
           onClick={() => setIsCollapsed((isCollapsed) => !isCollapsed)}
-          className={cn('text-white hover:bg-white/20', !isCollapsed ? 'hidden' : 'mx-auto')}
+          className={cn(
+            'text-white bg-[#6AE2B2] border-0 hover:border-0  hover:bg-white/20 ',
+            !isCollapsed ? 'hidden' : 'mx-auto',
+          )}
         >
           {isCollapsed && <Menu className="h-5 w-5" />}
         </Button>
         <Button
           onClick={() => setIsCollapsed((isCollapsed) => !isCollapsed)}
-          className={cn('text-white hover:bg-white/20 absolute right-1 top-1', isCollapsed && 'hidden')}
+          className={cn(
+            'text-white bg-[#6AE2B2]  hover:bg-white/20 absolute right-1 top-1 border-0 hover:border-0',
+            isCollapsed && 'hidden',
+          )}
         >
           <X className="h-5 w-5" />
         </Button>
@@ -167,7 +173,7 @@ export default function AdminSidebar() {
       {/* Menu Items */}
       <nav className="flex-1 flex flex-col items-center z-10 px-4 overflow-y-auto ">
         {menuItems.map((item, index) => {
-          const isActive = location.pathname === item.href
+          const isActive = pathname === item.href
           const Icon = item.icon
 
           return (

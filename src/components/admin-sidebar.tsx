@@ -3,7 +3,20 @@ import type React from 'react'
 
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, User, LogOut, Menu, X, BookHeart, Factory, Building, MapPinPen, Users } from 'lucide-react'
+import {
+  LayoutDashboard,
+  User,
+  LogOut,
+  Menu,
+  X,
+  BookHeart,
+  Factory,
+  Building,
+  MapPinPen,
+  Users,
+  ChartBarStacked,
+  MessageCircle,
+} from 'lucide-react'
 import type { LucideProps } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from 'primereact/button'
@@ -24,22 +37,22 @@ const menuItems: MenuItem[] = [
     href: '/admin/dashboard',
   },
   {
-    id: 'posts',
-    label: 'Posts',
+    id: 'places',
+    label: 'Places',
     icon: BookHeart,
-    href: '/admin/posts',
+    href: '/admin/places',
   },
   {
-    id: 'companies',
-    label: 'Companies',
-    icon: Building,
-    href: '/admin/companies',
+    id: 'categories',
+    label: 'Categories',
+    icon: ChartBarStacked,
+    href: '/admin/categories',
   },
   {
-    id: 'industries',
-    label: 'Industries',
-    icon: Factory,
-    href: '/admin/industries',
+    id: 'reviews',
+    label: 'Reviews',
+    icon: MessageCircle,
+    href: '/admin/reviews',
   },
   {
     id: 'locations',

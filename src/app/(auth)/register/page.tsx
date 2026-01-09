@@ -1,9 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { register, getAuthToken } from '@/lib/api/auth'
 
 export default function RegisterPage() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -11,16 +14,44 @@ export default function RegisterPage() {
     password: '',
     confirmPassword: '',
   })
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect nếu đã đăng nhập
+  useEffect(() => {
+    const token = getAuthToken()
+    if (token) {
+      router.push('/')
+    }
+  }, [router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsLoading(true)
+    setError(null)
 
     if (formData.password !== formData.confirmPassword) {
-      alert('Mật khẩu xác nhận không khớp!')
+      setError('Mật khẩu xác nhận không khớp!')
+      setIsLoading(false)
       return
     }
 
-    console.log('Register data:', formData)
+    try {
+      const user = await register({
+        email: formData.email,
+        password: formData.password,
+        full_name: formData.fullName,
+      })
+
+      console.log('Register successful:', user)
+      // Chuyển đến trang login sau khi đăng ký thành công
+      router.push('/login')
+    } catch (err: any) {
+      console.error('Register error:', err)
+      setError(err.message || 'Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -31,6 +62,13 @@ export default function RegisterPage() {
             <h1 className="text-3xl font-bold text-brand-border mb-2">Đăng ký</h1>
             <p className="text-brand-dark">Tạo tài khoản mới của bạn</p>
           </div>
+
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 relative" role="alert">
+              <strong className="font-bold">Lỗi!</strong>
+              <span className="block sm:inline ml-2">{error}</span>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
@@ -139,9 +177,10 @@ export default function RegisterPage() {
 
             <button
               type="submit"
-              className="w-full bg-brand-teal text-white font-semibold py-3 px-4 rounded-lg hover:bg-brand-dark transition-colors"
+              disabled={isLoading}
+              className="w-full bg-brand-teal text-white font-semibold py-3 px-4 rounded-lg hover:bg-brand-dark transition-colors disabled:bg-brand-teal/50 disabled:cursor-not-allowed"
             >
-              Đăng ký
+              {isLoading ? 'Đang xử lý...' : 'Đăng ký'}
             </button>
           </form>
 

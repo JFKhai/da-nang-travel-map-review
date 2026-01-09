@@ -1,25 +1,55 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { Menu, X, LogOut, User, Settings, BarChart3 } from 'lucide-react'
 import { Avatar } from 'primereact/avatar'
 import { Button } from 'primereact/button'
 import { Dropdown } from 'primereact/dropdown'
 import LanguageDropdown from '@/components/language-dropdown'
+import { logout } from '@/lib/api/auth'
+import { useAuth } from '@/contexts/auth-context'
 
-interface HeaderProps {
-  isAuthenticated?: boolean
-  user?: {
-    name: string
-    email: string
-    avatar?: string
+export function Header() {
+  const router = useRouter()
+  const { isAuthenticated, user, clearAuth } = useAuth()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+
+  const handleLogout = () => {
+    logout()
+    clearAuth()
+    setIsMobileMenuOpen(false)
+    setIsUserMenuOpen(false)
   }
-}
 
-export function Header({ isAuthenticated = false, user }: HeaderProps) {
-  const [isOpen, setIsOpen] = useState(false)
+  // Format user for display
+  const finalUser = user
+    ? {
+        name: user.full_name || 'User',
+        email: user.email || '',
+        avatar: user.avatar_url || undefined,
+      }
+    : null
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    if (!isUserMenuOpen) return
+
+    const handleClickOutside = () => {
+      setIsUserMenuOpen(false)
+    }
+    // Delay to avoid immediate close
+    setTimeout(() => {
+      document.addEventListener('click', handleClickOutside)
+    }, 0)
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isUserMenuOpen])
 
   const navLinks = [
     { label: 'Home', href: '/' },
@@ -30,10 +60,10 @@ export function Header({ isAuthenticated = false, user }: HeaderProps) {
   ]
 
   const userMenuItems = [
-    { label: 'Profile', icon: User, href: '/dashboard/profile' },
-    { label: 'Dashboard', icon: BarChart3, href: '/dashboard' },
-    { label: 'Settings', icon: Settings, href: '/dashboard/settings' },
-    { label: 'Logout', icon: LogOut, href: '/logout', divider: true },
+    { label: 'Profile', icon: User, href: '/me', action: null },
+    { label: 'Dashboard', icon: BarChart3, href: '/dashboard', action: null },
+    { label: 'Settings', icon: Settings, href: '/dashboard/settings', action: null },
+    { label: 'Logout', icon: LogOut, href: '#', action: handleLogout, divider: true },
   ]
 
   return (
@@ -86,34 +116,65 @@ export function Header({ isAuthenticated = false, user }: HeaderProps) {
               ) : (
                 /* Authenticated State - User Menu */
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
+                  <Link
+                    href="/me"
+                    className="flex items-center gap-3 border-l border-gray-200 pl-4 hover:opacity-80 transition-opacity"
+                  >
                     <Avatar
-                      image={user?.avatar}
-                      label={user?.name?.charAt(0) || 'U'}
+                      image={finalUser?.avatar}
+                      label={finalUser?.name?.charAt(0) || 'U'}
                       shape="circle"
                       size="large"
                       className="cursor-pointer"
                     />
                     <div className="hidden lg:block">
-                      <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                      <p className="text-xs text-gray-500">{user?.email}</p>
+                      <p className="text-sm font-medium text-gray-900">{finalUser?.name}</p>
+                      <p className="text-xs text-gray-500">{finalUser?.email}</p>
                     </div>
-                  </div>
+                  </Link>
 
                   {/* Desktop User Dropdown Menu */}
-                  <Dropdown
-                    options={userMenuItems}
-                    optionLabel="label"
-                    className="w-40"
-                    itemTemplate={(item) => (
-                      <Link href={item.href}>
-                        <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 w-full">
-                          <item.icon className="w-4 h-4" />
-                          <span className="text-sm">{item.label}</span>
-                        </div>
-                      </Link>
+                  <div className="relative">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setIsUserMenuOpen(!isUserMenuOpen)
+                      }}
+                      className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <Settings className="w-5 h-5 text-gray-600" />
+                    </button>
+                    {isUserMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                        {userMenuItems.map((item) => (
+                          <div key={item.label}>
+                            {item.action ? (
+                              <button
+                                onClick={() => {
+                                  item.action?.()
+                                  setIsUserMenuOpen(false)
+                                }}
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 w-full text-left"
+                              >
+                                <item.icon className="w-4 h-4" />
+                                <span className="text-sm">{item.label}</span>
+                              </button>
+                            ) : (
+                              <Link
+                                href={item.href}
+                                onClick={() => setIsUserMenuOpen(false)}
+                                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 w-full"
+                              >
+                                <item.icon className="w-4 h-4" />
+                                <span className="text-sm">{item.label}</span>
+                              </Link>
+                            )}
+                            {item.divider && <div className="border-t border-gray-200 my-1" />}
+                          </div>
+                        ))}
+                      </div>
                     )}
-                  />
+                  </div>
                 </div>
               )}
             </div>
@@ -127,17 +188,21 @@ export function Header({ isAuthenticated = false, user }: HeaderProps) {
 
               {/* Hamburger Menu */}
               <button
-                onClick={() => setIsOpen(!isOpen)}
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                 aria-label="Toggle menu"
               >
-                {isOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6 text-gray-700" />
+                ) : (
+                  <Menu className="w-6 h-6 text-gray-700" />
+                )}
               </button>
             </div>
           </div>
 
           {/* Mobile Menu */}
-          {isOpen && (
+          {isMobileMenuOpen && (
             <div className="md:hidden border-t border-gray-200 bg-white">
               <nav className="flex flex-col">
                 {navLinks.map((link) => (
@@ -145,7 +210,7 @@ export function Header({ isAuthenticated = false, user }: HeaderProps) {
                     key={link.href}
                     href={link.href}
                     className="px-4 py-3 text-gray-700 hover:bg-gray-50 hover:text-teal-700 border-b border-gray-100 transition-colors"
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {link.label}
                   </Link>
@@ -164,26 +229,51 @@ export function Header({ isAuthenticated = false, user }: HeaderProps) {
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3">
-                      <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
-                        <Avatar image={user?.avatar} label={user?.name?.charAt(0) || 'U'} shape="circle" size="large" />
+                      <Link
+                        href="/me"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="flex items-center gap-3 pb-3 border-b border-gray-200 hover:opacity-80 transition-opacity"
+                      >
+                        <Avatar
+                          image={finalUser?.avatar}
+                          label={finalUser?.name?.charAt(0) || 'U'}
+                          shape="circle"
+                          size="large"
+                        />
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{user?.name}</p>
-                          <p className="text-xs text-gray-500">{user?.email}</p>
+                          <p className="text-sm font-medium text-gray-900">{finalUser?.name}</p>
+                          <p className="text-xs text-gray-500">{finalUser?.email}</p>
                         </div>
-                      </div>
-                      {userMenuItems.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className={`flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors ${
-                            item.divider ? 'border-t border-gray-200 mt-2 pt-3' : ''
-                          }`}
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <item.icon className="w-4 h-4" />
-                          <span className="text-sm font-medium">{item.label}</span>
-                        </Link>
-                      ))}
+                      </Link>
+                      {userMenuItems.map((item) =>
+                        item.action ? (
+                          <button
+                            key={item.label}
+                            onClick={() => {
+                              item.action?.()
+                              setIsMobileMenuOpen(false)
+                            }}
+                            className={`flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors w-full text-left ${
+                              item.divider ? 'border-t border-gray-200 mt-2 pt-3' : ''
+                            }`}
+                          >
+                            <item.icon className="w-4 h-4" />
+                            <span className="text-sm font-medium">{item.label}</span>
+                          </button>
+                        ) : (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className={`flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors ${
+                              item.divider ? 'border-t border-gray-200 mt-2 pt-3' : ''
+                            }`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            <item.icon className="w-4 h-4" />
+                            <span className="text-sm font-medium">{item.label}</span>
+                          </Link>
+                        ),
+                      )}
                     </div>
                   )}
                 </div>

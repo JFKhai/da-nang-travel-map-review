@@ -1,18 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import Navbar from '@/components/navbar'
-import Footer from '@/components/footer'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { getMe, getAuthToken, type User } from '@/lib/api/auth'
 
 export default function UserProfilePage() {
-  // Mock user data
-  const [user, setUser] = useState({
-    fullName: 'Thân Ánh Thiện',
-    email: 'solshuneo@gmail.com',
-    password: 'password123',
-    avatar: '/assets/images/avatar.jpg',
-  })
+  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   const [isEditingPassword, setIsEditingPassword] = useState(false)
 
@@ -27,14 +24,34 @@ export default function UserProfilePage() {
     text: string
   } | null>(null)
 
-  const handlePasswordUpdate = (e: React.FormEvent) => {
+  // Fetch user data from API
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = getAuthToken()
+      if (!token) {
+        router.push('/login')
+        return
+      }
+
+      try {
+        setIsLoading(true)
+        const userData = await getMe()
+        setUser(userData)
+      } catch (err: any) {
+        console.error('Error fetching user data:', err)
+        setError(err.message || 'Không thể tải thông tin user')
+        // If 401, redirect will be handled by getMe function
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [router])
+
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage(null)
-
-    if (formData.oldPassword !== user.password) {
-      setMessage({ type: 'error', text: 'Mật khẩu cũ không chính xác!' })
-      return
-    }
 
     if (formData.newPassword !== formData.confirmPassword) {
       setMessage({
@@ -52,18 +69,43 @@ export default function UserProfilePage() {
       return
     }
 
-    // Simulate API call
-    setUser({ ...user, password: formData.newPassword })
+    // TODO: Implement change password API call
+    // For now, just show success message
     setIsEditingPassword(false)
     setFormData({ oldPassword: '', newPassword: '', confirmPassword: '' })
     setMessage({ type: 'success', text: 'Đổi mật khẩu thành công!' })
     setTimeout(() => setMessage(null), 3000)
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-teal mx-auto mb-4"></div>
+          <p className="text-gray-600">Đang tải thông tin...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">{error || 'Không thể tải thông tin user'}</p>
+          <button
+            onClick={() => router.push('/login')}
+            className="px-6 py-2 bg-brand-teal text-white rounded-lg hover:bg-brand-dark transition-colors"
+          >
+            Đăng nhập lại
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-brand-bg font-sans">
-      <Navbar />
-
       <main className="grow pt-24 pb-12">
         <div className="max-w-4xl mx-auto px-4">
           {/* PROFILE CARD */}
@@ -71,7 +113,7 @@ export default function UserProfilePage() {
             <div className="h-32 bg-brand-teal/20 relative">
               <div className="absolute -bottom-12 left-8">
                 <Image
-                  src={user.avatar}
+                  src={user.avatar_url || `/images/avatar.jpg`}
                   alt="User Avatar"
                   width={96}
                   height={96}
@@ -80,7 +122,7 @@ export default function UserProfilePage() {
                   onError={(e) => {
                     const target = e.currentTarget as HTMLImageElement
                     target.srcset = ''
-                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName)}&background=3D8E95&color=fff`
+                    target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.full_name)}&background=3D8E95&color=fff`
                   }}
                 />
               </div>
@@ -88,7 +130,7 @@ export default function UserProfilePage() {
 
             <div className="pt-16 p-8">
               <div className="mb-8">
-                <h1 className="text-3xl font-bold text-brand-border">{user.fullName}</h1>
+                <h1 className="text-3xl font-bold text-brand-border">{user.full_name}</h1>
                 <p className="text-gray-500">{user.email}</p>
               </div>
 
@@ -111,7 +153,7 @@ export default function UserProfilePage() {
                     <input
                       type="text"
                       readOnly
-                      value={user.fullName}
+                      value={user.full_name}
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed"
                     />
                   </div>
@@ -132,7 +174,7 @@ export default function UserProfilePage() {
                     <input
                       type="password"
                       readOnly
-                      value={user.password}
+                      value="••••••••"
                       className="w-full border border-gray-200 rounded-xl px-4 py-3 bg-gray-50 text-gray-500 cursor-not-allowed pr-12"
                     />
                     <button
@@ -230,8 +272,6 @@ export default function UserProfilePage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   )
 }

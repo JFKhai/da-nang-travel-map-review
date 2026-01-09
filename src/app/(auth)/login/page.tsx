@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { LockKeyhole, Mail } from 'lucide-react'
 
 const INIT_DATA = {
   email: '',
@@ -41,101 +42,59 @@ export default function LoginPage() {
   useEffect(() => {}, [])
 
   return (
-    <div className="min-h-screen bg-brand-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-brand-border/10">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-brand-border mb-2">Đăng nhập</h1>
-            <p className="text-brand-dark">Chào mừng bạn trở lại!</p>
-          </div>
+    <div className="w-full max-w-md ">
+      <h2 className="text-[74px] font-extrabold text-brand-teal  text-center">Welcome</h2>
+      <p className="text-gray-500 mb-8 text-center">Login with Email</p>
 
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 relative" role="alert">
-              <strong className="font-bold">Lỗi!</strong>
-              <span className="block sm:inline ml-2">{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-brand-border mb-2">Email</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    email: e.target.value,
-                  })
-                }
-                disabled={isLoading}
-                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent disabled:bg-brand-bg disabled:text-brand-border/50"
-                placeholder="Nhập email của bạn"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-brand-border mb-2">Mật khẩu</label>
-              <input
-                type="password"
-                required
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    password: e.target.value,
-                  })
-                }
-                disabled={isLoading}
-                className="w-full border border-brand-border/20 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent disabled:bg-brand-bg disabled:text-brand-border/50"
-                placeholder="Nhập mật khẩu"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  checked={formData.rememberMe}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      rememberMe: e.target.checked,
-                    })
-                  }
-                  disabled={isLoading}
-                  className="w-4 h-4 text-brand-teal border-brand-border/20 rounded focus:ring-brand-teal disabled:opacity-50"
-                />
-                <label htmlFor="remember" className="ml-2 text-sm text-brand-dark">
-                  Ghi nhớ đăng nhập
-                </label>
-              </div>
-              <Link href="#" className="text-sm text-brand-teal hover:text-brand-dark disabled:text-brand-border/40">
-                Quên mật khẩu?
-              </Link>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-brand-teal text-white font-semibold py-3 px-4 rounded-lg hover:bg-brand-dark transition-colors disabled:bg-brand-teal/50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-brand-dark">
-              Chưa có tài khoản?{' '}
-              <Link href="/register" className="text-brand-teal font-semibold hover:text-brand-dark">
-                Đăng ký ngay
-              </Link>
-            </p>
-          </div>
+      {/* Email */}
+      <div className="mb-4">
+        <label className="block text-sm mb-1 text-brand-teal font-semibold">Email</label>
+        <div className="flex items-center border rounded-lg px-4 py-3 focus-within:ring-2 ring-brand-teal">
+          <Mail className="text-brand-teal mr-3" />
+          <input type="email" placeholder="thisuix@mail.com" className="w-full outline-none" />
         </div>
       </div>
+
+      {/* Password */}
+      <div className="mb-2">
+        <label className="block text-sm mb-1 text-brand-teal font-semibold">Password</label>
+        <div className="flex items-center border rounded-lg px-4 py-3 focus-within:ring-2 ring-brand-teal">
+          <LockKeyhole className="text-brand-teal mr-3" />
+          <input type="password" placeholder="********" className="w-full outline-none" />
+        </div>
+      </div>
+
+      <div className="text-right text-sm text-gray-500 mb-6">
+        <a href="">Forgot your password?</a>
+      </div>
+
+      <button className="w-full bg-brand-teal text-white py-3 rounded-lg font-semibold hover:bg-brand-dark transition">
+        LOGIN
+      </button>
+
+      {/* OR */}
+      <div className="flex items-center my-6">
+        <div className="flex-1 h-px bg-gray-300" />
+        <span className="px-3 text-gray-400 text-sm">OR</span>
+        <div className="flex-1 h-px bg-gray-300" />
+      </div>
+
+      {/* Social */}
+      <div className="flex justify-center gap-4">
+        <button className=" border-none py-3 px-6 bg-[#E7F2F5] rounded-xl">
+          <img src="/images/google-logo.svg" className="mx-auto h-6" />
+        </button>
+        <button className="border-none py-3 px-6 bg-[#E7F2F5] rounded-xl">
+          <img src="/images/facebook-logo.svg" className="mx-auto h-6" />
+        </button>
+        <button className=" border-none py-3 px-6 bg-[#E7F2F5] rounded-xl">
+          <img src="/images/apple-logo.svg" className="mx-auto h-6" />
+        </button>
+      </div>
+
+      <p className="text-center text-sm mt-8">
+        Don’t have account? <span className="text-brand-teal font-semibold cursor-pointer">Register Now</span>
+      </p>
     </div>
   )
 }

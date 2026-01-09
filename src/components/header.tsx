@@ -72,7 +72,9 @@ export function Header({ isAuthenticated = false, user }: HeaderProps) {
               {!isAuthenticated ? (
                 <div className="flex items-center gap-3">
                   <Link href="/login">
-                    <Button className="rounded-xl bg-brand-light px-5 py-2 font-medium text-teal-900">Sign In</Button>
+                    <Button className="rounded-xl border-0 bg-brand-light! px-5 py-2 font-medium text-teal-900">
+                      Sign In
+                    </Button>
                   </Link>
                   <Link href="/register">
                     <Button

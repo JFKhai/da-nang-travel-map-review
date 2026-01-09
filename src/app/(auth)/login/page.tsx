@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { login, getAuthToken } from '@/lib/api/auth'
+import { useAuth } from '@/contexts/auth-context'
 
 const INIT_DATA = {
   email: '',
@@ -12,9 +14,18 @@ const INIT_DATA = {
 
 export default function LoginPage() {
   const router = useRouter()
+  const { setAuth } = useAuth()
   const [formData, setFormData] = useState(INIT_DATA)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Redirect nếu đã đăng nhập
+  useEffect(() => {
+    const token = getAuthToken()
+    if (token) {
+      router.push('/')
+    }
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,23 +33,24 @@ export default function LoginPage() {
     setError(null)
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      const result = await login({
+        email: formData.email,
+        password: formData.password,
+      })
 
-      if (formData.email === 'test@example.com' && formData.password === 'password') {
-        console.log('Simulated login successful with data:', formData)
-        router.push('/')
-      } else {
-        setError('Email hoặc mật khẩu không chính xác. Vui lòng thử lại.')
-      }
-    } catch (err) {
+      console.log('Login successful:', result.user)
+
+      // Update auth context to trigger header update
+      setAuth(result.user)
+
+      router.push('/')
+    } catch (err: any) {
       console.error('Login error:', err)
-      setError('Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.')
+      setError(err.message || 'Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.')
     } finally {
       setIsLoading(false)
     }
   }
-
-  useEffect(() => {}, [])
 
   return (
     <div className="min-h-screen bg-brand-bg flex items-center justify-center p-4">

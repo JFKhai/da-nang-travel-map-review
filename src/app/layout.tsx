@@ -4,6 +4,7 @@ import 'primereact/resources/themes/saga-blue/theme.css'
 import './globals.css'
 import { Header } from '@/components/header'
 import Footer from '@/components/footer'
+import { AuthProvider } from '@/contexts/auth-context'
 
 export const metadata: Metadata = {
   title: 'Travelopia - Khám phá Đà Nẵng',
@@ -20,9 +21,11 @@ export default function RootLayout({
       <body>
         <main className="min-h-screen bg-brand-bg">
           <PrimeReactProvider>
-            <Header isAuthenticated={false} />
-            {children}
-            <Footer />
+            <AuthProvider>
+              <Header />
+              {children}
+              <Footer />
+            </AuthProvider>
           </PrimeReactProvider>
         </main>
       </body>

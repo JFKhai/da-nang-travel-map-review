@@ -6,11 +6,12 @@ const configSchema = z.object({
 })
 
 const configProject = configSchema.safeParse({
-  NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT,
-  NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
+  NEXT_PUBLIC_API_ENDPOINT: process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:3001/api',
+  NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL || 'http://localhost:3000',
 })
+
 if (!configProject.success) {
-  console.error(configProject.error.issues)
+  console.error('Environment config errors:', configProject.error.issues)
   throw new Error('Các giá trị khai báo trong file .env không hợp lệ')
 }
 

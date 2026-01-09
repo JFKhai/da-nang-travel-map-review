@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "fake-api": "cd fakeAPI && npm run dev"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.16",

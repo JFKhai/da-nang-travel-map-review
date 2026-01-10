@@ -29,6 +29,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 4.7,
+    totalReviews: 15234,
   },
   {
     id: '2',
@@ -52,6 +54,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 4,
+    totalReviews: 234,
   },
   {
     id: '3',
@@ -75,6 +79,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 4.1,
+    totalReviews: 1234,
   },
   {
     id: '4',
@@ -98,6 +104,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 4.8,
+    totalReviews: 154,
   },
   {
     id: '5',
@@ -121,6 +129,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 4,
+    totalReviews: 154,
   },
   {
     id: '6',
@@ -144,6 +154,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 3.8,
+    totalReviews: 234,
   },
   {
     id: '7',
@@ -167,6 +179,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 4.7,
+    totalReviews: 15234,
   },
   {
     id: '8',
@@ -190,6 +204,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 4.7,
+    totalReviews: 15234,
   },
   {
     id: '9',
@@ -213,6 +229,8 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 4.7,
+    totalReviews: 15234,
   },
   {
     id: '10',
@@ -240,5 +258,7 @@ export const places = [
       { id: 'checkin', name: 'Check-in' },
       { id: 'hotel', name: 'Hotel' },
     ],
+    starAvg: 2.7,
+    totalReviews: 34,
   },
 ]

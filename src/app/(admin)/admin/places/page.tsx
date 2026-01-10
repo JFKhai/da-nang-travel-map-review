@@ -7,8 +7,6 @@ import { Toast } from 'primereact/toast'
 import { Button } from 'primereact/button'
 import { Toolbar } from 'primereact/toolbar'
 import { InputTextarea } from 'primereact/inputtextarea'
-import { IconField } from 'primereact/iconfield'
-import { InputIcon } from 'primereact/inputicon'
 import { InputNumber, InputNumberValueChangeEvent } from 'primereact/inputnumber'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
@@ -16,7 +14,7 @@ import { places } from '@/app/(admin)/admin/places/mock-data'
 import ImageUploader from '@/components/image-uploader'
 import Image from 'next/image'
 import { CategoryMultiSelect } from '@/components/category-multiselect'
-import { FloatLabel } from 'primereact/floatlabel'
+import { Pen, Search, Trash2 } from 'lucide-react'
 
 type ImageItem = {
   id: string
@@ -39,6 +37,8 @@ interface Place {
   lng: number
   images?: ImageItem[]
   categories: Category[]
+  starAvg: number
+  totalReviews: number
 }
 
 const data = places
@@ -56,6 +56,8 @@ export default function PlacesPage() {
     lng: 0,
     images: [],
     categories: [],
+    starAvg: 0,
+    totalReviews: 0,
   }
 
   const dataWithExport = data.map((place) => ({
@@ -220,7 +222,7 @@ export default function PlacesPage() {
 
   const leftToolbarTemplate = () => {
     return (
-      <div className="flex gap-4">
+      <div className="flex gap-4 items-start">
         <InputText
           placeholder="Search..."
           id="search"
@@ -229,7 +231,9 @@ export default function PlacesPage() {
             setGlobalFilter(target.value)
           }}
         />
-        <Button label="Search" icon="pi pi-search" className="p-button-primary" />
+        <Button className="p-button-primary flex items-center gap-2">
+          <Search /> Search
+        </Button>
         <CategoryMultiSelect
           className="max-w-[400px]"
           selectedCategories={searchSelectedCategories}
@@ -282,10 +286,20 @@ export default function PlacesPage() {
 
   const actionBodyTemplate = (rowData: Place) => {
     return (
-      <React.Fragment>
-        <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editPlace(rowData)} />
-        <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeletePlace(rowData)} />
-      </React.Fragment>
+      <div className="flex gap-2 items-center">
+        <Button rounded outlined className="mr-2 p-2 aspect-square rounded-full" onClick={() => editPlace(rowData)}>
+          <Pen className="w-6 font-bold" />
+        </Button>
+        <Button
+          rounded
+          outlined
+          severity="danger"
+          className="mr-2 p-2 aspect-square rounded-full"
+          onClick={() => confirmDeletePlace(rowData)}
+        >
+          <Trash2 className="w-6 font-bold" />
+        </Button>
+      </div>
     )
   }
 
@@ -317,6 +331,7 @@ export default function PlacesPage() {
         <DataTable
           ref={dt}
           size="small"
+          removableSort
           value={places}
           selection={selectedPlaces}
           onSelectionChange={(e) => {
@@ -324,6 +339,7 @@ export default function PlacesPage() {
               setSelectedPlaces(e.value)
             }
           }}
+          showGridlines
           dataKey="id"
           paginator
           rows={10}
@@ -345,6 +361,34 @@ export default function PlacesPage() {
           ></Column>
 
           <Column field="address" header="Address" sortable style={{ minWidth: '16rem' }}></Column>
+          <Column
+            field="starAvg"
+            header="Star Avg"
+            body={(rowData: Place) => {
+              return (
+                <div className="flex gap-2">
+                  <span>{rowData.starAvg}</span>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    // fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    className="lucide lucide-star-icon lucide-star"
+                  >
+                    <path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" />
+                  </svg>
+                </div>
+              )
+            }}
+            sortable
+            style={{ minWidth: '7rem' }}
+          ></Column>
+          <Column field="totalReviews" header="Reviews" sortable style={{ minWidth: '7rem' }}></Column>
           <Column field="website" header="Website" sortable style={{ minWidth: '12rem' }}></Column>
           <Column field="openingHours" header="Opening Hours" sortable style={{ minWidth: '12rem' }}></Column>
           <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '12rem' }}></Column>

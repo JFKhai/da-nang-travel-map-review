@@ -15,10 +15,17 @@ import { InputText } from 'primereact/inputtext'
 import { places } from '@/app/(admin)/admin/places/mock-data'
 import ImageUploader from '@/components/image-uploader'
 import Image from 'next/image'
+import { CategoryMultiSelect } from '@/components/category-multiselect'
+import { FloatLabel } from 'primereact/floatlabel'
 
 type ImageItem = {
   id: string
   url: string
+}
+
+type Category = {
+  id: string
+  name: string
 }
 interface Place {
   id: string | null
@@ -31,6 +38,7 @@ interface Place {
   lat: number
   lng: number
   images?: ImageItem[]
+  categories: Category[]
 }
 
 const data = places
@@ -47,11 +55,13 @@ export default function PlacesPage() {
     lat: 0,
     lng: 0,
     images: [],
+    categories: [],
   }
 
   const dataWithExport = data.map((place) => ({
     ...place,
     imagesExport: place.images?.map((img) => img.url).join(', ') || '',
+    categoriesExport: place.categories.map((cat) => cat.name).join(', ') || '',
   }))
 
   const [places, setPlaces] = useState<Place[]>(dataWithExport)
@@ -60,6 +70,7 @@ export default function PlacesPage() {
   const [deletePlacesDialog, setDeletePlacesDialog] = useState<boolean>(false)
   const [place, setPlace] = useState<Place>(emptyPlace)
   const [selectedPlaces, setSelectedPlaces] = useState<Place[]>([])
+  const [searchSelectedCategories, setSearchSelectedCategories] = useState<Category[]>([])
   const [submitted, setSubmitted] = useState<boolean>(false)
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const toast = useRef<Toast>(null)
@@ -209,17 +220,24 @@ export default function PlacesPage() {
 
   const leftToolbarTemplate = () => {
     return (
-      <IconField iconPosition="left">
-        <InputIcon className="pi pi-search" />
+      <div className="flex gap-4">
         <InputText
-          type="search"
           placeholder="Search..."
+          id="search"
           onInput={(e) => {
             const target = e.target as HTMLInputElement
             setGlobalFilter(target.value)
           }}
         />
-      </IconField>
+        <Button label="Search" icon="pi pi-search" className="p-button-primary" />
+        <CategoryMultiSelect
+          className="max-w-[400px]"
+          selectedCategories={searchSelectedCategories}
+          setSelectedCategories={(categories) => {
+            setSearchSelectedCategories(categories)
+          }}
+        />
+      </div>
     )
   }
 
@@ -247,6 +265,18 @@ export default function PlacesPage() {
         className="shadow-2 border-round"
         style={{ width: '64px', height: '64px', objectFit: 'cover' }}
       />
+    )
+  }
+
+  const categoriesBodyTemplate = (rowData: Place) => {
+    return (
+      <div className="flex items-start flex-wrap min-w-[200px] gap-1">
+        {rowData.categories.map((cat) => (
+          <span key={cat.id} className="mr-2 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs shrink-0">
+            {cat.name}
+          </span>
+        ))}
+      </div>
     )
   }
 
@@ -307,6 +337,13 @@ export default function PlacesPage() {
           <Column field="slug" header="Slug" sortable style={{ minWidth: '12rem' }}></Column>
           <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
           <Column header="Image" body={imageBodyTemplate} exportField="imagesExport" field="imagesExport"></Column>
+          <Column
+            header="Categories"
+            body={categoriesBodyTemplate}
+            exportField="categoriesExport"
+            field="categoriesExport"
+          ></Column>
+
           <Column field="address" header="Address" sortable style={{ minWidth: '16rem' }}></Column>
           <Column field="website" header="Website" sortable style={{ minWidth: '12rem' }}></Column>
           <Column field="openingHours" header="Opening Hours" sortable style={{ minWidth: '12rem' }}></Column>
@@ -371,6 +408,18 @@ export default function PlacesPage() {
               Address
             </label>
             <InputText id="address" value={place.address} onChange={(e) => onInputChange(e, 'address')} />
+          </div>
+          {/* categories */}
+          <div className="field">
+            <label htmlFor="categories" className="font-bold">
+              Categories
+            </label>
+            <CategoryMultiSelect
+              selectedCategories={place.categories}
+              setSelectedCategories={(categories) => {
+                setPlace({ ...place, categories })
+              }}
+            />
           </div>
           <div className="field">
             <label htmlFor="website" className="font-bold">

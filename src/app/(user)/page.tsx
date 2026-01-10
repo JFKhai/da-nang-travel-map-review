@@ -67,8 +67,8 @@ export default function Home() {
   return (
     <>
       {/* Line decorate */}
-      <section className="px-10">
-        <hr className="border-t-2 border-dashed border-gray-300" />
+      <section className="">
+        <hr className="border-t-2 border-dashed border-brand-light" />
       </section>
       {/* Hero */}
       <section className="relative  px-10 pt-4">

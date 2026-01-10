@@ -23,6 +23,12 @@ export const places = [
         url: 'https://i.pinimg.com/1200x/79/20/e1/7920e194caa538f92668cfd80cc22c21.jpg',
       },
     ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
+    ],
   },
   {
     id: '2',
@@ -39,6 +45,12 @@ export const places = [
         id: 'img2',
         url: 'https://i.pinimg.com/1200x/39/72/bb/3972bb246ecaedb37c014828e72580a9.jpg',
       },
+    ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
     ],
   },
   {
@@ -57,6 +69,12 @@ export const places = [
         url: 'https://i.pinimg.com/1200x/88/db/50/88db50ea5ea4270718556a7dec5d0e73.jpg',
       },
     ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
+    ],
   },
   {
     id: '4',
@@ -73,6 +91,12 @@ export const places = [
         id: 'img4',
         url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400',
       },
+    ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
     ],
   },
   {
@@ -91,6 +115,12 @@ export const places = [
         url: 'https://i.pinimg.com/1200x/88/db/50/88db50ea5ea4270718556a7dec5d0e73.jpg',
       },
     ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
+    ],
   },
   {
     id: '6',
@@ -107,6 +137,12 @@ export const places = [
         id: 'img6',
         url: 'https://images.unsplash.com/photo-1508780709619-79562169bc64?w=400',
       },
+    ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
     ],
   },
   {
@@ -125,6 +161,12 @@ export const places = [
         url: 'https://i.pinimg.com/1200x/88/db/50/88db50ea5ea4270718556a7dec5d0e73.jpg',
       },
     ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
+    ],
   },
   {
     id: '8',
@@ -142,6 +184,12 @@ export const places = [
         url: 'https://i.pinimg.com/1200x/88/db/50/88db50ea5ea4270718556a7dec5d0e73.jpg',
       },
     ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
+    ],
   },
   {
     id: '9',
@@ -158,6 +206,12 @@ export const places = [
         id: 'img9',
         url: 'https://i.pinimg.com/1200x/88/db/50/88db50ea5ea4270718556a7dec5d0e73.jpg',
       },
+    ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
     ],
   },
   {
@@ -179,6 +233,12 @@ export const places = [
         id: 'img11',
         url: 'https://i.pinimg.com/736x/28/bb/c9/28bbc9dd9039be8a22a821309b5932b8.jpg',
       },
+    ],
+    categories: [
+      { id: 'food', name: 'Food' },
+      { id: 'coffee', name: 'Coffee' },
+      { id: 'checkin', name: 'Check-in' },
+      { id: 'hotel', name: 'Hotel' },
     ],
   },
 ]

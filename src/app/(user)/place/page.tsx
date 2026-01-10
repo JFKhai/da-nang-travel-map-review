@@ -5,7 +5,7 @@ import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import Image from 'next/image'
 import Link from 'next/link'
-import data from '@/app/detail/[id]/data/data.json'
+import data from '@/app/(user)/detail/[id]/data/data.json'
 
 export default function PlacesPage() {
   // Convert the data object to an array for mapping

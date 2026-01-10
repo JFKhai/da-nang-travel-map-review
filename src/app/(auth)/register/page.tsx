@@ -2,159 +2,162 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { LockKeyhole, Mail, Phone, User } from 'lucide-react'
+import { registerSchema, type RegisterInput } from '@/lib/schemas/auth.schema'
+import { registerApi } from '@/lib/api/auth.api'
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: RegisterInput) => {
+    setIsLoading(true)
+    setError(null)
+    setSuccess(false)
 
-    if (formData.password !== formData.confirmPassword) {
-      alert('Mật khẩu xác nhận không khớp!')
-      return
+    try {
+      const response = await registerApi(data)
+      // Register API doesn't return token, user needs to login
+      if (response.success) {
+        setSuccess(true)
+        // Redirect sau 1.5 giây
+        setTimeout(() => {
+          router.push('/login')
+        }, 1500)
+      } else {
+        setError(response.message || 'Đã xảy ra lỗi trong quá trình đăng ký.')
+      }
+    } catch (err: any) {
+      console.error('Register error:', err)
+
+      // Handle different error types
+      if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
+        setError('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.')
+      } else if (err.response) {
+        // Server responded with error status
+        const errorMessage =
+          err.response?.data?.message ||
+          err.response?.data?.error ||
+          'Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.'
+        setError(errorMessage)
+      } else if (err.request) {
+        // Request was made but no response received
+        setError('Không nhận được phản hồi từ server. Vui lòng thử lại.')
+      } else {
+        // Something else happened
+        setError(err.message || 'Đã xảy ra lỗi trong quá trình đăng ký. Vui lòng thử lại.')
+      }
+    } finally {
+      setIsLoading(false)
     }
-
-    console.log('Register data:', formData)
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-brand-border/10">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-brand-border mb-2">Đăng ký</h1>
-            <p className="text-gray-600">Tạo tài khoản mới của bạn</p>
-          </div>
+    <div className="w-full max-w-md">
+      <h2 className="text-[74px] font-extrabold text-brand-teal text-center -mt-14">Register</h2>
+      <p className="text-gray-500 mb-4 -mt-2 text-center">Register a new account</p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Họ và tên</label>
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">{error}</div>
+      )}
+
+      {success && (
+        <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm">
+          Đăng ký thành công! Đang chuyển đến trang đăng nhập...
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="mb-6 grid md:grid-cols-2 gap-2">
+          {/* Full Name */}
+          <div className="mb-1 col-span-2">
+            <label className="block text-sm mb-1 text-brand-teal font-semibold">Full Name</label>
+            <div className="flex items-center border rounded-lg px-4 py-3 focus-within:ring-2 ring-brand-teal">
+              <User className="text-brand-teal mr-3" />
               <input
                 type="text"
-                required
-                value={formData.fullName}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    fullName: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
-                placeholder="Nhập họ và tên"
+                placeholder="Nhập họ tên của bạn"
+                className="w-full outline-none bg-transparent"
+                {...register('full_name')}
               />
             </div>
+            {errors.full_name && <p className="mt-1 text-sm text-red-600">{errors.full_name.message}</p>}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+          {/* Email */}
+          <div className="mb-1 col-span-2">
+            <label className="block text-sm mb-1 text-brand-teal font-semibold">Email</label>
+            <div className="flex items-center border rounded-lg px-4 py-3 focus-within:ring-2 ring-brand-teal">
+              <Mail className="text-brand-teal mr-3" />
               <input
                 type="email"
-                required
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    email: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
-                placeholder="Nhập email của bạn"
+                placeholder="thisuix@mail.com"
+                className="w-full outline-none bg-transparent"
+                {...register('email')}
               />
             </div>
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
-              <input
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    phone: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
-                placeholder="Nhập số điện thoại"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu</label>
+          {/* Password */}
+          <div className="mb-1">
+            <label className="block text-sm mb-1 text-brand-teal font-semibold">Password</label>
+            <div className="flex items-center border rounded-lg px-4 py-3 focus-within:ring-2 ring-brand-teal">
+              <LockKeyhole className="text-brand-teal mr-3" />
               <input
                 type="password"
-                required
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    password: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
-                placeholder="Nhập mật khẩu"
+                placeholder="********"
+                className="w-full outline-none bg-transparent"
+                {...register('password')}
               />
             </div>
+            {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Xác nhận mật khẩu</label>
+          {/* Confirm Password */}
+          <div className="mb-1">
+            <label className="block text-sm mb-1 text-brand-teal font-semibold">Confirm password</label>
+            <div className="flex items-center border rounded-lg px-4 py-3 focus-within:ring-2 ring-brand-teal">
+              <LockKeyhole className="text-brand-teal mr-3" />
               <input
                 type="password"
-                required
-                value={formData.confirmPassword}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    confirmPassword: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
-                placeholder="Nhập lại mật khẩu"
+                placeholder="********"
+                className="w-full outline-none bg-transparent"
+                {...register('confirm_password')}
               />
             </div>
-
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                id="terms"
-                required
-                className="w-4 h-4 text-brand-teal border-gray-300 rounded focus:ring-brand-teal"
-              />
-              <label htmlFor="terms" className="ml-2 text-sm text-gray-600">
-                Tôi đồng ý với{' '}
-                <Link href="#" className="text-brand-teal hover:text-brand-dark">
-                  điều khoản
-                </Link>{' '}
-                và{' '}
-                <Link href="#" className="text-brand-teal hover:text-brand-dark">
-                  chính sách bảo mật
-                </Link>
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-brand-teal text-white font-semibold py-3 px-4 rounded-lg hover:bg-brand-dark transition-colors"
-            >
-              Đăng ký
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Đã có tài khoản?{' '}
-              <Link href="/login" className="text-brand-teal font-semibold hover:text-brand-dark">
-                Đăng nhập ngay
-              </Link>
-            </p>
+            {errors.confirm_password && <p className="mt-1 text-sm text-red-600">{errors.confirm_password.message}</p>}
           </div>
         </div>
-      </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-brand-teal text-white py-3 rounded-lg font-semibold hover:bg-brand-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? 'Đang đăng ký...' : 'REGISTER'}
+        </button>
+      </form>
+
+      <p className="text-center text-sm mt-8">
+        Do you have account?{' '}
+        <Link href="/login" className="text-brand-teal font-semibold cursor-pointer hover:underline">
+          Login Now
+        </Link>
+      </p>
     </div>
   )
 }

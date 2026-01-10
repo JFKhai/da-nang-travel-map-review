@@ -1,34 +1,75 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-
-const INIT_DATA = {
-  email: '',
-  password: '',
-  rememberMe: false,
-}
+import { signIn } from 'next-auth/react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { LockKeyhole, Mail } from 'lucide-react'
+import { loginSchema, type LoginInput } from '@/lib/schemas/auth.schema'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [formData, setFormData] = useState(INIT_DATA)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+  })
+
+  const onSubmit = async (data: LoginInput) => {
     setIsLoading(true)
     setError(null)
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      // Call API through Next.js proxy to avoid CORS
+      const loginResponse = await fetch('/api/proxy/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+        }),
+      })
 
-      if (formData.email === 'test@example.com' && formData.password === 'password') {
-        console.log('Simulated login successful with data:', formData)
+      if (!loginResponse.ok) {
+        const errorData = await loginResponse.json().catch(() => ({}))
+        setError(errorData.message || 'Email hoặc mật khẩu không chính xác. Vui lòng thử lại.')
+        setIsLoading(false)
+        return
+      }
+
+      const loginData = await loginResponse.json()
+
+      // Extract token from response structure: { success, message, data: { token, user } }
+      if (!loginData.success || !loginData.data?.token) {
+        setError(loginData.message || 'Email hoặc mật khẩu không chính xác. Vui lòng thử lại.')
+        setIsLoading(false)
+        return
+      }
+
+      // Save token to localStorage for axios interceptor
+      localStorage.setItem('token', loginData.data.token)
+
+      // Sign in with next-auth (this will also use the API internally but we've already cached the token)
+      const result = await signIn('credentials', {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        setError('Đã xảy ra lỗi trong quá trình đăng nhập. Vui lòng thử lại.')
+      } else if (result?.ok) {
         router.push('/')
-      } else {
-        setError('Email hoặc mật khẩu không chính xác. Vui lòng thử lại.')
+        router.refresh()
       }
     } catch (err) {
       console.error('Login error:', err)
@@ -38,104 +79,87 @@ export default function LoginPage() {
     }
   }
 
-  useEffect(() => {}, [])
-
   return (
-    <div className="min-h-screen bg-brand-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8 border border-brand-border/10">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-brand-border mb-2">Đăng nhập</h1>
-            <p className="text-gray-600">Chào mừng bạn trở lại!</p>
+    <div className="w-full max-w-md">
+      <h2 className="text-[74px] font-extrabold text-brand-teal text-center">Welcome</h2>
+      <p className="text-gray-500 mb-8 text-center">Login with Email</p>
+
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">{error}</div>
+      )}
+
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/* Email */}
+        <div className="mb-4">
+          <label className="block text-sm mb-1 text-brand-teal font-semibold">Email</label>
+          <div className="flex items-center border rounded-lg px-4 py-3 focus-within:ring-2 ring-brand-teal">
+            <Mail className="text-brand-teal mr-3" />
+            <input
+              type="email"
+              placeholder="thisuix@mail.com"
+              className="w-full outline-none bg-transparent"
+              {...register('email')}
+            />
           </div>
-
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 relative" role="alert">
-              <strong className="font-bold">Lỗi!</strong>
-              <span className="block sm:inline ml-2">{error}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    email: e.target.value,
-                  })
-                }
-                disabled={isLoading}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
-                placeholder="Nhập email của bạn"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Mật khẩu</label>
-              <input
-                type="password"
-                required
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    password: e.target.value,
-                  })
-                }
-                disabled={isLoading}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent disabled:bg-gray-100 disabled:text-gray-500"
-                placeholder="Nhập mật khẩu"
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id="remember"
-                  checked={formData.rememberMe}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      rememberMe: e.target.checked,
-                    })
-                  }
-                  disabled={isLoading}
-                  className="w-4 h-4 text-brand-teal border-gray-300 rounded focus:ring-brand-teal disabled:opacity-50"
-                />
-                <label htmlFor="remember" className="ml-2 text-sm text-gray-600">
-                  Ghi nhớ đăng nhập
-                </label>
-              </div>
-              <Link href="#" className="text-sm text-brand-teal hover:text-brand-dark disabled:text-gray-400">
-                Quên mật khẩu?
-              </Link>
-            </div>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-brand-teal text-white font-semibold py-3 px-4 rounded-lg hover:bg-brand-dark transition-colors disabled:bg-brand-teal/50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? 'Đang xử lý...' : 'Đăng nhập'}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Chưa có tài khoản?{' '}
-              <Link href="/register" className="text-brand-teal font-semibold hover:text-brand-dark">
-                Đăng ký ngay
-              </Link>
-            </p>
-          </div>
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>}
         </div>
+
+        {/* Password */}
+        <div className="mb-2">
+          <label className="block text-sm mb-1 text-brand-teal font-semibold">Password</label>
+          <div className="flex items-center border rounded-lg px-4 py-3 focus-within:ring-2 ring-brand-teal">
+            <LockKeyhole className="text-brand-teal mr-3" />
+            <input
+              type="password"
+              placeholder="********"
+              className="w-full outline-none bg-transparent"
+              {...register('password')}
+            />
+          </div>
+          {errors.password && <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>}
+        </div>
+
+        <div className="text-right text-sm text-gray-500 mb-6">
+          <a href="" className="hover:text-brand-teal">
+            Forgot your password?
+          </a>
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-brand-teal text-white py-3 rounded-lg font-semibold hover:bg-brand-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? 'Đang đăng nhập...' : 'LOGIN'}
+        </button>
+      </form>
+
+      {/* OR */}
+      <div className="flex items-center my-6">
+        <div className="flex-1 h-px bg-gray-300" />
+        <span className="px-3 text-gray-400 text-sm">OR</span>
+        <div className="flex-1 h-px bg-gray-300" />
       </div>
+
+      {/* Social */}
+      <div className="flex justify-center gap-4">
+        <button className="border-none py-3 px-6 bg-[#E7F2F5] rounded-xl hover:bg-[#d0e5ea] transition">
+          <img src="/images/google-logo.svg" className="mx-auto h-6" alt="Google" />
+        </button>
+        <button className="border-none py-3 px-6 bg-[#E7F2F5] rounded-xl hover:bg-[#d0e5ea] transition">
+          <img src="/images/facebook-logo.svg" className="mx-auto h-6" alt="Facebook" />
+        </button>
+        <button className="border-none py-3 px-6 bg-[#E7F2F5] rounded-xl hover:bg-[#d0e5ea] transition">
+          <img src="/images/apple-logo.svg" className="mx-auto h-6" alt="Apple" />
+        </button>
+      </div>
+
+      <p className="text-center text-sm mt-8">
+        Don't have account?{' '}
+        <Link href="/register" className="text-brand-teal font-semibold cursor-pointer hover:underline">
+          Register Now
+        </Link>
+      </p>
     </div>
   )
 }

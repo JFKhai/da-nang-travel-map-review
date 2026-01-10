@@ -1,14 +1,8 @@
 import type { Metadata } from 'next'
-import { Roboto } from 'next/font/google'
 import { PrimeReactProvider } from 'primereact/api'
-import 'primereact/resources/themes/saga-blue/theme.css'
+import { AuthSessionProvider } from '@/components/providers/session-provider'
+// import 'primeicons/primeicons.css'
 import './globals.css'
-import { Header } from '@/components/header'
-import Footer from '@/components/footer'
-
-const roboto = Roboto({
-  subsets: ['latin'],
-})
 
 export const metadata: Metadata = {
   title: 'Travelopia - Khám phá Đà Nẵng',
@@ -22,14 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={roboto.className}>
-        <main className="min-h-screen bg-gradient-to-br from-[#f7fce8] to-[#e9f4fb]">
-          <PrimeReactProvider>
-            <Header isAuthenticated={false} />
-            {children}
-            <Footer />
-          </PrimeReactProvider>
-        </main>
+      <body>
+        <PrimeReactProvider>
+          <AuthSessionProvider>
+            <main className="min-h-screen bg-brand-bg">{children}</main>
+          </AuthSessionProvider>
+        </PrimeReactProvider>
       </body>
     </html>
   )

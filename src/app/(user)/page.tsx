@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 
 const items = [
   {
@@ -43,6 +44,25 @@ const items = [
   },
 ]
 
+const destinations = [
+  {
+    title: 'Alaska: Westminster to Greenwich River Thames',
+    image: 'https://i.pinimg.com/1200x/bf/8a/2e/bf8a2efd2e72a2a39e844648e22e91b3.jpg',
+  },
+  {
+    title: 'Alaska: Vintage Double Decker Bus Tour & Thames',
+    image: 'https://i.pinimg.com/1200x/bf/8a/2e/bf8a2efd2e72a2a39e844648e22e91b3.jpg',
+  },
+  {
+    title: 'Alaska: Magic of London Tour with Afternoon Tea',
+    image: 'https://i.pinimg.com/1200x/bf/8a/2e/bf8a2efd2e72a2a39e844648e22e91b3.jpg',
+  },
+  {
+    title: 'Alaska: Magic of London Tour with Afternoon Tea',
+    image: 'https://i.pinimg.com/1200x/bf/8a/2e/bf8a2efd2e72a2a39e844648e22e91b3.jpg',
+  },
+]
+
 export default function Home() {
   return (
     <>
@@ -51,7 +71,7 @@ export default function Home() {
         <hr className="border-t-2 border-dashed border-gray-300" />
       </section>
       {/* Hero */}
-      <section className="relative  px-10 py-4">
+      <section className="relative  px-10 pt-4">
         <div className="grid grid-cols-2 gap-0 bg-[url('/images/map-bg-image.png')] bg-contain bg-center bg-no-repeat">
           {/* Left */}
           <div className="">
@@ -173,7 +193,55 @@ export default function Home() {
 
         <img src="/images/boat.png" alt="" className="absolute z-10 bottom-0 right-0" />
       </section>
-      <section className="h-[1000px]"></section>
+
+      <section className="max-w-7xl mx-auto px-4 py-16">
+        {/* HEADER */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold tracking-wide text-brand-teal">TOP DESTINATION</h1>
+
+          <div className="flex gap-3">
+            <button className="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-brand-teal transition">
+              <ArrowLeft />
+            </button>
+            <button className="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-brand-teal transition">
+              <ArrowRight />
+            </button>
+          </div>
+        </div>
+
+        {/* LIST */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {destinations.map((item, index) => (
+            <div key={index} className="bg-white rounded-xl overflow-hidden shadow hover:shadow-lg transition">
+              {/* Image */}
+              <img src={item.image} alt={item.title} className="h-48 w-full object-cover" />
+
+              {/* Content */}
+              <div className="p-4">
+                <h3 className="font-semibold text-sm mb-3 leading-snug">{item.title}</h3>
+
+                {/* Features */}
+                <ul className="text-xs text-gray-500 space-y-2 mb-4">
+                  <li className="flex items-center gap-2">Duration 2 hours</li>
+                  <li className="flex items-center gap-2">Transport Facility</li>
+                  <li className="flex items-center gap-2">Family Plan</li>
+                </ul>
+
+                {/* Footer */}
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-gray-400">
+                    ⭐⭐⭐⭐☆ <br /> 584 reviews
+                  </div>
+                  <div className="text-right">
+                    <p className="text-green-500 font-semibold">$35.00</p>
+                    <span className="text-xs text-gray-400">per person</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
     </>
   )
 }

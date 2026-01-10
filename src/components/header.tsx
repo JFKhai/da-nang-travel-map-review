@@ -38,7 +38,7 @@ export function Header({ isAuthenticated = false, user }: HeaderProps) {
 
   return (
     <>
-      <header className=" ">
+      <header className=" bg-brand-teal">
         <div className=" mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo - Desktop & Mobile */}
@@ -54,7 +54,7 @@ export function Header({ isAuthenticated = false, user }: HeaderProps) {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-gray-700 text-sm md:text-lg font-medium hover:text-teal-700 transition-colors"
+                  className="text-black text-sm md:text-lg font-medium hover:text-brand-light transition-colors"
                 >
                   {link.label}
                 </Link>

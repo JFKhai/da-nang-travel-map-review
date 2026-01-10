@@ -4,7 +4,7 @@ import { useParams } from 'next/navigation'
 import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import Image from 'next/image'
-import data from '@/app/detail/[id]/data/data.json'
+import data from '@/app/(user)/detail/[id]/data/data.json'
 
 export default function PlaceDetailPage() {
   const params = useParams()

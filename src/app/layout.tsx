@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { PrimeReactProvider } from 'primereact/api'
+import { AuthSessionProvider } from '@/components/providers/session-provider'
 // import 'primeicons/primeicons.css'
 import './globals.css'
 
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <PrimeReactProvider>
-          <main className="min-h-screen bg-brand-bg">{children}</main>
+          <AuthSessionProvider>
+            <main className="min-h-screen bg-brand-bg">{children}</main>
+          </AuthSessionProvider>
         </PrimeReactProvider>
       </body>
     </html>

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { PrimeReactProvider } from 'primereact/api'
+import 'primeicons/primeicons.css'
 import './globals.css'
 
 export const metadata: Metadata = {

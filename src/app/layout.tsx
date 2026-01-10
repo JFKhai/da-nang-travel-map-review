@@ -3,6 +3,7 @@ import { PrimeReactProvider } from 'primereact/api'
 import { AuthSessionProvider } from '@/components/providers/session-provider'
 // import 'primeicons/primeicons.css'
 import './globals.css'
+import { ErrorBoundary } from '@/components/error-boundary'
 
 export const metadata: Metadata = {
   title: 'Travelopia - Khám phá Đà Nẵng',
@@ -17,11 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <PrimeReactProvider>
-          <AuthSessionProvider>
-            <main className="min-h-screen bg-brand-bg">{children}</main>
-          </AuthSessionProvider>
-        </PrimeReactProvider>
+        <ErrorBoundary>
+          <PrimeReactProvider>
+            <AuthSessionProvider>
+              <main className="min-h-screen bg-brand-bg">{children}</main>
+            </AuthSessionProvider>
+          </PrimeReactProvider>
+        </ErrorBoundary>
       </body>
     </html>
   )

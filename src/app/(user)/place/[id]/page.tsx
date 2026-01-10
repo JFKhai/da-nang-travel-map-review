@@ -1,10 +1,10 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import Navbar from '@/components/navbar'
+// import Navbar from '@/components/navbar'
 import Footer from '@/components/footer'
 import Image from 'next/image'
-import data from '@/app/detail/[id]/data/data.json'
+import data from '@/app/(user)/detail/[id]/data/data.json'
 
 export default function PlaceDetailPage() {
   const params = useParams()
@@ -14,7 +14,7 @@ export default function PlaceDetailPage() {
   if (!locationData) {
     return (
       <div className="min-h-screen flex flex-col bg-brand-bg">
-        <Navbar />
+        {/* <Navbar /> */}
         <main className="grow flex items-center justify-center">
           <h1 className="text-2xl font-bold text-brand-border">Không tìm thấy địa điểm</h1>
         </main>
@@ -25,7 +25,7 @@ export default function PlaceDetailPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-brand-bg font-sans">
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="grow">
         {/* HERO SECTION */}

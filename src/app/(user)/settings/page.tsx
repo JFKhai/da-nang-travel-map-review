@@ -1,16 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { LockKeyhole, CheckCircle2, AlertCircle } from 'lucide-react'
 import { changePasswordSchema, type ChangePasswordInput } from '@/lib/schemas/auth.schema'
-import { changePasswordApi } from '@/lib/api/auth.api'
 
 export default function SettingsPage() {
-  const { data: session, status } = useSession()
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -40,51 +37,9 @@ export default function SettingsPage() {
   }
 
   const onSubmit = async (data: ChangePasswordInput) => {
-    if (!session?.user?.token) {
-      setError('Bạn cần đăng nhập để đổi mật khẩu.')
-      return
-    }
-
     setIsLoading(true)
     setError(null)
     setSuccess(false)
-
-    try {
-      // API only needs old_password and new_password, confirm_password is just for validation
-      await changePasswordApi(
-        {
-          old_password: data.old_password,
-          new_password: data.new_password,
-          confirm_password: data.confirm_password, // This will be excluded in the API call
-        },
-        session.user.token,
-      )
-
-      setSuccess(true)
-      reset() // Clear form after success
-
-      // Hide success message after 3 seconds
-      setTimeout(() => {
-        setSuccess(false)
-      }, 3000)
-    } catch (err: any) {
-      console.error('Change password error:', err)
-
-      // Handle different error types
-      if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') {
-        setError('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.')
-      } else if (err.response) {
-        const errorMessage =
-          err.response?.data?.message ||
-          err.response?.data?.error ||
-          'Đã xảy ra lỗi trong quá trình đổi mật khẩu. Vui lòng thử lại.'
-        setError(errorMessage)
-      } else {
-        setError(err.message || 'Đã xảy ra lỗi trong quá trình đổi mật khẩu. Vui lòng thử lại.')
-      }
-    } finally {
-      setIsLoading(false)
-    }
   }
 
   return (

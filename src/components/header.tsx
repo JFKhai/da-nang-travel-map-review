@@ -1,91 +1,49 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useSession, signOut } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { Menu, X, LogOut, User, Settings, ChevronDown } from 'lucide-react'
+import { Menu, X, LogOut, User, Settings, BarChart3 } from 'lucide-react'
 import { Avatar } from 'primereact/avatar'
 import { Button } from 'primereact/button'
+import { Dropdown } from 'primereact/dropdown'
 import LanguageDropdown from '@/components/language-dropdown'
 
-export function Header() {
-  const { data: session, status } = useSession()
-  const router = useRouter()
-  const [isOpen, setIsOpen] = useState(false)
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const userMenuRef = useRef<HTMLDivElement>(null)
+interface HeaderProps {
+  isAuthenticated?: boolean
+  user?: {
+    name: string
+    email: string
+    avatar?: string
+  }
+}
 
-  const isAuthenticated = status === 'authenticated'
-  const user = session?.user
+export function Header({ isAuthenticated = false, user }: HeaderProps) {
+  const [isOpen, setIsOpen] = useState(false)
 
   const navLinks = [
     { label: 'Home', href: '/' },
-    { label: 'Places', href: '/place' },
-    { label: 'Reviews', href: '/review' },
+    { label: 'Places', href: '/places' },
+    { label: 'Reviews', href: '/reviews' },
     { label: 'About', href: '/about' },
     { label: 'Blogs', href: '/blogs' },
   ]
 
-  const userMenuItems: Array<{
-    label: string
-    icon: React.ComponentType<{ className?: string }>
-    href?: string
-    action?: string
-    divider?: boolean
-  }> = [
-    { label: 'Profile', icon: User, href: '/me' },
-    { label: 'Settings', icon: Settings, href: '/settings' },
-    { label: 'Logout', icon: LogOut, action: 'logout', divider: true },
+  const userMenuItems = [
+    { label: 'Profile', icon: User, href: '/dashboard/profile' },
+    { label: 'Dashboard', icon: BarChart3, href: '/dashboard' },
+    { label: 'Settings', icon: Settings, href: '/dashboard/settings' },
+    { label: 'Logout', icon: LogOut, href: '/logout', divider: true },
   ]
-
-  // Close user menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-        setIsUserMenuOpen(false)
-      }
-    }
-
-    if (isUserMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [isUserMenuOpen])
-
-  const handleLogout = async () => {
-    // Clear localStorage token
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token')
-    }
-    await signOut({ redirect: false })
-    router.push('/')
-    router.refresh()
-    setIsOpen(false)
-    setIsUserMenuOpen(false)
-  }
-
-  const handleUserMenuItemClick = (item: any) => {
-    if (item.action === 'logout') {
-      handleLogout()
-    } else {
-      setIsUserMenuOpen(false)
-      router.push(item.href)
-    }
-  }
 
   return (
     <>
-      <header className="bg-brand-teal">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8">
+      <header className=" bg-brand-teal">
+        <div className=" mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo - Desktop & Mobile */}
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <div className="relative">
+              <div className="relative ">
                 <Image src="/images/logo.svg" alt="Logo" width={150} height={40} />
               </div>
             </Link>
@@ -120,7 +78,7 @@ export function Header() {
                   </Link>
                   <Link href="/register">
                     <Button
-                      className="rounded-xl px-5 py-2 font-medium border-2 border-brand-light text-brand-light"
+                      className="rounded-xl  px-5 py-2 font-medium border-2 border-brand-light text-brand-light"
                       outlined
                     >
                       Register
@@ -128,62 +86,36 @@ export function Header() {
                   </Link>
                 </div>
               ) : (
-                /* Authenticated State - User Menu with Dropdown */
-                <div className="relative border-l border-gray-200 pl-4" ref={userMenuRef}>
-                  {/* User Info Button - Clickable */}
-                  <button
-                    type="button"
-                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-teal focus:ring-offset-2 rounded-lg p-1"
-                  >
+                /* Authenticated State - User Menu */
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 border-l border-gray-200 pl-4">
                     <Avatar
-                      label={user?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
+                      image={user?.avatar}
+                      label={user?.name?.charAt(0) || 'U'}
                       shape="circle"
                       size="large"
-                      className="bg-brand-teal"
+                      className="cursor-pointer"
                     />
-                    <div className="hidden lg:block text-left">
-                      <p className="text-sm font-medium text-gray-900">{user?.full_name || 'User'}</p>
+                    <div className="hidden lg:block">
+                      <p className="text-sm font-medium text-gray-900">{user?.name}</p>
                       <p className="text-xs text-gray-500">{user?.email}</p>
                     </div>
-                    <ChevronDown
-                      className={`w-4 h-4 text-gray-500 hidden lg:block transition-transform ${
-                        isUserMenuOpen ? 'rotate-180' : ''
-                      }`}
-                    />
-                  </button>
+                  </div>
 
-                  {/* Dropdown Menu */}
-                  {isUserMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                      {userMenuItems.map((item, index) => (
-                        <div key={index}>
-                          {item.divider && index > 0 && <hr className="my-2 border-gray-200" />}
-                          {item.action ? (
-                            <button
-                              type="button"
-                              onClick={() => handleUserMenuItemClick(item)}
-                              className="w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-gray-100 transition-colors"
-                            >
-                              <item.icon className={`w-4 h-4 ${item.action === 'logout' ? 'text-red-600' : ''}`} />
-                              <span className={item.action === 'logout' ? 'text-red-600 font-medium' : 'text-gray-700'}>
-                                {item.label}
-                              </span>
-                            </button>
-                          ) : (
-                            <Link
-                              href={item.href}
-                              onClick={() => handleUserMenuItemClick(item)}
-                              className="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                            >
-                              <item.icon className="w-4 h-4" />
-                              <span>{item.label}</span>
-                            </Link>
-                          )}
+                  {/* Desktop User Dropdown Menu */}
+                  <Dropdown
+                    options={userMenuItems}
+                    optionLabel="label"
+                    className="w-40"
+                    itemTemplate={(item) => (
+                      <Link href={item.href}>
+                        <div className="flex items-center gap-3 px-4 py-3 hover:bg-gray-100 w-full">
+                          <item.icon className="w-4 h-4" />
+                          <span className="text-sm">{item.label}</span>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      </Link>
+                    )}
+                  />
                 </div>
               )}
             </div>
@@ -229,24 +161,15 @@ export function Header() {
                         <Button className="w-full justify-center text-gray-700 border border-gray-300">Sign In</Button>
                       </Link>
                       <Link href="/register" className="w-full">
-                        <Button className="w-full bg-teal-700 hover:bg-teal-800 text-white font-medium">
-                          Register
-                        </Button>
+                        <Button className="w-full bg-teal-700 hover:bg-teal-800 text-white font-medium">Explore</Button>
                       </Link>
                     </div>
                   ) : (
                     <div className="flex flex-col gap-3">
                       <div className="flex items-center gap-3 pb-3 border-b border-gray-200">
-                        <Avatar
-                          label={
-                            user?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'
-                          }
-                          shape="circle"
-                          size="large"
-                          className="bg-brand-teal"
-                        />
+                        <Avatar image={user?.avatar} label={user?.name?.charAt(0) || 'U'} shape="circle" size="large" />
                         <div>
-                          <p className="text-sm font-medium text-gray-900">{user?.full_name || 'User'}</p>
+                          <p className="text-sm font-medium text-gray-900">{user?.name}</p>
                           <p className="text-xs text-gray-500">{user?.email}</p>
                         </div>
                       </div>
@@ -254,20 +177,15 @@ export function Header() {
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                          className={`flex items-center gap-3 px-3 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors ${
+                            item.divider ? 'border-t border-gray-200 mt-2 pt-3' : ''
+                          }`}
                           onClick={() => setIsOpen(false)}
                         >
                           <item.icon className="w-4 h-4" />
                           <span className="text-sm font-medium">{item.label}</span>
                         </Link>
                       ))}
-                      <button
-                        onClick={handleLogout}
-                        className="flex items-center gap-3 px-3 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors border-t border-gray-200 mt-2 pt-3"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        <span className="text-sm font-medium">Logout</span>
-                      </button>
                     </div>
                   )}
                 </div>

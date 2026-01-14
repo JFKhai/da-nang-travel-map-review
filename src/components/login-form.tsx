@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import authApiServerRequest from '@/lib/api/server-api/auth.api'
 import authApiClientRequest from '@/lib/api/client-api/auth.api'
 import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
+import { clientAccessToken } from '@/lib/http'
 
 function LoginForm() {
   const router = useRouter()
@@ -36,6 +37,7 @@ function LoginForm() {
     setIsLoading(true)
     try {
       const result = await authApiServerRequest.login(data)
+      clientAccessToken.value = result.data.token
       await authApiClientRequest.setToken({
         accessToken: result.data.token,
       })

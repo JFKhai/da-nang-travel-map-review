@@ -1,19 +1,36 @@
 'use client'
-import { clientAccessTokenToken } from '@/lib/http'
-import { useState } from 'react'
+import { clientAccessToken } from '@/lib/http'
+import { UserResponseType } from '@/lib/schemas/user.schema'
+import { createContext, useContext, useState } from 'react'
+
+const AppContext = createContext<{
+  user: UserResponseType | undefined
+  setUser: (user: UserResponseType | undefined) => void
+}>({
+  user: undefined,
+  setUser: () => {},
+})
+
+export const useAppContext = () => {
+  const context = useContext(AppContext)
+  return context
+}
 
 export default function AppProvider({
   children,
   inititalAccessToken = '',
+  user: userProp,
 }: {
   children: React.ReactNode
   inititalAccessToken?: string
+  user?: UserResponseType
 }) {
+  const [user, setUser] = useState<UserResponseType | undefined>(userProp)
   useState(() => {
     if (typeof window !== 'undefined') {
-      clientAccessTokenToken.value = inititalAccessToken
+      clientAccessToken.value = inititalAccessToken
     }
   })
 
-  return <>{children}</>
+  return <AppContext.Provider value={{ user, setUser }}>{children}</AppContext.Provider>
 }

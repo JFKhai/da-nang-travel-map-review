@@ -1,18 +1,12 @@
 import envConfig from '@/lib/config/env.config'
+import { ResponseType } from '@/lib/types/response.type'
 
 type CustomOptions = Omit<RequestInit, 'method'> & {
   baseUrl?: string | undefined
+  params?: Record<string, any> | undefined
 }
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE'
-
-type ResponseType<TData> = {
-  success: boolean
-  message: string
-  data: TData
-  error?: any
-  status: number
-}
 
 export class HttpError extends Error {
   status: number
@@ -52,31 +46,55 @@ class AccessToken {
   }
 }
 
-export const clientAccessTokenToken = new AccessToken()
+export const clientAccessToken = new AccessToken()
 
 const request = async <TResponse>(
   method: HttpMethod,
   url: string,
   options?: CustomOptions | undefined,
 ): Promise<ResponseType<TResponse>> => {
-  const body = options?.body ? JSON.stringify(options.body) : undefined
-  const baseHeaders = {
-    'Content-Type': 'application/json',
-    Authorization: clientAccessTokenToken.value ? `Bearer ${clientAccessTokenToken.value}` : '',
-  }
+  const body = options?.body
+    ? options.body instanceof FormData
+      ? options.body
+      : JSON.stringify(options.body)
+    : undefined
+
+  const baseHeaders =
+    body instanceof FormData
+      ? {
+          Authorization: clientAccessToken.value ? `Bearer ${clientAccessToken.value}` : '',
+        }
+      : {
+          'Content-Type': 'application/json',
+          Authorization: clientAccessToken.value ? `Bearer ${clientAccessToken.value}` : '',
+        }
   // Nếu không truyền baseUrl (hoặc baseUrl = undefined) thì lấy từ envConfig.NEXT_PUBLIC_API_ENDPOINT
   // Nếu truyền baseUrl thì lấy giá trị truyền vào, truyền vào '' thì đồng nghĩa với việc chúng ta gọi API đến Next.js Server
 
   const baseUrl = options?.baseUrl === undefined ? envConfig.NEXT_PUBLIC_API_ENDPOINT : options.baseUrl
 
-  const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
+  let fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
+
+  // Xử lý query parameters
+  if (options?.params) {
+    const searchParams = new URLSearchParams()
+    Object.entries(options.params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value))
+      }
+    })
+    const queryString = searchParams.toString()
+    if (queryString) {
+      fullUrl += `?${queryString}`
+    }
+  }
 
   const res = await fetch(fullUrl, {
     ...options,
     headers: {
       ...baseHeaders,
       ...options?.headers,
-    },
+    } as any,
     body,
     method,
   })
@@ -103,8 +121,8 @@ const http = {
   put<TResponse>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
     return request<TResponse>('PUT', url, { ...options, body })
   },
-  delete<TResponse>(url: string, body: any, options?: Omit<CustomOptions, 'body'> | undefined) {
-    return request<TResponse>('DELETE', url, { ...options, body })
+  delete<TResponse>(url: string, options?: Omit<CustomOptions, 'body'> | undefined) {
+    return request<TResponse>('DELETE', url, { ...options })
   },
 }
 

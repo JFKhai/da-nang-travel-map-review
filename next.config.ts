@@ -43,6 +43,12 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'i.pinimg.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'loremflickr.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 }

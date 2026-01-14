@@ -5,6 +5,8 @@ import './globals.css'
 import { ErrorBoundary } from '@/components/error-boundary'
 import AppProvider from '@/components/providers/app-provider'
 import { cookies } from 'next/headers'
+import userApiServerRequest from '@/lib/api/server-api/user.api'
+import { UserResponseType } from '@/lib/schemas/user.schema'
 
 export const metadata: Metadata = {
   title: 'Travelopia - Khám phá Đà Nẵng',
@@ -17,13 +19,20 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const cookieStore = await cookies()
-  const accessToken = cookieStore.get('acccessToken')
+  const accessToken = cookieStore.get('accessToken')
+  let user: UserResponseType | undefined = undefined
+  if (accessToken) {
+    const result = await userApiServerRequest.getMe(accessToken.value)
+    user = result.data
+  }
+  console.log('accessToken: ', accessToken)
+  console.log('user: ', user)
   return (
     <html lang="en">
       <body>
         <ErrorBoundary>
           <PrimeReactProvider>
-            <AppProvider inititalAccessToken={accessToken?.value}>
+            <AppProvider inititalAccessToken={accessToken?.value} user={user}>
               <main className="min-h-screen bg-brand-bg">{children}</main>
             </AppProvider>
           </PrimeReactProvider>

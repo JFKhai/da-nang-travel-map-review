@@ -32,12 +32,11 @@ export default function AppProvider({
     setUser(userProp)
   }, [userProp])
 
-  // Initialize client access token
-  useEffect(() => {
+  useState(() => {
     if (typeof window !== 'undefined') {
       clientAccessToken.value = inititalAccessToken
     }
-  }, [inititalAccessToken])
+  })
 
   return (
     <AppContext.Provider value={{ user, setUser }}>

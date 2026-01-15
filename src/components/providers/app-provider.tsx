@@ -1,7 +1,8 @@
 'use client'
 import { clientAccessToken } from '@/lib/http'
 import { UserResponseType } from '@/lib/schemas/user.schema'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
+import ToastProvider from './toast-provider'
 
 const AppContext = createContext<{
   user: UserResponseType | undefined
@@ -26,11 +27,21 @@ export default function AppProvider({
   user?: UserResponseType
 }) {
   const [user, setUser] = useState<UserResponseType | undefined>(userProp)
-  useState(() => {
+
+  useEffect(() => {
+    setUser(userProp)
+  }, [userProp])
+
+  // Initialize client access token
+  useEffect(() => {
     if (typeof window !== 'undefined') {
       clientAccessToken.value = inititalAccessToken
     }
-  })
+  }, [inititalAccessToken])
 
-  return <AppContext.Provider value={{ user, setUser }}>{children}</AppContext.Provider>
+  return (
+    <AppContext.Provider value={{ user, setUser }}>
+      <ToastProvider>{children}</ToastProvider>
+    </AppContext.Provider>
+  )
 }

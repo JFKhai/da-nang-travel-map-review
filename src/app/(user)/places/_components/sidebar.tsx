@@ -21,7 +21,7 @@ export function Sidebar({ popularPlaces, recommendedPlaces }: SidebarProps) {
         <div className="space-y-4">
           {popularPlaces.map((place, index) => (
             <Link
-              href={`/place/${place.id}`}
+              href={`/places/${place.id}`}
               key={place.id}
               className="group flex gap-3 bg-white hover:bg-gray-50 p-2 rounded-xl transition-colors"
             >
@@ -65,7 +65,7 @@ export function Sidebar({ popularPlaces, recommendedPlaces }: SidebarProps) {
         <div className="space-y-4">
           {recommendedPlaces.map((place) => (
             <Link
-              href={`/place/${place.id}`}
+              href={`/places/${place.id}`}
               key={place.id}
               className="group flex gap-3 bg-white hover:bg-gray-50 p-2 rounded-xl transition-colors"
             >

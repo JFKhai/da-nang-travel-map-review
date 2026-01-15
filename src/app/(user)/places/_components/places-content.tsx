@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -9,6 +9,8 @@ import { CategoryMultiSelect } from '@/components/category-multiselect'
 import { Search, MapPin, Star } from 'lucide-react'
 import { PlaceWithRelations } from '@/lib/schemas/place.schema'
 import { GetPlacesParams } from '@/lib/api/server-api/place.api'
+import { CategoryType } from '@/lib/schemas/category.schema'
+import { categoryApiServerRequest } from '@/lib/api/server-api/category.api'
 
 type PlacesContentProps = {
   places: PlaceWithRelations[]
@@ -25,26 +27,33 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
   const searchParams = useSearchParams()
 
   const [searchQuery, setSearchQuery] = useState(search)
+  const [allCategories, setAllCategories] = useState<CategoryType[]>([])
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string; slug: string }[]>([])
 
-  // Fix: Initialize selectedCategories from categories prop, not places
-  //vì chưa có api lấy category nên tạm map thủ công
-  const [selectedCategories, setSelectedCategories] = useState<{ id: number; name: string; slug: string }[]>(() => {
-    const CATEGORY_MAP: Record<number, { name: string; slug: string }> = {
-      1: { name: 'Cà phê & Trà', slug: 'coffee-tea' },
-      2: { name: 'Ẩm thực', slug: 'food' },
-      3: { name: 'Check-in', slug: 'check-in' },
-      4: { name: 'Lịch sử', slug: 'history' },
-      5: { name: 'Vui chơi', slug: 'entertainment' },
+  // Fetch all categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await categoryApiServerRequest.getAll()
+        setAllCategories(response.data)
+
+        // Initialize selectedCategories from URL params once categories are loaded
+        if (categories.length > 0 && response.data.length > 0) {
+          const selected = categories
+            .map((catSlug) => {
+              const category = response.data.find((cat) => cat.slug === catSlug)
+              return category ? { id: category.id, name: category.name, slug: category.slug } : null
+            })
+            .filter((cat): cat is { id: number; name: string; slug: string } => cat !== null)
+          setSelectedCategories(selected)
+        }
+      } catch (error) {
+        console.error('Failed to fetch categories:', error)
+      }
     }
 
-    return categories
-      .map((catId) => {
-        const id = Number(catId)
-        const category = CATEGORY_MAP[id]
-        return category ? { id, ...category } : null
-      })
-      .filter((cat): cat is { id: number; name: string; slug: string } => cat !== null)
-  })
+    fetchCategories()
+  }, [categories])
 
   // Update URL with new params
   const updateURL = useCallback(
@@ -77,7 +86,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
   const handleSearch = () => {
     updateURL({
       search: searchQuery,
-      category: selectedCategories.map((c) => c.id).join(','),
+      category: selectedCategories.map((c) => c.slug).join(','),
       page: 1,
     })
   }
@@ -85,7 +94,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
   const handleCategoryChange = (cats: { id: number; name: string; slug: string }[]) => {
     setSelectedCategories(cats)
     updateURL({
-      category: cats.map((c) => c.id).join(','),
+      category: cats.map((c) => c.slug).join(','),
       page: 1,
     })
   }
@@ -121,6 +130,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
             <CategoryMultiSelect
+              availableCategories={allCategories}
               selectedCategories={selectedCategories}
               setSelectedCategories={handleCategoryChange}
               placeholder="Chọn danh mục..."
@@ -157,7 +167,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
 
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-lg border border-white/50">
                     <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                    <span className="font-bold text-brand-border text-sm">4</span>
+                    <span className="font-bold text-brand-border text-sm">{place.averageRating}</span>
                   </div>
                 </div>
 
@@ -174,7 +184,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
                   <p className="text-gray-500 line-clamp-2 text-sm leading-relaxed mb-4">{place.short_description}</p>
 
                   <div className="flex items-center justify-between pt-3 border-t border-gray-50">
-                    <span className="text-xs font-medium text-gray-400">0 đánh giá</span>
+                    <span className="text-xs font-medium text-gray-400">{place.reviewCount} đánh giá</span>
                     <span className="text-brand-teal font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
                       Xem chi tiết
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

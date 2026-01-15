@@ -183,7 +183,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
                 <div className="flex items-center justify-between mb-2">
                   <div>
                     <h4 className="font-semibold">{review.author.full_name}</h4>
-                    <p className="text-sm text-gray-500">{new Date(review.created_at).toLocaleDateString('vi-VN')}</p>
+                    <p className="text-sm text-gray-500">{new Date(review.created_at).toLocaleString('vi-VN')}</p>
                   </div>
                   <div className="flex items-center gap-1">
                     {[...Array(5)].map((_, i) => (

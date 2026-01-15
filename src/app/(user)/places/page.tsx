@@ -3,6 +3,7 @@ import { GetPlacesParams, placeApiServerRequest } from '@/lib/api/server-api/pla
 import { PlacesContent } from '@/app/(user)/places/_components/places-content'
 import { Sidebar } from '@/app/(user)/places/_components/sidebar'
 import { PlacesSkeleton } from '@/app/(user)/places/_components/places-skeleton'
+import { PaginationType } from '@/lib/schemas/pagination.schema'
 
 export default async function PlacesPage({ searchParams }: { searchParams: Promise<GetPlacesParams> }) {
   const params = await searchParams
@@ -14,10 +15,13 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
   let allPlaces: any[] = []
   let popularPlaces = []
   let recommendedPlaces = []
-  let pagination = {
+  let pagination: PaginationType = {
     currentPage: 1,
     itemsPerPage: limit,
     totalPages: 1,
+    totalItems: 0,
+    hasNextPage: false,
+    hasPrevPage: false,
   }
 
   try {
@@ -55,6 +59,7 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
             page={pagination.currentPage}
             limit={pagination.itemsPerPage}
             totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
           />
         </Suspense>
       </div>

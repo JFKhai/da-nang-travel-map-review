@@ -38,4 +38,6 @@ export type PlaceWithRelations = PlaceType & {
     caption?: string
     sort_order: number
   }[]
+  reviewCount: number
+  averageRating: number | null
 }

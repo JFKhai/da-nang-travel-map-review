@@ -17,9 +17,10 @@ type PlacesContentProps = {
   page: number
   limit: number
   totalPages: number
+  totalItems: number
 }
 
-export function PlacesContent({ places, search, categories, page, limit, totalPages }: PlacesContentProps) {
+export function PlacesContent({ places, search, categories, page, limit, totalPages, totalItems }: PlacesContentProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -141,7 +142,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             {places.map((place) => (
               <Link
-                href={`/place/${place.slug}`}
+                href={`/places/${place.id}`}
                 key={place.slug}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-brand-border/5 hover:-translate-y-2"
               >
@@ -197,7 +198,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
               <Paginator
                 first={first}
                 rows={limit}
-                totalRecords={totalPages * limit}
+                totalRecords={totalItems}
                 rowsPerPageOptions={[6, 12, 18]}
                 onPageChange={onPageChange}
                 className="border-none"

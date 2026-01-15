@@ -26,4 +26,5 @@ export const placeApiServerRequest = {
         sortOrder: params?.sortOrder ?? 'ASC',
       },
     }),
+  getPlaceById: (id: number) => http.get<PlaceWithRelations>(`/places/${id}`),
 }

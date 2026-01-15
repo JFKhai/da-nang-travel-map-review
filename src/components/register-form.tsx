@@ -1,16 +1,16 @@
 'use client'
 import { Eye, EyeOff, LockKeyhole, Mail, Phone, User } from 'lucide-react'
-import { useRef, useState } from 'react'
-import { Toast } from 'primereact/toast'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { RegisterBodySchema, RegisterBodyType } from '@/lib/schemas/auth.schema'
 import authApiServerRequest from '@/lib/api/server-api/auth.api'
 import { HttpError } from '@/lib/http'
+import { useToast } from '@/components/providers/toast-provider'
 
 function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false)
-  const toast = useRef<Toast>(null)
+  const { showSuccess, showError } = useToast()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
@@ -23,26 +23,18 @@ function RegisterForm() {
     resolver: zodResolver(RegisterBodySchema),
   })
 
-  const show = (
-    severity?: 'error' | 'success' | 'info' | 'warn' | 'secondary' | 'contrast',
-    summary?: string,
-    detail?: string,
-  ) => {
-    toast.current?.show({ severity, summary, detail })
-  }
-
   const onSubmit = async (data: RegisterBodyType) => {
     if (isLoading) return
     setIsLoading(true)
     try {
       await authApiServerRequest.register(data)
-      show('success', 'Đăng ký thành công', 'Đăng nhập để tiếp tục sử dụng dịch vụ')
+      showSuccess('Đăng ký thành công', 'Bạn đã đăng ký tài khoản thành công. Vui lòng đăng nhập để tiếp tục.')
       reset()
     } catch (error: any) {
       if (error instanceof HttpError) {
-        show('error', 'Đăng ký thất bại', error.data?.message || 'Có lỗi xảy ra')
+        showError('Đăng ký thất bại', error.data?.message || 'Có lỗi xảy ra')
       } else {
-        show('error', 'Đăng ký thất bại', 'Vui lòng kiểm tra lại thông tin đăng ký')
+        showError('Đăng ký thất bại', 'Vui lòng kiểm tra lại thông tin đăng ký')
       }
     } finally {
       setIsLoading(false)
@@ -51,8 +43,6 @@ function RegisterForm() {
 
   return (
     <>
-      {' '}
-      <Toast ref={toast} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-6 grid md:grid-cols-2 gap-2">
           {/* Name */}

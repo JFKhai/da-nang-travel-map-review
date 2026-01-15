@@ -47,7 +47,7 @@ export function Sidebar({ popularPlaces, recommendedPlaces }: SidebarProps) {
                 </div>
                 <div className="flex items-center gap-1">
                   <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                  <span className="text-xs font-bold text-gray-700">5</span>
+                  <span className="text-xs font-bold text-gray-700">{place.averageRating}</span>
                 </div>
               </div>
             </Link>
@@ -88,9 +88,9 @@ export function Sidebar({ popularPlaces, recommendedPlaces }: SidebarProps) {
                 </div>
                 <div className="flex items-center gap-2 text-xs text-gray-600">
                   <Star className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-                  <span className="font-bold">5</span>
+                  <span className="font-bold">{place.averageRating}</span>
                   <span className="text-gray-400">•</span>
-                  <span>0 đánh giá</span>
+                  <span>{place.reviewCount} đánh giá</span>
                 </div>
               </div>
             </Link>

@@ -54,6 +54,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ sl
             {/* Reviews */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-teal/10">
               <ReviewSection
+                placeId={placeDetail.id}
                 reviews={reviews}
                 rating={placeDetail.averageRating}
                 totalReviews={placeDetail.reviewCount}

@@ -3,35 +3,8 @@ import { useState, useRef, useEffect, useMemo } from 'react'
 import { Tags, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const PLACE_CATEGORIES = [
-  {
-    id: 1,
-    slug: 'coffee-tea',
-    name: 'Cà phê & Trà',
-  },
-  {
-    id: 2,
-    slug: 'food',
-    name: 'Ẩm thực',
-  },
-  {
-    id: 3,
-    slug: 'check-in',
-    name: 'Check-in',
-  },
-  {
-    id: 4,
-    slug: 'history',
-    name: 'Lịch sử',
-  },
-  {
-    id: 5,
-    slug: 'entertainment',
-    name: 'Vui chơi',
-  },
-] as const
-
 interface CategoryMultiSelectProps {
+  availableCategories: { id: number; slug: string; name: string }[]
   selectedCategories: { id: number; slug: string; name: string }[]
   setSelectedCategories: (categories: { id: number; slug: string; name: string }[]) => void
   placeholder?: string
@@ -39,6 +12,7 @@ interface CategoryMultiSelectProps {
 }
 
 export function CategoryMultiSelect({
+  availableCategories,
   selectedCategories,
   setSelectedCategories,
   placeholder = 'Chọn danh mục...',
@@ -52,17 +26,17 @@ export function CategoryMultiSelect({
 
   /* Filter + sync selected */
   const filteredCategories = useMemo(() => {
-    const normalized = PLACE_CATEGORIES.map((c) => ({
+    const normalized = availableCategories.map((c) => ({
       ...c,
       isSelected: selectedCategories.some((s) => s.id === c.id),
     }))
 
     return searchQuery ? normalized.filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase())) : normalized
-  }, [selectedCategories, searchQuery])
+  }, [availableCategories, selectedCategories, searchQuery])
 
   /* Toggle category */
   const handleToggleCategory = (categoryId: number) => {
-    const category = PLACE_CATEGORIES.find((c) => c.id === categoryId)
+    const category = availableCategories.find((c) => c.id === categoryId)
     if (!category) return
 
     const exists = selectedCategories.some((c) => c.id === categoryId)

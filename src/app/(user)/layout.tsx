@@ -5,7 +5,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <Header />
-      {children}
+      <div className="bg-brand-teal/40 min-h-screen">{children}</div>
       <Footer />
     </>
   )

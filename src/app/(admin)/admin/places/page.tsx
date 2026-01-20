@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { classNames } from 'primereact/utils'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
@@ -7,18 +7,25 @@ import { Toast } from 'primereact/toast'
 import { Button } from 'primereact/button'
 import { Toolbar } from 'primereact/toolbar'
 import { InputTextarea } from 'primereact/inputtextarea'
-import { IconField } from 'primereact/iconfield'
-import { InputIcon } from 'primereact/inputicon'
 import { InputNumber, InputNumberValueChangeEvent } from 'primereact/inputnumber'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { places } from '@/app/(admin)/admin/places/mock-data'
 import ImageUploader from '@/components/image-uploader'
-import Image from 'next/image'
+import { CategoryMultiSelect } from '@/components/category-multiselect'
+import { categoryApiServerRequest } from '@/lib/api/server-api/category.api'
+import { CategoryType } from '@/lib/schemas/category.schema'
+import { Edit, Trash } from 'lucide-react'
 
 type ImageItem = {
   id: string
   url: string
+}
+
+type Category = {
+  id: number
+  name: string
+  slug: string
 }
 interface Place {
   id: string | null
@@ -31,6 +38,7 @@ interface Place {
   lat: number
   lng: number
   images?: ImageItem[]
+  categories: Category[]
 }
 
 const data = places
@@ -47,11 +55,13 @@ export default function PlacesPage() {
     lat: 0,
     lng: 0,
     images: [],
+    categories: [],
   }
 
   const dataWithExport = data.map((place) => ({
     ...place,
     imagesExport: place.images?.map((img) => img.url).join(', ') || '',
+    categoriesExport: place.categories.map((cat) => cat.name).join(', ') || '',
   }))
 
   const [places, setPlaces] = useState<Place[]>(dataWithExport)
@@ -60,10 +70,31 @@ export default function PlacesPage() {
   const [deletePlacesDialog, setDeletePlacesDialog] = useState<boolean>(false)
   const [place, setPlace] = useState<Place>(emptyPlace)
   const [selectedPlaces, setSelectedPlaces] = useState<Place[]>([])
+  const [searchSelectedCategories, setSearchSelectedCategories] = useState<Category[]>([])
+  const [allCategories, setAllCategories] = useState<CategoryType[]>([])
   const [submitted, setSubmitted] = useState<boolean>(false)
   const [globalFilter, setGlobalFilter] = useState<string>('')
   const toast = useRef<Toast>(null)
   const dt = useRef<DataTable<Place[]>>(null)
+
+  // Fetch all categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await categoryApiServerRequest.getAll()
+        setAllCategories(response.data)
+      } catch (error) {
+        console.error('Failed to fetch categories:', error)
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load categories',
+          life: 3000,
+        })
+      }
+    }
+    fetchCategories()
+  }, [])
 
   const openNew = () => {
     setPlace(emptyPlace)
@@ -209,17 +240,25 @@ export default function PlacesPage() {
 
   const leftToolbarTemplate = () => {
     return (
-      <IconField iconPosition="left">
-        <InputIcon className="pi pi-search" />
+      <div className="flex gap-4">
         <InputText
-          type="search"
           placeholder="Search..."
+          id="search"
           onInput={(e) => {
             const target = e.target as HTMLInputElement
             setGlobalFilter(target.value)
           }}
         />
-      </IconField>
+        <Button label="Search" icon="pi pi-search" className="p-button-primary" />
+        <CategoryMultiSelect
+          className="max-w-[400px]"
+          availableCategories={allCategories}
+          selectedCategories={searchSelectedCategories}
+          setSelectedCategories={(categories) => {
+            setSearchSelectedCategories(categories)
+          }}
+        />
+      </div>
     )
   }
 
@@ -250,12 +289,36 @@ export default function PlacesPage() {
     )
   }
 
+  const categoriesBodyTemplate = (rowData: Place) => {
+    return (
+      <div className="flex items-start flex-wrap min-w-[200px] gap-1">
+        {rowData.categories.map((cat) => (
+          <span key={cat.id} className="mr-2 bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs shrink-0">
+            {cat.name}
+          </span>
+        ))}
+      </div>
+    )
+  }
+
   const actionBodyTemplate = (rowData: Place) => {
     return (
-      <React.Fragment>
-        <Button icon="pi pi-pencil" rounded outlined className="mr-2" onClick={() => editPlace(rowData)} />
-        <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => confirmDeletePlace(rowData)} />
-      </React.Fragment>
+      <div className="flex gap-2">
+        <button
+          onClick={() => editPlace(rowData)}
+          className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
+          title="Edit"
+        >
+          <Edit className="text-gray-600" />
+        </button>
+        <button
+          onClick={() => confirmDeletePlace(rowData)}
+          className="p-2 rounded-full border border-red-300 hover:bg-red-50 transition-colors"
+          title="Delete"
+        >
+          <Trash className="text-red-600" />
+        </button>
+      </div>
     )
   }
 
@@ -307,6 +370,13 @@ export default function PlacesPage() {
           <Column field="slug" header="Slug" sortable style={{ minWidth: '12rem' }}></Column>
           <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
           <Column header="Image" body={imageBodyTemplate} exportField="imagesExport" field="imagesExport"></Column>
+          <Column
+            header="Categories"
+            body={categoriesBodyTemplate}
+            exportField="categoriesExport"
+            field="categoriesExport"
+          ></Column>
+
           <Column field="address" header="Address" sortable style={{ minWidth: '16rem' }}></Column>
           <Column field="website" header="Website" sortable style={{ minWidth: '12rem' }}></Column>
           <Column field="openingHours" header="Opening Hours" sortable style={{ minWidth: '12rem' }}></Column>
@@ -371,6 +441,19 @@ export default function PlacesPage() {
               Address
             </label>
             <InputText id="address" value={place.address} onChange={(e) => onInputChange(e, 'address')} />
+          </div>
+          {/* categories */}
+          <div className="field">
+            <label htmlFor="categories" className="font-bold">
+              Categories
+            </label>
+            <CategoryMultiSelect
+              availableCategories={allCategories}
+              selectedCategories={place.categories}
+              setSelectedCategories={(categories) => {
+                setPlace({ ...place, categories })
+              }}
+            />
           </div>
           <div className="field">
             <label htmlFor="website" className="font-bold">

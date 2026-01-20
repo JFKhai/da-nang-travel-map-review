@@ -35,7 +35,20 @@ export const RegisterBodySchema = z
 
 export const RegisterResponse = UserSchema.omit({ password: true })
 
+export const ChangePasswordBodySchema = z
+  .object({
+    old_password: z.string().min(1, 'Mật khẩu cũ không được để trống'),
+    new_password: z
+      .string()
+      .min(1, 'Mật khẩu mới không được để trống')
+      .min(8, 'Mật khẩu phải có ít nhất 8 ký tự')
+      .max(16, 'Mật khẩu không được vượt quá 16 ký tự')
+      .regex(PASSWORD_REGEX, 'Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường và một ký tự đặc biệt'),
+  })
+  .strict()
+
 export type LoginBodyType = z.TypeOf<typeof LoginBodySchema>
 export type LoginResponseType = z.TypeOf<typeof LoginResponse>
 export type RegisterBodyType = z.TypeOf<typeof RegisterBodySchema>
 export type RegisterResType = z.TypeOf<typeof RegisterResponse>
+export type ChangePasswordBodyType = z.TypeOf<typeof ChangePasswordBodySchema>

@@ -1,7 +1,11 @@
 import Image from 'next/image'
 import GoBackButton from '@/components/go-back-button'
 
-export default function NotFound() {
+export default async function NotFound() {
+  // const headersList = await headers()
+  // console.log(headersList)
+  // const domain = headersList.get('host')
+  // console.log(domain)
   return (
     <div className="bg-white min-h-screen flex flex-col justify-center gap-2">
       <Image src="/images/not-found.png" alt="Not Found" width={600} height={400} className="mx-auto w-1/2" />

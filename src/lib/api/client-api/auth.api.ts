@@ -5,5 +5,9 @@ const authApiClientRequest = {
     http.post('/api/auth/token', body, {
       baseUrl: '',
     }),
+  removeToken: () =>
+    http.delete('/api/auth/token', {
+      baseUrl: '',
+    }),
 }
 export default authApiClientRequest

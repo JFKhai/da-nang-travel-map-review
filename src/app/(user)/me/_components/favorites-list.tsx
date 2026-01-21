@@ -6,6 +6,8 @@ import PlaceCard from '@/components/place-card'
 import { PlaceWithRelations } from '@/lib/schemas/place.schema'
 import { useToast } from '@/components/providers/toast-provider'
 import favoriteApiServerRequest from '@/lib/api/server-api/favorite.api'
+import { reviewApiServerRequest } from '@/lib/api/server-api/review.api'
+import { placeApiServerRequest } from '@/lib/api/server-api/place.api'
 
 export default function FavoritesList() {
   const { showError, showSuccess } = useToast()
@@ -18,8 +20,44 @@ export default function FavoritesList() {
     const fetchFavorites = async () => {
       try {
         const result = await favoriteApiServerRequest.getMyFavorites()
-        setFavorites(result.data || [])
+        let places = result.data || []
+
+        // Nếu API không trả về đầy đủ thông tin reviews, fetch thêm từ API places
+        const placesWithReviews = await Promise.all(
+          places.map(async (place) => {
+            // Nếu đã có averageRating và reviewCount thì giữ nguyên
+            if (place.averageRating !== null && place.averageRating !== undefined && place.reviewCount !== undefined) {
+              return place
+            }
+
+            try {
+              // Fetch chi tiết place để lấy đầy đủ thông tin bao gồm reviews
+              const placeDetail = await placeApiServerRequest.getPlaceById(place.id)
+              return placeDetail.data
+            } catch (error) {
+              // Nếu không fetch được, thử fetch reviews để tính toán
+              try {
+                const reviews = await reviewApiServerRequest.getReviewsByPlaceId(place.id)
+                const reviewCount = reviews.data.length
+                const averageRating =
+                  reviewCount > 0 ? reviews.data.reduce((sum, review) => sum + review.stars, 0) / reviewCount : null
+
+                return {
+                  ...place,
+                  reviewCount,
+                  averageRating: averageRating ? Math.round(averageRating * 10) / 10 : null,
+                }
+              } catch (reviewError) {
+                // Nếu cả 2 đều fail, trả về place gốc
+                return place
+              }
+            }
+          }),
+        )
+
+        setFavorites(placesWithReviews)
       } catch (error) {
+        console.error('Error fetching favorites:', error)
         showError('Lỗi', 'Không thể tải danh sách yêu thích')
       } finally {
         setIsLoading(false)

@@ -3,12 +3,14 @@
 import { useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import { X, LogOut, Settings, User2, MenuIcon } from 'lucide-react'
 import { Avatar } from 'primereact/avatar'
 import { Button } from 'primereact/button'
 import LanguageDropdown from '@/components/language-dropdown'
 import { useAppContext } from '@/components/providers/app-provider'
 import { Menu } from 'primereact/menu'
+import { useToast } from '@/components/providers/toast-provider'
 
 const navLinks = [
   { label: 'Home', href: '/' },
@@ -18,57 +20,66 @@ const navLinks = [
   { label: 'Blogs', href: '/blogs' },
 ]
 
-const userMenuItems = [
-  {
-    label: 'Profile',
-    icon: User2,
-    href: '/profile',
-    template: () => (
-      <Link
-        href="/profile"
-        className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full"
-      >
-        <User2 className="w-4 h-4" />
-        <span className="text-sm font-medium">Profile</span>
-      </Link>
-    ),
-  },
-  {
-    label: 'Settings',
-    icon: Settings,
-    href: '/settings',
-    template: () => (
-      <Link
-        href="/settings"
-        className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full"
-      >
-        <Settings className="w-4 h-4" />
-        <span className="text-sm font-medium">Settings</span>
-      </Link>
-    ),
-  },
-  {
-    separator: true,
-  },
-  {
-    label: 'Logout',
-    icon: LogOut,
-    href: '/logout',
-    template: () => (
-      <Link
-        href="/logout"
-        className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full"
-      >
-        <LogOut className="w-4 h-4" />
-        <span className="text-sm font-medium">Logout</span>
-      </Link>
-    ),
-  },
-]
 export function Header() {
-  const { user } = useAppContext()
+  const { user, logout } = useAppContext()
+  const router = useRouter()
+  const { showSuccess } = useToast()
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<Menu>(null)
+
+  const handleLogout = async () => {
+    await logout()
+    showSuccess('Đăng xuất thành công', 'Bạn đã đăng xuất khỏi tài khoản')
+    router.push('/')
+    router.refresh()
+  }
+
+  const userMenuItems = [
+    {
+      label: 'Profile',
+      icon: User2,
+      href: '/me',
+      template: () => (
+        <Link
+          href="/me"
+          className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full"
+        >
+          <User2 className="w-4 h-4" />
+          <span className="text-sm font-medium">Profile</span>
+        </Link>
+      ),
+    },
+    {
+      label: 'Settings',
+      icon: Settings,
+      href: '/settings',
+      template: () => (
+        <Link
+          href="/settings"
+          className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full"
+        >
+          <Settings className="w-4 h-4" />
+          <span className="text-sm font-medium">Settings</span>
+        </Link>
+      ),
+    },
+    {
+      separator: true,
+    },
+    {
+      label: 'Logout',
+      icon: LogOut,
+      template: () => (
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full text-left"
+        >
+          <LogOut className="w-4 h-4" />
+          <span className="text-sm font-medium">Logout</span>
+        </button>
+      ),
+    },
+  ]
 
   return (
     <>
@@ -223,6 +234,21 @@ export function Header() {
                           .filter((item) => !item.separator)
                           .map((item) => {
                             const Icon = item.icon
+                            if (item.label === 'Logout') {
+                              return (
+                                <button
+                                  key={item.label}
+                                  onClick={() => {
+                                    setIsOpen(false)
+                                    handleLogout()
+                                  }}
+                                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors w-full text-left"
+                                >
+                                  {Icon && <Icon className="w-5 h-5 flex-shrink-0" />}
+                                  <span className="text-sm font-medium">{item.label}</span>
+                                </button>
+                              )
+                            }
                             return (
                               <Link
                                 key={item.href}

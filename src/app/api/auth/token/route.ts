@@ -10,10 +10,28 @@ export async function POST(request: Request) {
     )
   }
 
+  const isProd = process.env.NODE_ENV === 'production'
+  const secureFlag = isProd ? 'Secure; ' : ''
+
   return Response.json(body, {
     status: 200,
     headers: {
-      'Set-Cookie': `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax; Secure`,
+      'Set-Cookie': `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax; ${secureFlag}Max-Age=86400`,
     },
   })
+}
+
+export async function DELETE() {
+  const isProd = process.env.NODE_ENV === 'production'
+  const secureFlag = isProd ? 'Secure; ' : ''
+
+  return Response.json(
+    { message: 'Logged out successfully' },
+    {
+      status: 200,
+      headers: {
+        'Set-Cookie': `accessToken=; Path=/; HttpOnly; SameSite=Lax; ${secureFlag}Max-Age=0`,
+      },
+    },
+  )
 }

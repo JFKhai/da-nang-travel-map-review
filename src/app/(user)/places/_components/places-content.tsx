@@ -153,7 +153,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
             {places.map((place) => (
               <Link
                 href={`/places/${place.id}`}
-                key={place.slug}
+                key={place.id}
                 className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-brand-border/5 hover:-translate-y-2"
               >
                 <div className="relative h-56 w-full overflow-hidden">

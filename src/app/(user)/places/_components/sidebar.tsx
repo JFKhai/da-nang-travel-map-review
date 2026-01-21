@@ -22,7 +22,7 @@ export function Sidebar({ popularPlaces, recommendedPlaces }: SidebarProps) {
           {popularPlaces.map((place, index) => (
             <Link
               href={`/places/${place.id}`}
-              key={place.id}
+              key={`popular-${place.id}`}
               className="group flex gap-3 bg-white hover:bg-gray-50 p-2 rounded-xl transition-colors"
             >
               <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
@@ -66,7 +66,7 @@ export function Sidebar({ popularPlaces, recommendedPlaces }: SidebarProps) {
           {recommendedPlaces.map((place) => (
             <Link
               href={`/places/${place.id}`}
-              key={place.id}
+              key={`recommended-${place.id}`}
               className="group flex gap-3 bg-white hover:bg-gray-50 p-2 rounded-xl transition-colors"
             >
               <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">

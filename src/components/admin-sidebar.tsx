@@ -2,6 +2,7 @@
 import type React from 'react'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -21,6 +22,8 @@ import type { LucideProps } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from 'primereact/button'
 import { usePathname } from 'next/navigation'
+import { useAppContext } from '@/components/providers/app-provider'
+import { useToast } from '@/components/providers/toast-provider'
 
 interface MenuItem {
   id: string
@@ -123,9 +126,20 @@ export function SidebarItem({ item, isCollapsed, isActive, face, position }: Sid
 
 export default function AdminSidebar() {
   const pathname = usePathname()
-  const [userName] = useState('Admin')
-  const [userEmail] = useState('admin@travel.com')
+  const router = useRouter()
+  const { user, logout } = useAppContext()
+  const { showSuccess } = useToast()
   const [isCollapsed, setIsCollapsed] = useState(false)
+
+  const userName = user?.full_name || 'Admin'
+  const userEmail = user?.email || 'admin@travel.com'
+
+  const handleLogout = async () => {
+    await logout()
+    showSuccess('Đăng xuất thành công', 'Bạn đã đăng xuất khỏi tài khoản')
+    router.push('/')
+    router.refresh()
+  }
 
   return (
     <div
@@ -205,6 +219,7 @@ export default function AdminSidebar() {
       <img src="/images/asset-1.png" alt="" className="absolute bottom-1 w-full" />
       {/* Logout Button */}
       <button
+        onClick={handleLogout}
         className={cn(
           'h-[56px] flex items-center gap-3 px-4 text-[15px] transition-all duration-200 outline-1 outline-[#009473]/30 outline-offset-[-1px] hover:outline-[#009473]/100 hover:bg-[#6EBD9D] hover:text-[#6AE2B2] mx-auto mb-4 absolute bottom-1 z-10 left-1/2 transform -translate-x-1/2 text-[#4c5b55] bg-[#6EBD9D] cursor-pointer',
           isCollapsed ? 'w-[72px] justify-center' : 'w-[177px] justify-start',

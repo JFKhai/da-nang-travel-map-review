@@ -20,7 +20,10 @@ import {
 import type { LucideProps } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from 'primereact/button'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import authApiClientRequest from '@/lib/api/client-api/auth.api'
+import { clientAccessToken } from '@/lib/http'
+import { useToast } from '@/components/providers/toast-provider'
 
 interface MenuItem {
   id: string
@@ -126,6 +129,21 @@ export default function AdminSidebar() {
   const [userName] = useState('Admin')
   const [userEmail] = useState('admin@travel.com')
   const [isCollapsed, setIsCollapsed] = useState(false)
+  const { showSuccess, showError } = useToast()
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    try {
+      authApiClientRequest.logout({ accessToken: clientAccessToken.value })
+      showSuccess('Đăng xuất thành công')
+
+      clientAccessToken.value = ''
+      router.push('/')
+      router.refresh()
+    } catch (error) {
+      showError('Đăng xuất thất bại')
+    }
+  }
 
   return (
     <div
@@ -205,6 +223,7 @@ export default function AdminSidebar() {
       <img src="/images/asset-1.png" alt="" className="absolute bottom-1 w-full" />
       {/* Logout Button */}
       <button
+        onClick={handleLogout}
         className={cn(
           'h-[56px] flex items-center gap-3 px-4 text-[15px] transition-all duration-200 outline-1 outline-[#009473]/30 outline-offset-[-1px] hover:outline-[#009473]/100 hover:bg-[#6EBD9D] hover:text-[#6AE2B2] mx-auto mb-4 absolute bottom-1 z-10 left-1/2 transform -translate-x-1/2 text-[#4c5b55] bg-[#6EBD9D] cursor-pointer',
           isCollapsed ? 'w-[72px] justify-center' : 'w-[177px] justify-start',

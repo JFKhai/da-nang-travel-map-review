@@ -11,6 +11,11 @@ export type GetPlacesParams = {
   sortOrder?: 'ASC' | 'DESC'
 }
 
+export type GetRelatedPlacesParams = {
+  categoryIds: number[]
+  excludePlaceId?: number
+}
+
 export const placeApiServerRequest = {
   getPlaces: (params?: GetPlacesParams) =>
     http.get<{
@@ -27,4 +32,14 @@ export const placeApiServerRequest = {
       },
     }),
   getPlaceById: (id: number) => http.get<PlaceWithRelations>(`/places/${id}`),
+  getRelatedPlaces: (params: GetRelatedPlacesParams) =>
+    http.get<PlaceWithRelations[]>('/places/related', {
+      params: {
+        categoryIds: params.categoryIds.join(','),
+        excludePlaceId: params.excludePlaceId,
+      },
+    }),
+  createPlace: (data: FormData) => http.post<PlaceWithRelations>('/places', data),
+  updatePlace: (id: number, data: FormData) => http.put<PlaceWithRelations>(`/places/${id}`, data),
+  deletePlace: (id: number) => http.delete<{ message: string }>(`/places/${id}`),
 }

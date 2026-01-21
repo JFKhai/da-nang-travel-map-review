@@ -5,5 +5,9 @@ const authApiClientRequest = {
     http.post('/api/auth/token', body, {
       baseUrl: '',
     }),
+  logout: (body: { accessToken: string }) =>
+    http.post('/api/auth/logout', body, {
+      baseUrl: '',
+    }),
 }
 export default authApiClientRequest

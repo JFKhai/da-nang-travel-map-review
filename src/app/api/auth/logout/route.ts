@@ -1,7 +1,9 @@
-import jwt from 'jsonwebtoken'
+import { cookies } from 'next/headers'
 
 export async function POST(request: Request) {
   const body = await request.json()
+  const cookieStore = await cookies()
+  cookieStore.delete('accessToken')
   const accessToken = body.accessToken as string
   if (!accessToken) {
     return Response.json(
@@ -11,12 +13,8 @@ export async function POST(request: Request) {
       },
     )
   }
-  const decodedAccessToken = jwt.decode(accessToken) as { exp: number }
-  const expiresAt = new Date(decodedAccessToken.exp * 1000).toUTCString()
+
   return Response.json(body, {
     status: 200,
-    headers: {
-      'Set-Cookie': `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax; Secure; Expires=${expiresAt}`,
-    },
   })
 }

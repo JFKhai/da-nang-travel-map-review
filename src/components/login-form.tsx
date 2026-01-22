@@ -35,8 +35,9 @@ function LoginForm() {
       })
       showSuccess('Đăng nhập thành công', `Chào mừng ${result.data.user.full_name} đến với Travelopia`)
 
-      // Toast sẽ không bị mất khi chuyển trang vì đã ở global level
-      router.push('/')
+      // Chuyển hướng dựa trên role
+      const redirectPath = result.data.user.role === 'admin' ? '/admin/dashboard' : '/'
+      router.push(redirectPath)
       router.refresh()
     } catch (error) {
       showError('Đăng nhập thất bại', 'Vui lòng kiểm tra lại thông tin đăng nhập')

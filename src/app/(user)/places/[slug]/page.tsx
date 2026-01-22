@@ -2,7 +2,6 @@ import ImageGallery from '../_components/image-gallery'
 import PlaceInfoCard from '../_components/place-info-card'
 import ReviewSection from '../_components/review-section'
 import RelatedPlaces from '../_components/related-places'
-import { reviews, relatedPlaces, relatedPopular } from './mock-data'
 import { placeApiServerRequest } from '@/lib/api/server-api/place.api'
 import { notFound } from 'next/navigation'
 import { reviewApiServerRequest } from '@/lib/api/server-api/review.api'
@@ -12,11 +11,22 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ sl
 
   let placeDetail
   let reviews
+  let relatedPlaces: any[] = []
   try {
     const placeResult = await placeApiServerRequest.getPlaceById(Number(slug))
     placeDetail = placeResult.data
     const reviewsResult = await reviewApiServerRequest.getReviewsByPlaceId(Number(slug))
     reviews = reviewsResult.data
+
+    // Get related places based on categories
+    if (placeDetail.categories && placeDetail.categories.length > 0) {
+      const categoryIds = placeDetail.categories.map((cat) => cat.id)
+      const relatedResult = await placeApiServerRequest.getRelatedPlaces({
+        categoryIds,
+        excludePlaceId: placeDetail.id,
+      })
+      relatedPlaces = relatedResult.data
+    }
   } catch (error) {
     notFound()
   }
@@ -67,14 +77,11 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ sl
         </div>
 
         {/* Related Places Section */}
-        <div className="mt-12">
-          <RelatedPlaces places={relatedPlaces} title="Địa điểm liên quan" />
-        </div>
-
-        {/* Related Popular Section */}
-        <div className="mt-8">
-          <RelatedPlaces places={relatedPopular} title="Địa điểm phổ biến" />
-        </div>
+        {relatedPlaces.length > 0 && (
+          <div className="mt-12">
+            <RelatedPlaces places={relatedPlaces} title="Địa điểm liên quan" />
+          </div>
+        )}
       </div>
     </div>
   )

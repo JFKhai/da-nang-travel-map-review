@@ -10,6 +10,8 @@ import { Button } from 'primereact/button'
 import LanguageDropdown from '@/components/language-dropdown'
 import { useAppContext } from '@/components/providers/app-provider'
 import { Menu } from 'primereact/menu'
+// import authApiClientRequest from '@/lib/api/client-api/auth.api'
+// import { clientAccessToken } from '@/lib/http'
 import { useToast } from '@/components/providers/toast-provider'
 
 const navLinks = [

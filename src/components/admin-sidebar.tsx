@@ -2,7 +2,7 @@
 import type React from 'react'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -21,7 +21,6 @@ import {
 import type { LucideProps } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from 'primereact/button'
-import { usePathname } from 'next/navigation'
 import { useAppContext } from '@/components/providers/app-provider'
 import { useToast } from '@/components/providers/toast-provider'
 

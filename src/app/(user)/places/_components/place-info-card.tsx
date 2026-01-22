@@ -8,7 +8,7 @@ interface PlaceInfoCardProps {
 }
 
 export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
-  console.log(place)
+  // console.log(place)
   return (
     <div className="lg:col-span-1">
       <div className="sticky top-4 space-y-6">

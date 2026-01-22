@@ -2,6 +2,7 @@
 import type React from 'react'
 
 import { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard,
@@ -20,9 +21,7 @@ import {
 import type { LucideProps } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from 'primereact/button'
-import { usePathname, useRouter } from 'next/navigation'
-import authApiClientRequest from '@/lib/api/client-api/auth.api'
-import { clientAccessToken } from '@/lib/http'
+import { useAppContext } from '@/components/providers/app-provider'
 import { useToast } from '@/components/providers/toast-provider'
 
 interface MenuItem {
@@ -126,23 +125,19 @@ export function SidebarItem({ item, isCollapsed, isActive, face, position }: Sid
 
 export default function AdminSidebar() {
   const pathname = usePathname()
-  const [userName] = useState('Admin')
-  const [userEmail] = useState('admin@travel.com')
-  const [isCollapsed, setIsCollapsed] = useState(false)
-  const { showSuccess, showError } = useToast()
   const router = useRouter()
+  const { user, logout } = useAppContext()
+  const { showSuccess } = useToast()
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  const userName = user?.full_name || 'Admin'
+  const userEmail = user?.email || 'admin@travel.com'
 
   const handleLogout = async () => {
-    try {
-      authApiClientRequest.logout({ accessToken: clientAccessToken.value })
-      showSuccess('Đăng xuất thành công')
-
-      clientAccessToken.value = ''
-      router.push('/')
-      router.refresh()
-    } catch (error) {
-      showError('Đăng xuất thất bại')
-    }
+    await logout()
+    showSuccess('Đăng xuất thành công', 'Bạn đã đăng xuất khỏi tài khoản')
+    router.push('/')
+    router.refresh()
   }
 
   return (

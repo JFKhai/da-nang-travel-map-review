@@ -201,7 +201,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {review.images.map((image, index) => (
                       <div
-                        key={index}
+                        key={image.id || `review-${review.id}-image-${index}`}
                         className="relative rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
                       >
                         <Image src={image.url} alt={`Review image ${index + 1}`} preview className="object-cover" />

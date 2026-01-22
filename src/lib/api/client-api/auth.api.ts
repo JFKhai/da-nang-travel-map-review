@@ -5,8 +5,8 @@ const authApiClientRequest = {
     http.post('/api/auth/token', body, {
       baseUrl: '',
     }),
-  logout: (body: { accessToken: string }) =>
-    http.post('/api/auth/logout', body, {
+  removeToken: () =>
+    http.delete('/api/auth/token', {
       baseUrl: '',
     }),
 }

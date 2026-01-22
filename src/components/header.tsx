@@ -10,8 +10,8 @@ import { Button } from 'primereact/button'
 import LanguageDropdown from '@/components/language-dropdown'
 import { useAppContext } from '@/components/providers/app-provider'
 import { Menu } from 'primereact/menu'
-import authApiClientRequest from '@/lib/api/client-api/auth.api'
-import { clientAccessToken } from '@/lib/http'
+// import authApiClientRequest from '@/lib/api/client-api/auth.api'
+// import { clientAccessToken } from '@/lib/http'
 import { useToast } from '@/components/providers/toast-provider'
 
 const navLinks = [
@@ -23,44 +23,27 @@ const navLinks = [
 ]
 
 export function Header() {
-  const { user, setUser } = useAppContext()
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoggingOut, setIsLoggingOut] = useState(false)
-  const menuRef = useRef<Menu>(null)
+  const { user, logout } = useAppContext()
   const router = useRouter()
-  const { showSuccess, showError } = useToast()
+  const { showSuccess } = useToast()
+  const [isOpen, setIsOpen] = useState(false)
+  const menuRef = useRef<Menu>(null)
 
   const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true)
-      const accessToken = clientAccessToken.value
-
-      if (accessToken) {
-        await authApiClientRequest.logout({ accessToken })
-      }
-
-      setUser(undefined)
-      clientAccessToken.value = ''
-
-      setIsOpen(false)
-
-      router.push('/login')
-      showSuccess('Đăng xuất thành công')
-    } catch (error) {
-      showError('Đăng xuất thất bại. Vui lòng thử lại.')
-    } finally {
-      setIsLoggingOut(false)
-    }
+    await logout()
+    showSuccess('Đăng xuất thành công', 'Bạn đã đăng xuất khỏi tài khoản')
+    router.push('/')
+    router.refresh()
   }
 
   const userMenuItems = [
     {
       label: 'Profile',
       icon: User2,
-      href: '/profile',
+      href: '/me',
       template: () => (
         <Link
-          href="/profile"
+          href="/me"
           className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full"
         >
           <User2 className="w-4 h-4" />
@@ -91,11 +74,10 @@ export function Header() {
       template: () => (
         <button
           onClick={handleLogout}
-          disabled={isLoggingOut}
-          className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full text-left disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full text-left"
         >
           <LogOut className="w-4 h-4" />
-          <span className="text-sm font-medium">{isLoggingOut ? 'Đang đăng xuất...' : 'Logout'}</span>
+          <span className="text-sm font-medium">Logout</span>
         </button>
       ),
     },
@@ -250,30 +232,37 @@ export function Header() {
 
                       {/* Menu Items */}
                       <div className="flex flex-col gap-1">
-                        <Link
-                          href="/profile"
-                          className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <User2 className="w-5 h-5 flex-shrink-0" />
-                          <span className="text-sm font-medium">Profile</span>
-                        </Link>
-                        <Link
-                          href="/settings"
-                          className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors"
-                          onClick={() => setIsOpen(false)}
-                        >
-                          <Settings className="w-5 h-5 flex-shrink-0" />
-                          <span className="text-sm font-medium">Settings</span>
-                        </Link>
-                        <button
-                          onClick={handleLogout}
-                          disabled={isLoggingOut}
-                          className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <LogOut className="w-5 h-5 flex-shrink-0" />
-                          <span className="text-sm font-medium">{isLoggingOut ? 'Đang đăng xuất...' : 'Logout'}</span>
-                        </button>
+                        {userMenuItems
+                          .filter((item) => !item.separator)
+                          .map((item) => {
+                            const Icon = item.icon
+                            if (item.label === 'Logout') {
+                              return (
+                                <button
+                                  key={item.label}
+                                  onClick={() => {
+                                    setIsOpen(false)
+                                    handleLogout()
+                                  }}
+                                  className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors w-full text-left"
+                                >
+                                  {Icon && <Icon className="w-5 h-5 flex-shrink-0" />}
+                                  <span className="text-sm font-medium">{item.label}</span>
+                                </button>
+                              )
+                            }
+                            return (
+                              <Link
+                                key={item.href}
+                                href={item.href as any}
+                                className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 rounded-lg transition-colors"
+                                onClick={() => setIsOpen(false)}
+                              >
+                                {Icon && <Icon className="w-5 h-5 flex-shrink-0" />}
+                                <span className="text-sm font-medium">{item.label}</span>
+                              </Link>
+                            )
+                          })}
                       </div>
                     </div>
                   )}

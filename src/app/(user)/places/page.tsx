@@ -34,7 +34,12 @@ export default async function PlacesPage({ searchParams }: { searchParams: Promi
       sortOrder: 'DESC',
     })
 
-    // console.log(placesResponse)
+    console.log('=== PLACES RESPONSE ===')
+    console.log('Full response:', JSON.stringify(placesResponse, null, 2))
+    console.log('Places count:', placesResponse.data.places?.length || 0)
+    console.log('Pagination:', placesResponse.data.pagination)
+    console.log('All places:', placesResponse.data.places)
+    console.log('======================')
 
     allPlaces = placesResponse.data.places || []
     pagination = placesResponse.data.pagination

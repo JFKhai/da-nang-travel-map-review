@@ -44,7 +44,7 @@ export default function AppProvider({
   const logout = async () => {
     try {
       // Xóa token từ cookie
-      await authApiClientRequest.removeToken()
+      await authApiClientRequest.logout({ accessToken: clientAccessToken.value })
       // Xóa token từ memory
       if (typeof window !== 'undefined') {
         clientAccessToken.value = ''

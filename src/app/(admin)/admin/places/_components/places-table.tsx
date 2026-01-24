@@ -95,7 +95,6 @@ const ActionBodyTemplate = ({
 }
 
 export default function PlacesTable({ places, pagination, categories, search }: Props) {
-  const [selectedPlaces, setSelectedPlaces] = useState<PlaceWithRelations[]>([])
   const [editingPlace, setEditingPlace] = useState<PlaceWithRelations | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
   const [deletingPlace, setDeletingPlace] = useState<PlaceWithRelations | null>(null)
@@ -195,7 +194,6 @@ export default function PlacesTable({ places, pagination, categories, search }: 
     <>
       <PlacesToolbar
         availableCategories={allCategories}
-        selectedPlaces={selectedPlaces}
         selectedCategories={selectedCategories}
         setSelectedCategories={handleCategoryChange}
         search={search}
@@ -210,14 +208,8 @@ export default function PlacesTable({ places, pagination, categories, search }: 
         rows={pagination.itemsPerPage}
         totalRecords={pagination.totalItems}
         first={first}
-        selection={selectedPlaces}
-        onSelectionChange={(e) => {
-          if (Array.isArray(e.value)) setSelectedPlaces(e.value)
-        }}
-        selectionMode="multiple"
         className="text-[15px]"
       >
-        <Column selectionMode="multiple" />
         <Column field="slug" header="Slug" style={{ minWidth: '12rem' }}></Column>
         <Column field="name" header="Name" sortable style={{ minWidth: '16rem' }}></Column>
         <Column header="Image" body={imageBodyTemplate} exportField="imagesExport" field="imagesExport"></Column>

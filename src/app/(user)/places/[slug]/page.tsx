@@ -9,52 +9,25 @@ import { reviewApiServerRequest } from '@/lib/api/server-api/review.api'
 export default async function PlaceDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
 
-  const placeId = Number(slug)
-  if (isNaN(placeId)) {
-    notFound()
-  }
-
   let placeDetail
-  let reviews: any[] = []
+  let reviews
   let relatedPlaces: any[] = []
-
   try {
-    const placeResult = await placeApiServerRequest.getPlaceById(placeId)
+    const placeResult = await placeApiServerRequest.getPlaceById(Number(slug))
     placeDetail = placeResult.data
-
-    if (!placeDetail) {
-      notFound()
-    }
-
-    // Fetch reviews
-    try {
-      const reviewsResult = await reviewApiServerRequest.getReviewsByPlaceId(placeId)
-      reviews = reviewsResult.data || []
-    } catch (reviewError) {
-      console.warn('Error fetching reviews:', reviewError)
-      reviews = []
-    }
+    const reviewsResult = await reviewApiServerRequest.getReviewsByPlaceId(Number(slug))
+    reviews = reviewsResult.data
 
     // Get related places based on categories
     if (placeDetail.categories && placeDetail.categories.length > 0) {
-      try {
-        const categoryIds = placeDetail.categories.map((cat) => cat.id)
-        const relatedResult = await placeApiServerRequest.getRelatedPlaces({
-          categoryIds,
-          excludePlaceId: placeDetail.id,
-        })
-        relatedPlaces = relatedResult.data || []
-      } catch (relatedError) {
-        console.warn('Error fetching related places:', relatedError)
-        relatedPlaces = []
-      }
+      const categoryIds = placeDetail.categories.map((cat) => cat.id)
+      const relatedResult = await placeApiServerRequest.getRelatedPlaces({
+        categoryIds,
+        excludePlaceId: placeDetail.id,
+      })
+      relatedPlaces = relatedResult.data
     }
   } catch (error) {
-    console.error('Error fetching place detail:', error)
-    notFound()
-  }
-
-  if (!placeDetail) {
     notFound()
   }
 
@@ -65,40 +38,28 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ sl
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Content - 2/3 width */}
           <div className="lg:col-span-2 space-y-6">
-            {placeDetail.coverImage && (
-              <ImageGallery
-                coverImage={placeDetail.coverImage}
-                images={placeDetail.images || []}
-                title={placeDetail.name}
-              />
-            )}
+            <ImageGallery coverImage={placeDetail.coverImage} images={placeDetail.images} title={placeDetail.name} />
 
             {/* Description */}
-            {placeDetail.short_description && (
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-teal/10">
-                <h2 className="text-2xl font-bold mb-4 text-brand-border">Mô tả</h2>
-                <p className="text-gray-700 leading-relaxed">{placeDetail.short_description}</p>
-              </div>
-            )}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-teal/10">
+              <h2 className="text-2xl font-bold mb-4 text-brand-border">Mô tả</h2>
+              <p className="text-gray-700 leading-relaxed">{placeDetail.short_description}</p>
+            </div>
 
             {/* Location & Map */}
-            {(placeDetail.address || (placeDetail.lat && placeDetail.lng)) && (
-              <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-teal/10">
-                <h2 className="text-2xl font-bold mb-4 text-brand-border">Địa điểm</h2>
-                {placeDetail.address && <p className="text-gray-700 mb-4">{placeDetail.address}</p>}
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-teal/10">
+              <h2 className="text-2xl font-bold mb-4 text-brand-border">Địa điểm</h2>
+              <p className="text-gray-700 mb-4">{placeDetail.address}</p>
 
-                {placeDetail.lat && placeDetail.lng && (
-                  <div className="rounded-xl overflow-hidden">
-                    <iframe
-                      className="w-full h-[400px]"
-                      loading="lazy"
-                      src={`https://www.google.com/maps?q=${placeDetail.lat},${placeDetail.lng}&z=15&output=embed`}
-                      title="Map"
-                    />
-                  </div>
-                )}
+              <div className="rounded-xl overflow-hidden">
+                <iframe
+                  className="w-full h-[400px]"
+                  loading="lazy"
+                  src={`https://www.google.com/maps?q=${placeDetail.lat},${placeDetail.lng}&z=15&output=embed`}
+                  title="Map"
+                />
               </div>
-            )}
+            </div>
 
             {/* Reviews */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-teal/10">

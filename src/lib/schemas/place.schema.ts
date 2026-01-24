@@ -73,3 +73,48 @@ export const UpdatePlaceBodySchema = z
   .strict()
 
 export type UpdatePlaceBodyType = z.infer<typeof UpdatePlaceBodySchema>
+
+export const CreatePlaceBodySchema = z
+  .object({
+    name: z
+      .string('Tên địa điểm là bắt buộc')
+      .min(3, 'Tên địa điểm phải có ít nhất 3 ký tự')
+      .max(255, 'Tên địa điểm không được vượt quá 255 ký tự'),
+    slug: z
+      .string('Slug là bắt buộc')
+      .min(3, 'Slug phải có ít nhất 3 ký tự')
+      .max(255, 'Slug không được vượt quá 255 ký tự')
+      .refine((slug) => /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug), 'Slug chỉ được chứa chữ thường, số và dấu gạch ngang'),
+    short_description: z.string().max(1000, 'Mô tả ngắn không được vượt quá 1000 ký tự').optional(),
+    address: z.string().max(500, 'Địa chỉ không được vượt quá 500 ký tự').optional(),
+    phone: z.string().max(20, 'Số điện thoại không được vượt quá 20 ký tự').optional(),
+    website: z.string().max(255, 'Website không được vượt quá 255 ký tự').optional(),
+    opening_hours: z
+      .string('Giờ mở cửa là bắt buộc')
+      .min(1, 'Giờ mở cửa là bắt buộc')
+      .max(255, 'Giờ mở cửa không được vượt quá 255 ký tự'),
+    lat: z
+      .number('Vĩ độ phải là số')
+      .min(-90, 'Vĩ độ phải nằm trong khoảng -90 đến 90')
+      .max(90, 'Vĩ độ phải nằm trong khoảng -90 đến 90')
+      .optional(),
+    lng: z
+      .number('Kinh độ phải là số')
+      .min(-180, 'Kinh độ phải nằm trong khoảng -180 đến 180')
+      .max(180, 'Kinh độ phải nằm trong khoảng -180 đến 180')
+      .optional(),
+    categories: z.array(z.number(), 'Danh mục là bắt buộc').min(1, 'Phải chọn ít nhất 1 danh mục'),
+  })
+  .strict()
+  .refine(
+    (data) =>
+      (data.address && String(data.address).trim() !== '') || (data.lat !== undefined && data.lng !== undefined),
+    'Phải cung cấp địa chỉ hoặc tọa độ (vĩ độ và kinh độ)',
+  )
+  .refine((data) => {
+    const hasLat = data.lat !== undefined
+    const hasLng = data.lng !== undefined
+    return (hasLat && hasLng) || (!hasLat && !hasLng)
+  }, 'Phải cung cấp đầy đủ cả vĩ độ và kinh độ')
+
+export type CreatePlaceBodyType = z.infer<typeof CreatePlaceBodySchema>

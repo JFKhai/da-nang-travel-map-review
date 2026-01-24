@@ -13,28 +13,10 @@ export async function POST(request: Request) {
   }
   const decodedAccessToken = jwt.decode(accessToken) as { exp: number }
   const expiresAt = new Date(decodedAccessToken.exp * 1000).toUTCString()
-  const isProd = process.env.NODE_ENV === 'production'
-  const secureFlag = isProd ? 'Secure; ' : ''
-
   return Response.json(body, {
     status: 200,
     headers: {
-      'Set-Cookie': `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax; ${secureFlag}Expires=${expiresAt}`,
+      'Set-Cookie': `accessToken=${accessToken}; Path=/; HttpOnly; SameSite=Lax; Secure; Expires=${expiresAt}`,
     },
   })
-}
-
-export async function DELETE() {
-  const isProd = process.env.NODE_ENV === 'production'
-  const secureFlag = isProd ? 'Secure; ' : ''
-
-  return Response.json(
-    { message: 'Logged out successfully' },
-    {
-      status: 200,
-      headers: {
-        'Set-Cookie': `accessToken=; Path=/; HttpOnly; SameSite=Lax; ${secureFlag}Max-Age=0`,
-      },
-    },
-  )
 }

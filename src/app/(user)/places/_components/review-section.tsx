@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ImageNext from 'next/image'
 import { Image } from 'primereact/image'
 import { Dialog } from 'primereact/dialog'
@@ -30,12 +30,6 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
     images: [] as File[],
   })
   const [previewImages, setPreviewImages] = useState<string[]>([])
-  const [canWriteReview, setCanWriteReview] = useState(false)
-
-  // Tránh đọc clientAccessToken trực tiếp trong render SSR để không gây lỗi hydration
-  useEffect(() => {
-    setCanWriteReview(!!clientAccessToken.value)
-  }, [])
 
   // Tính toán số lượng reviews cho mỗi mức sao
   const ratingDistribution = [5, 4, 3, 2, 1].map((stars) => ({
@@ -112,7 +106,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
     <div className="mb-8">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-brand-border">Đánh giá</h2>
-        {canWriteReview && (
+        {clientAccessToken.value && (
           <button
             onClick={() => setShowModal(true)}
             className="px-6 py-2.5 bg-brand-teal text-white rounded-full hover:bg-brand-teal/90 font-medium transition-colors flex items-center gap-2"
@@ -207,7 +201,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
                   <div className="mt-3 grid grid-cols-3 gap-2">
                     {review.images.map((image, index) => (
                       <div
-                        key={image.id || `review-${review.id}-image-${index}`}
+                        key={index}
                         className="relative rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
                       >
                         <Image src={image.url} alt={`Review image ${index + 1}`} preview className="object-cover" />

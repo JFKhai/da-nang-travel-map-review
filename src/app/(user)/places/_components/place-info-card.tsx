@@ -13,11 +13,11 @@ export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
     <div className="lg:col-span-1">
       <div className="sticky top-4 space-y-6">
         {/* Rating Card */}
-        <div className="bg-gradient-to-br from-brand-light/20 to-brand-teal/20 rounded-2xl p-6 border border-brand-teal/20">
+        <div className="bg-brand-bg rounded-2xl p-6 border border-brand-teal/20">
           <div className=" mb-4">
             <div className=" mb-3 font-bold text-3xl">{place.name}</div>
             <div className="text-5xl flex gap-3 font-bold text-gray-800 mb-1">
-              <span> {place.averageRating}</span>{' '}
+              <span> {place.averageRating ? parseFloat(place.averageRating.toFixed(2)) : 0}</span>{' '}
               <div className="flex items-center justify-center gap-1 mb-4">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star

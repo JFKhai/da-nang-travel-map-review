@@ -50,3 +50,19 @@ export const CreateReviewResponseSchema = z.object({
   ),
 })
 export type CreateReviewResponseType = z.infer<typeof CreateReviewResponseSchema>
+
+export const UpdateReviewBodySchema = z.object({
+  title: z
+    .string()
+    .min(5, 'Tiêu đề phải có ít nhất 5 ký tự')
+    .max(100, 'Tiêu đề không được vượt quá 100 ký tự')
+    .optional(),
+  content: z
+    .string()
+    .min(10, 'Nội dung phải có ít nhất 10 ký tự')
+    .max(1000, 'Nội dung không được vượt quá 1000 ký tự')
+    .optional(),
+  stars: z.number().min(1, 'Đánh giá phải từ 1 đến 5 sao').max(5, 'Đánh giá phải từ 1 đến 5 sao').optional(),
+  deleteImageIds: z.array(z.number()).optional(),
+})
+export type UpdateReviewBodyType = z.infer<typeof UpdateReviewBodySchema>

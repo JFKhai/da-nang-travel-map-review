@@ -167,7 +167,9 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
 
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-lg border border-white/50">
                     <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
-                    <span className="font-bold text-brand-border text-sm">{place.averageRating}</span>
+                    <span className="font-bold text-brand-border text-sm">
+                      {place.averageRating ? parseFloat(place.averageRating.toFixed(2)) : 0}
+                    </span>
                   </div>
                 </div>
 

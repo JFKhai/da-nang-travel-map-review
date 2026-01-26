@@ -8,7 +8,7 @@ import PlacesToolbar from '@/app/(admin)/admin/places/_components/places-toolbar
 import EditPlaceModal from '@/app/(admin)/admin/places/_components/edit-place-modal'
 import DeletePlaceDialog from '@/app/(admin)/admin/places/_components/delete-place-dialog'
 import Image from 'next/image'
-import { Edit, Trash } from 'lucide-react'
+import { Edit, Eye, Trash } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { GetPlacesParams } from '@/lib/api/server-api/place.api'
 import { Paginator } from 'primereact/paginator'
@@ -74,21 +74,35 @@ const ActionBodyTemplate = ({
   onEdit: (place: PlaceWithRelations) => void
   onDelete: (place: PlaceWithRelations) => void
 }) => {
+  const handleViewPlace = () => {
+    window.open(`/places/${rowData.id}`, '_blank')
+  }
+
   return (
     <div className="flex gap-2">
+      <button
+        onClick={handleViewPlace}
+        className="p-2 rounded-full border border-blue-300 hover:bg-blue-50 transition-colors"
+        title="View"
+        aria-label="View place"
+      >
+        <Eye className="text-blue-600 w-4 h-4" />
+      </button>
       <button
         onClick={() => onEdit(rowData)}
         className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 transition-colors"
         title="Edit"
+        aria-label="Edit place"
       >
-        <Edit className="text-gray-600" />
+        <Edit className="text-gray-600 w-4 h-4" />
       </button>
       <button
         onClick={() => onDelete(rowData)}
         className="p-2 rounded-full border border-red-300 hover:bg-red-50 transition-colors"
         title="Delete"
+        aria-label="Delete place"
       >
-        <Trash className="text-red-600" />
+        <Trash className="text-red-600 w-4 h-4" />
       </button>
     </div>
   )

@@ -74,7 +74,7 @@ export function PlaceListSidebar({
                 >
                   <div className="flex gap-3">
                     <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
-                      <Image src={place.image} alt={place.name} fill className="object-cover" />
+                      <Image src={place.image} alt={place.name} fill className="object-cover" sizes="80px" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="mb-1 text-sm font-semibold text-gray-900 line-clamp-1">{place.name}</h3>

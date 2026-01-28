@@ -15,6 +15,7 @@ import { useToast } from '@/components/providers/toast-provider'
 const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Places', href: '/places' },
+  { label: 'Map', href: '/map' },
   { label: 'Reviews', href: '/reviews' },
   { label: 'About', href: '/about' },
   { label: 'Blogs', href: '/blogs' },

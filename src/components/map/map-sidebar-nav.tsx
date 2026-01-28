@@ -1,7 +1,7 @@
 import { Home, Star, History, Clock, Filter, Heart, LogIn } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
-import { useSession } from 'next-auth/react'
+import { useAppContext } from '@/components/providers/app-provider'
 import { useRouter } from 'next/navigation'
 import { Dialog } from 'primereact/dialog'
 import { Button } from 'primereact/button'
@@ -27,7 +27,7 @@ export function MapSidebarNav({
   onCloseLoginDialog,
   onShowLoginDialog,
 }: MapSidebarNavProps) {
-  const { status } = useSession()
+  const { user } = useAppContext()
   const router = useRouter()
   const [isRatingOpen, setIsRatingOpen] = useState(false)
 
@@ -40,7 +40,7 @@ export function MapSidebarNav({
   ] as const
 
   const handleTabClick = (tabId: NavTab) => {
-    if (tabId === 'favorites' && status !== 'authenticated') {
+    if (tabId === 'favorites' && !user) {
       onShowLoginDialog?.()
       return
     }

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
+import { useAppContext } from '@/components/providers/app-provider'
 import { Map } from '@/components/map/map'
 import { MapMarker } from '@/components/map/map-marker'
 import { MapInfoWindow } from '@/components/map/map-info-window'
@@ -11,7 +11,7 @@ import { PlaceListSidebar } from '@/components/map/place-list-sidebar'
 import { PlaceDetailSidebar } from '@/components/map/place-detail-sidebar'
 import { SearchInput } from '@/components/map/search-input'
 import { useMapFilters } from '@/components/map/use-map-filters'
-import { getPlacesApi } from '@/lib/api/places.api'
+import { getPlacesApi } from '@/lib/api/client-api/map.api'
 // import { getMyFavoritesApi, toggleFavoriteApi } from '@/lib/api/favorites.api' // TODO: Implement by other team member
 import type { PlaceLocation, PlaceCategory, MapViewport } from '@/lib/map/map.types'
 import { isInBounds } from '@/lib/map/map.utils'
@@ -20,7 +20,7 @@ import { MapSidebarNav, type NavTab } from '@/components/map/map-sidebar-nav'
 
 export default function MapPage() {
   const router = useRouter()
-  const { data: session, status } = useSession()
+  const { user } = useAppContext()
 
   // Custom hooks
   const { filters, setCategories, setSearch } = useMapFilters()

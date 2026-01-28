@@ -5,7 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, Share2, Bookmark, Info, Star, ImageIcon, Heart, ExternalLink } from 'lucide-react'
 import type { PlaceLocation, PlaceReview } from '@/lib/map/map.types'
-import { getReviewsApi } from '@/lib/api/places.api'
+import { getReviewsApi } from '@/lib/api/client-api/map.api'
 import { getCategoryLabel, isPlaceOpen } from '@/lib/map/map.utils'
 import { cn } from '@/lib/utils'
 

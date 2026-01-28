@@ -1,4 +1,4 @@
-import apiClient from './client'
+import http from '@/lib/http'
 import type { PlaceAPIResponse, PlaceLocation, PlaceCategory } from '@/lib/map/map.types'
 
 interface GetPlacesParams {
@@ -11,13 +11,13 @@ interface GetPlacesParams {
 }
 
 export const getPlacesApi = async (params: GetPlacesParams) => {
-  const response = await apiClient.get<{ data: PlaceAPIResponse }>('/places', {
-    params,
+  const response = await http.get<PlaceAPIResponse>('/places', {
+    params: params as any,
   })
 
-  // Map backend response to frontend types if needed
   // Backend API returns { data: { places: [], pagination: {} } }
-  const result = response.data.data
+  // http client wraps it in ResponseType, so response.data is the payload
+  const result = response.data
 
   // Transform data to match frontend PlaceLocation interface
   const places = result.places.map(
@@ -49,8 +49,8 @@ export const getPlacesApi = async (params: GetPlacesParams) => {
 }
 
 export const getPlaceByIdApi = async (id: number | string) => {
-  const response = await apiClient.get<{ data: any }>(`/places/${id}`)
-  const place = response.data.data
+  const response = await http.get<any>(`/places/${id}`)
+  const place = response.data
 
   // Transform single place
   return {
@@ -76,9 +76,9 @@ export const getPlaceByIdApi = async (id: number | string) => {
 export const getReviewsApi = async (placeId: number | string) => {
   // Correct endpoint corresponds to src/app.js: app.use('/api/review', ...)
   // and src/routes/review.route.js: router.get('/place/:placeId', ...)
-  const response = await apiClient.get<{ data: any[] }>(`/review/place/${placeId}`)
+  const response = await http.get<any[]>(`/review/place/${placeId}`)
 
-  return response.data.data.map((r: any) => ({
+  return response.data.map((r: any) => ({
     id: r.id,
     userId: r.user_id,
     placeId: r.place_id,

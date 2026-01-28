@@ -77,9 +77,20 @@
 }
 
 @layer components {
-  /* Goong Maps Popup Styles */
+  /* Goong Maps Marker Styles */
+  .goongjs-marker {
+    z-index: 10 !important;
+  }
+
+  /* Highlighted marker should be above normal markers but below popups */
+  .custom-marker-highlighted {
+    position: relative;
+    z-index: 100;
+  }
+
+  /* Goong Maps Popup Styles - must be above all markers */
   .goongjs-popup {
-    z-index: 1000;
+    z-index: 1000 !important;
   }
 
   .goongjs-popup-content {

@@ -102,17 +102,15 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
 
       // Create marker element with inline SVG
       const el = document.createElement('div')
-      el.className = 'custom-marker'
+      el.className = isHighlighted ? 'custom-marker custom-marker-highlighted' : 'custom-marker'
       el.style.cursor = 'pointer'
       el.style.width = `${size}px`
       el.style.height = `${size + 10}px`
 
-      // Ensure highlighted marker is always on top
+      // Set marker content based on highlight state
       if (isHighlighted) {
-        el.style.zIndex = '999'
         el.innerHTML = createHighlightedMarkerSVG()
       } else {
-        el.style.zIndex = '1'
         el.innerHTML = createCategoryMarkerSVG(place.id, color, iconPath, size)
       }
 

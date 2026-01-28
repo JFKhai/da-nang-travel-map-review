@@ -13,7 +13,7 @@ import { PlaceDetailSidebar } from '@/components/map/place-detail-sidebar'
 import { SearchInput } from '@/components/map/search-input'
 import { useMapFilters } from '@/components/map/use-map-filters'
 import { getPlacesApi } from '@/lib/api/client-api/map.api'
-// import { getMyFavoritesApi, toggleFavoriteApi } from '@/lib/api/favorites.api' // TODO: Implement by other team member
+import favoriteApiClientRequest from '@/lib/api/client-api/favorite.api'
 import type { PlaceLocation, PlaceCategory, MapViewport } from '@/lib/map/map.types'
 import { useRecentPlaces } from '@/lib/hooks/useRecentPlaces'
 import { MapSidebarNav, type NavTab } from '@/components/map/map-sidebar-nav'
@@ -22,6 +22,7 @@ export default function MapPage() {
   // Custom hooks
   const { filters, setCategories, setSearch } = useMapFilters()
   const { recentPlaces, addPlace } = useRecentPlaces()
+  const { user } = useAppContext()
 
   // State
   const [places, setPlaces] = useState<PlaceLocation[]>([])
@@ -32,8 +33,8 @@ export default function MapPage() {
   const [activeTab, setActiveTab] = useState<NavTab>('all')
   const [minRating, setMinRating] = useState<number>(0)
   const mapInstanceRef = useRef<any>(null)
-  // const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set()) // TODO: Implement favorites
-  // const [showLoginDialog, setShowLoginDialog] = useState(false) // TODO: Implement favorites
+  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set())
+  const [showLoginDialog, setShowLoginDialog] = useState(false)
 
   // Fetch places
   useEffect(() => {
@@ -52,56 +53,55 @@ export default function MapPage() {
     fetchPlaces()
   }, [])
 
-  // TODO: Implement favorites feature
-  // useEffect(() => {
-  //   if (status === 'authenticated') {
-  //     const fetchFavorites = async () => {
-  //       try {
-  //         const favorites = await getMyFavoritesApi()
-  //         setFavoriteIds(new Set(favorites.map((f) => f.id)))
-  //       } catch (error) {
-  //         console.error('Failed to fetch favorites:', error)
-  //       }
-  //     }
-  //     fetchFavorites()
-  //   }
-  // }, [status])
+  // Fetch favorites
+  useEffect(() => {
+    if (user) {
+      const fetchFavorites = async () => {
+        try {
+          const response = await favoriteApiClientRequest.getMyFavorites()
+          setFavoriteIds(new Set(response.data.map((f) => f.id)))
+        } catch (error) {
+          console.error('Failed to fetch favorites:', error)
+        }
+      }
+      fetchFavorites()
+    }
+  }, [user])
 
-  // TODO: Implement toggle favorite
-  // const handleToggleFavorite = async (placeId: number) => {
-  //   if (status !== 'authenticated') {
-  //     setShowLoginDialog(true)
-  //     return
-  //   }
-  //   try {
-  //     await toggleFavoriteApi(placeId)
-  //     setFavoriteIds((prev) => {
-  //       const newSet = new Set(prev)
-  //       if (newSet.has(placeId)) {
-  //         newSet.delete(placeId)
-  //       } else {
-  //         newSet.add(placeId)
-  //       }
-  //       return newSet
-  //     })
-  //   } catch (error) {
-  //     console.error('Failed to toggle favorite:', error)
-  //   }
-  // }
+  // Toggle favorite handler
+  const handleToggleFavorite = async (placeId: number) => {
+    if (!user) {
+      setShowLoginDialog(true)
+      return
+    }
+    try {
+      const response = await favoriteApiClientRequest.toggleFavorite(placeId)
+      setFavoriteIds((prev) => {
+        const newSet = new Set(prev)
+        if (response.data.is_favorited) {
+          newSet.add(placeId)
+        } else {
+          newSet.delete(placeId)
+        }
+        return newSet
+      })
+    } catch (error) {
+      console.error('Failed to toggle favorite:', error)
+    }
+  }
 
   // Filter places based on active tab
   const filteredByTab = useMemo(() => {
     if (activeTab === 'all') return places
-    // TODO: Implement favorites tab
-    // if (activeTab === 'favorites') {
-    //   return places.filter((p) => favoriteIds.has(p.id))
-    // }
+    if (activeTab === 'favorites') {
+      return places.filter((p) => favoriteIds.has(p.id))
+    }
     if (activeTab === 'recent') {
       const recentIds = new Set(recentPlaces.map((p) => p.id))
       return places.filter((p) => recentIds.has(p.id))
     }
     return places
-  }, [activeTab, places, recentPlaces])
+  }, [activeTab, places, recentPlaces, favoriteIds])
 
   // Apply filters
   const displayedPlaces = useMemo(() => {
@@ -194,6 +194,18 @@ export default function MapPage() {
     setHoveredFromMarker(false)
   }, [])
 
+  // Handle search change - close detail sidebar when user starts searching
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setSearch(value)
+      // If user is searching and detail sidebar is open, close it to show list
+      if (value && selectedPlace) {
+        setSelectedPlace(null)
+      }
+    },
+    [setSearch, selectedPlace],
+  )
+
   return (
     <div className="flex flex-1 h-full w-full overflow-hidden bg-gray-100">
       {/* 1. Left Navigation Rail */}
@@ -205,9 +217,9 @@ export default function MapPage() {
         }}
         minRating={minRating}
         onMinRatingChange={(rating) => setMinRating(rating ?? 0)}
-        showLoginDialog={false}
-        onCloseLoginDialog={() => {}}
-        onShowLoginDialog={() => {}}
+        showLoginDialog={showLoginDialog}
+        onCloseLoginDialog={() => setShowLoginDialog(false)}
+        onShowLoginDialog={() => setShowLoginDialog(true)}
       />
 
       {/* Main Content Area */}
@@ -215,7 +227,11 @@ export default function MapPage() {
         {/* Floating Header */}
         <div className="absolute left-4 right-4 top-4 z-30 flex items-start gap-3 pointer-events-none">
           <div className="pointer-events-auto w-[400px]">
-            <SearchInput value={filters.search} onChange={setSearch} placeholder="Tìm kiếm danh mục, địa điểm..." />
+            <SearchInput
+              value={filters.search}
+              onChange={handleSearchChange}
+              placeholder="Tìm kiếm danh mục, địa điểm..."
+            />
           </div>
           <div className="pointer-events-auto min-w-0 flex-1 pt-1">
             <CategoryFilter
@@ -233,8 +249,8 @@ export default function MapPage() {
               <PlaceDetailSidebar
                 place={selectedPlace}
                 onClose={() => setSelectedPlace(null)}
-                isFavorite={false}
-                onToggleFavorite={() => {}}
+                isFavorite={favoriteIds.has(selectedPlace.id)}
+                onToggleFavorite={() => handleToggleFavorite(selectedPlace.id)}
               />
             ) : (
               <PlaceListSidebar

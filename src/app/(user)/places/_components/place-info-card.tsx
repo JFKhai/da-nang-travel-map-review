@@ -1,13 +1,51 @@
 'use client'
 
 import { PlaceWithRelations } from '@/lib/schemas/place.schema'
-import { MapPin, Phone, Globe, Clock, Star } from 'lucide-react'
+import { MapPin, Phone, Globe, Clock, Star, Heart } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { clientAccessToken } from '@/lib/http'
+import favoriteApiClientRequest from '@/lib/api/client-api/favorite.api'
 
 interface PlaceInfoCardProps {
   place: PlaceWithRelations
 }
 
 export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
+  const [isFavorited, setIsFavorited] = useState(false)
+
+  useEffect(() => {
+    const fetchFavoriteStatus = async () => {
+      try {
+        if (!clientAccessToken.value) return
+        const res = await favoriteApiClientRequest.getMyFavorites()
+        if (res.data) {
+          const isFav = res.data.some((p: any) => p.id === place.id)
+          setIsFavorited(isFav)
+        }
+      } catch (error) {
+        console.error('Error fetching favorites:', error)
+      }
+    }
+    fetchFavoriteStatus()
+  }, [place.id])
+
+  const handleToggleFavorite = async () => {
+    if (!clientAccessToken.value) {
+      alert('Vui lòng đăng nhập để thêm vào yêu thích!')
+      return
+    }
+
+    try {
+      const res = await favoriteApiClientRequest.toggleFavorite(place.id)
+      if (res.data) {
+        setIsFavorited(res.data.is_favorited)
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error)
+      alert('Có lỗi xảy ra, vui lòng thử lại sau.')
+    }
+  }
+
   // console.log(place)
   return (
     <div className="lg:col-span-1">
@@ -15,7 +53,12 @@ export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
         {/* Rating Card */}
         <div className="bg-brand-bg rounded-2xl p-6 border border-brand-teal/20">
           <div className=" mb-4">
-            <div className=" mb-3 font-bold text-3xl">{place.name}</div>
+            <div className="flex justify-between items-start gap-4">
+              <div className=" mb-3 font-bold text-3xl">{place.name}</div>
+              <button onClick={handleToggleFavorite} className="p-2 rounded-full hover:bg-black/5 transition-colors">
+                <Heart className={`w-7 h-7 ${isFavorited ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+              </button>
+            </div>
             <div className="text-5xl flex gap-3 font-bold text-gray-800 mb-1">
               <span> {place.averageRating ? parseFloat(place.averageRating.toFixed(2)) : 0}</span>{' '}
               <div className="flex items-center justify-center gap-1 mb-4">

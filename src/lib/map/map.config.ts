@@ -11,6 +11,9 @@ export const BRAND_COLORS = {
   bg: '#eef4f7',
 } as const
 
+// Goong Maps configuration
+export const GOONG_MAP_STYLE = 'https://tiles.goong.io/assets/goong_map_web.json' as const
+
 // Default map configuration
 export const DEFAULT_MAP_CONFIG = {
   center: {
@@ -20,6 +23,27 @@ export const DEFAULT_MAP_CONFIG = {
   zoom: 13,
   minZoom: 10,
   maxZoom: 18,
+} as const
+
+// Marker size configuration
+export const MARKER_CONFIG = {
+  size: 40,
+  highlightedColor: '#EA4335',
+  highlightedInnerColor: '#B31412',
+} as const
+
+// Popup configuration
+export const POPUP_CONFIG = {
+  offset: [0, -55] as [number, number],
+  maxWidth: '300px',
+  className: 'map-popup',
+  anchor: 'bottom' as const,
+} as const
+
+// Hover delay configuration (ms)
+export const HOVER_DELAY = {
+  marker: 50,
+  popup: 100,
 } as const
 
 // Category marker configurations with Font Awesome icons

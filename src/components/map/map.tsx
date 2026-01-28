@@ -1,18 +1,15 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import goongjs, { type Map as GoongMapType } from '@goongmaps/goong-js'
 import '@goongmaps/goong-js/dist/goong-js.css'
-import { DEFAULT_MAP_CONFIG } from '@/lib/map/map.config'
+import { DEFAULT_MAP_CONFIG, GOONG_MAP_STYLE } from '@/lib/map/map.config'
 import envConfig from '@/lib/config/env.config'
 import type { MapViewport } from '@/lib/map/map.types'
-import { MapProvider } from './map-context'
+import { MapProvider, type GoongMap } from './map-context'
 
-// Import Goong JS types
-declare global {
-  interface Window {
-    goongjs: any
-  }
-}
+// Export goongjs for use in other components
+export { goongjs }
 
 /**
  * Props for the Map component
@@ -23,7 +20,7 @@ interface MapProps {
   /** Callback fired when the map camera (center/zoom) changes */
   onCameraChanged?: (viewport: MapViewport) => void
   /** Callback fired when map is ready */
-  onMapReady?: (map: any) => void
+  onMapReady?: (map: GoongMap) => void
   /** Optional CSS class name for the map container */
   className?: string
   /** Default center position for the map */
@@ -41,7 +38,7 @@ export function Map({
   defaultZoom = DEFAULT_MAP_CONFIG.zoom,
 }: MapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null)
-  const mapInstanceRef = useRef<any>(null)
+  const mapInstanceRef = useRef<GoongMap | null>(null)
   const [mapLoaded, setMapLoaded] = useState(false)
 
   // Use refs for callbacks to avoid re-initializing map when they change
@@ -58,73 +55,49 @@ export function Map({
   useEffect(() => {
     if (!mapContainerRef.current || !goongKey) return
 
-    // Check if script already exists
-    const existingScript = document.querySelector('script[src*="goong-js.js"]')
+    // Prevent multiple initializations
+    if (mapInstanceRef.current) return
 
-    const initializeMap = () => {
-      // Prevent multiple initializations
-      if (!window.goongjs || !mapContainerRef.current || mapInstanceRef.current) return
+    // Initialize map using imported goongjs
+    goongjs.accessToken = goongKey
+    const map = new goongjs.Map({
+      container: mapContainerRef.current,
+      style: GOONG_MAP_STYLE,
+      center: [defaultCenter.lng, defaultCenter.lat],
+      zoom: defaultZoom,
+    })
 
-      // Initialize map
-      window.goongjs.accessToken = goongKey
-      const map = new window.goongjs.Map({
-        container: mapContainerRef.current,
-        style: 'https://tiles.goong.io/assets/goong_map_web.json',
-        center: [defaultCenter.lng, defaultCenter.lat],
-        zoom: defaultZoom,
-      })
+    mapInstanceRef.current = map
 
-      mapInstanceRef.current = map
-
-      map.on('load', () => {
-        // Hide all POI labels and icons
-        const layers = map.getStyle().layers
-        layers.forEach((layer: any) => {
-          if (layer.id.includes('poi') || layer.id.includes('label')) {
-            // Wrap in try-catch in case layout property doesn't exist or is invalid
-            try {
-              map.setLayoutProperty(layer.id, 'visibility', 'none')
-            } catch (e) {
-              console.warn('Failed to hide layer:', layer.id)
-            }
+    map.on('load', () => {
+      // Hide all POI labels and icons
+      const layers = map.getStyle().layers
+      layers.forEach((layer) => {
+        if (layer.id.includes('poi') || layer.id.includes('label')) {
+          // Wrap in try-catch in case layout property doesn't exist or is invalid
+          try {
+            map.setLayoutProperty(layer.id, 'visibility', 'none')
+          } catch (e) {
+            console.warn('Failed to hide layer:', layer.id)
           }
-        })
-
-        setMapLoaded(true)
-        onMapReadyRef.current?.(map)
+        }
       })
 
-      // Add event listeners
-      map.on('move', () => {
-        const center = map.getCenter()
-        const zoom = map.getZoom()
-        onCameraChangedRef.current?.({
-          center: { lat: center.lat, lng: center.lng },
-          zoom,
-        })
-      })
-    }
+      setMapLoaded(true)
+      onMapReadyRef.current?.(map)
+    })
 
-    if (existingScript) {
-      // Script already loaded
-      if (window.goongjs) {
-        initializeMap()
-      } else {
-        existingScript.addEventListener('load', initializeMap)
-      }
-    } else {
-      // Dynamically load Goong JS SDK
-      const script = document.createElement('script')
-      script.src = 'https://cdn.jsdelivr.net/npm/@goongmaps/goong-js/dist/goong-js.js'
-      script.async = true
-      script.onload = initializeMap
-      document.head.appendChild(script)
-    }
+    // Add event listeners
+    map.on('move', () => {
+      const center = map.getCenter()
+      const zoom = map.getZoom()
+      onCameraChangedRef.current?.({
+        center: { lat: center.lat, lng: center.lng },
+        zoom,
+      })
+    })
 
     return () => {
-      if (existingScript) {
-        existingScript.removeEventListener('load', initializeMap)
-      }
       if (mapInstanceRef.current) {
         mapInstanceRef.current.remove()
         mapInstanceRef.current = null

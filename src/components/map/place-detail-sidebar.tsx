@@ -111,7 +111,7 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
               {review.images && review.images.length > 0 && (
                 <div className="flex gap-2 mt-1 overflow-x-auto pb-1 no-scrollbar">
                   {review.images.map((img, idx) => (
-                    <div key={idx} className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
+                    <div key={idx} className="relative w-16 h-16 shrink-0 rounded-lg overflow-hidden">
                       <Image src={img} alt="Review" fill className="object-cover" sizes="64px" />
                     </div>
                   ))}
@@ -162,7 +162,7 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
   return (
     <div className="flex flex-col h-full bg-white animate-in slide-in-from-left-5 duration-300">
       {/* 1. Header with Cover Image */}
-      <div className="relative h-48 w-full flex-shrink-0">
+      <div className="relative h-48 w-full shrink-0">
         <Image
           src={place.image}
           alt={place.name}
@@ -172,7 +172,7 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
           loading="eager"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
 
         {/* Top Actions */}
         <div className="absolute left-0 top-0 flex w-full justify-between p-4">
@@ -234,7 +234,7 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
 
       {/* Content Container */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="p-5 pb-0 flex-shrink-0">
+        <div className="p-5 pb-0 shrink-0">
           {/* Rating & Review Count */}
           <div className="mb-4 flex items-center gap-2 text-sm">
             <span className="font-medium text-orange-500">{place.rating}</span>

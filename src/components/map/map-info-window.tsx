@@ -3,7 +3,10 @@
 import { useEffect, useRef } from 'react'
 import type { PlaceLocation } from '@/lib/map/map.types'
 import { getCategoryLabel, isPlaceOpen } from '@/lib/map/map.utils'
+import { POPUP_CONFIG, HOVER_DELAY } from '@/lib/map/map.config'
+import { escapeHtml } from '@/lib/utils'
 import { useMap } from './map-context'
+import { goongjs } from './map'
 
 /**
  * Props for the MapInfoWindow component
@@ -17,6 +20,48 @@ interface MapInfoWindowProps {
   immediate?: boolean
 }
 
+/**
+ * Builds HTML content for the popup with XSS prevention
+ */
+function buildPopupHTML(place: PlaceLocation): string {
+  // Determine if place is open
+  let openStatusHTML = ''
+  if (place.opening_hours) {
+    const isOpen = isPlaceOpen(place.opening_hours)
+    if (isOpen === null) {
+      openStatusHTML = `<span class="text-xs text-gray-500">Giờ mở cửa: ${escapeHtml(place.opening_hours)}</span>`
+    } else if (isOpen) {
+      openStatusHTML = `<span class="text-xs font-medium text-green-600">Đang mở cửa</span>`
+    } else {
+      openStatusHTML = `<span class="text-xs font-medium text-red-600">Đã đóng cửa</span>`
+    }
+  }
+
+  return `
+    <div class="w-64 overflow-hidden rounded-lg">
+      <div class="relative h-32 w-full overflow-hidden bg-gray-200">
+        <img src="${escapeHtml(place.image)}" alt="${escapeHtml(place.name)}" class="h-full w-full object-cover" onerror="this.style.display='none'" />
+      </div>
+      <div class="p-3">
+        <div class="mb-1 flex items-start justify-between gap-2">
+          <h3 class="font-cabinet-grotesk text-sm font-semibold text-brand-dark">${escapeHtml(place.name)}</h3>
+          ${place.priceRange ? `<span class="text-xs text-gray-500">${escapeHtml(place.priceRange)}</span>` : ''}
+        </div>
+        <p class="mb-2 text-xs text-gray-600">${escapeHtml(getCategoryLabel(place.category))}</p>
+        <div class="mb-2 flex items-center gap-2">
+          <div class="flex items-center">
+            <span class="text-xs text-yellow-500">★</span>
+            <span class="ml-1 text-xs font-medium">${escapeHtml(place.rating)}</span>
+          </div>
+          <span class="text-xs text-gray-400">(${escapeHtml(place.reviewCount)} reviews)</span>
+          ${openStatusHTML ? `<span class="text-xs text-gray-300">•</span>${openStatusHTML}` : ''}
+        </div>
+        <p class="line-clamp-2 text-xs text-gray-600">${escapeHtml(place.description)}</p>
+      </div>
+    </div>
+  `
+}
+
 export function MapInfoWindow({ place, onClose, immediate = false }: MapInfoWindowProps) {
   const map = useMap()
   const popupRef = useRef<any>(null)
@@ -25,7 +70,7 @@ export function MapInfoWindow({ place, onClose, immediate = false }: MapInfoWind
   const isProgrammaticCloseRef = useRef(false)
 
   useEffect(() => {
-    if (!map || !window.goongjs) return
+    if (!map || !goongjs) return
 
     // Reset flags
     isCancelledRef.current = false
@@ -57,55 +102,17 @@ export function MapInfoWindow({ place, onClose, immediate = false }: MapInfoWind
         isProgrammaticCloseRef.current = false
       }
 
-      // Determine if place is open
-      let openStatusHTML = ''
-      if (place.opening_hours) {
-        const isOpen = isPlaceOpen(place.opening_hours)
-        if (isOpen === null) {
-          openStatusHTML = `<span class="text-xs text-gray-500">Giờ mở cửa: ${place.opening_hours}</span>`
-        } else if (isOpen) {
-          openStatusHTML = `<span class="text-xs font-medium text-green-600">Đang mở cửa</span>`
-        } else {
-          openStatusHTML = `<span class="text-xs font-medium text-red-600">Đã đóng cửa</span>`
-        }
-      }
-
-      // Create popup HTML content
-      const htmlContent = `
-        <div class="w-64 overflow-hidden rounded-lg">
-          <div class="relative h-32 w-full overflow-hidden bg-gray-200">
-            <img src="${place.image}" alt="${place.name}" class="h-full w-full object-cover" />
-          </div>
-          <div class="p-3">
-            <div class="mb-1 flex items-start justify-between gap-2">
-              <h3 class="font-cabinet-grotesk text-sm font-semibold text-brand-dark">${place.name}</h3>
-              ${place.priceRange ? `<span class="text-xs text-gray-500">${place.priceRange}</span>` : ''}
-            </div>
-            <p class="mb-2 text-xs text-gray-600">${getCategoryLabel(place.category)}</p>
-            <div class="mb-2 flex items-center gap-2">
-              <div class="flex items-center">
-                <span class="text-xs text-yellow-500">★</span>
-                <span class="ml-1 text-xs font-medium">${place.rating}</span>
-              </div>
-              <span class="text-xs text-gray-400">(${place.reviewCount} reviews)</span>
-              ${openStatusHTML ? `<span class="text-xs text-gray-300">•</span>${openStatusHTML}` : ''}
-            </div>
-            <p class="line-clamp-2 text-xs text-gray-600">${place.description}</p>
-          </div>
-        </div>
-      `
-
-      // Create popup - positioned above marker with marker at center bottom
-      const popup = new window.goongjs.Popup({
+      // Create popup with configuration from config
+      const popup = new goongjs.Popup({
         closeButton: true,
         closeOnClick: false,
-        offset: [0, -55], // Position above marker
-        maxWidth: '300px',
-        className: 'map-popup',
-        anchor: 'bottom', // Anchor at bottom so marker is at center of bottom edge
+        offset: POPUP_CONFIG.offset,
+        maxWidth: POPUP_CONFIG.maxWidth,
+        className: POPUP_CONFIG.className,
+        anchor: POPUP_CONFIG.anchor,
       })
         .setLngLat([place.longitude, place.latitude])
-        .setHTML(htmlContent)
+        .setHTML(buildPopupHTML(place))
         .addTo(map)
 
       popup.on('close', () => {
@@ -144,8 +151,8 @@ export function MapInfoWindow({ place, onClose, immediate = false }: MapInfoWind
       // Show immediately for sidebar hover
       showPopup()
     } else {
-      // Delay for marker hover
-      timerRef.current = setTimeout(showPopup, 100)
+      // Delay for marker hover using configured delay
+      timerRef.current = setTimeout(showPopup, HOVER_DELAY.popup)
     }
 
     return () => {

@@ -29,7 +29,7 @@ export function Map({
   defaultCenter = DEFAULT_MAP_CONFIG.center,
   defaultZoom = DEFAULT_MAP_CONFIG.zoom,
 }: MapProps) {
-  const [viewport, setViewport] = useState<MapViewport>({
+  const [, setViewport] = useState<MapViewport>({
     center: defaultCenter,
     zoom: defaultZoom,
   })

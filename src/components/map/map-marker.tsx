@@ -59,8 +59,6 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
     // Convert Font Awesome icon to SVG path
     const faIconObj = faIcon(iconDefinition)
     const iconPath = faIconObj.icon[4] as string // SVG path data
-    const iconWidth = faIconObj.icon[0]
-    const iconHeight = faIconObj.icon[1]
 
     const svg = `
       <svg width="${size}" height="${size + 10}" viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg">
@@ -89,8 +87,8 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
 
     return {
       url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
-      scaledSize: new google.maps.Size(40, 50),
-      anchor: new google.maps.Point(20, 50),
+      scaledSize: typeof google !== 'undefined' ? new google.maps.Size(40, 50) : undefined,
+      anchor: typeof google !== 'undefined' ? new google.maps.Point(20, 50) : undefined,
     }
   }, [place.category, place.id])
 

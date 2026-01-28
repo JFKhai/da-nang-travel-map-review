@@ -1,6 +1,8 @@
 import type { PlaceCategory, MapBounds } from './map.types'
 import { CATEGORY_MARKERS } from './map.config'
 
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+
 /**
  * Get marker configuration for a category
  */
@@ -18,7 +20,7 @@ export function getCategoryColor(category: PlaceCategory): string {
 /**
  * Get marker icon for a category
  */
-export function getCategoryIcon(category: PlaceCategory): string {
+export function getCategoryIcon(category: PlaceCategory): IconDefinition {
   return CATEGORY_MARKERS[category].icon
 }
 
@@ -70,8 +72,8 @@ export function formatDistance(km: number): string {
  * @param opening_hours - Format: "HH:MM - HH:MM" (e.g., "08:00 - 22:00")
  * @returns true if currently open, false if closed or invalid format
  */
-export function isPlaceOpen(opening_hours: string | undefined): boolean {
-  if (!opening_hours) return false
+export function isPlaceOpen(opening_hours: string | undefined): boolean | null {
+  if (!opening_hours) return null
 
   try {
     // Format: "08:00 - 22:00"

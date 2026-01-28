@@ -26,10 +26,15 @@ export const getPlacesApi = async (params: GetPlacesParams) => {
       name: place.name,
       slug: place.slug,
       // Map the first category slug to the frontend PlaceCategory type
-      category: (place.categories?.[0]?.slug as PlaceCategory) || 'landmark',
+      // Map categories safely
+      category:
+        place.categories?.[0]?.slug &&
+        ['coffee-tea', 'food', 'hotel', 'check-in', 'history', 'entertainment'].includes(place.categories[0].slug)
+          ? (place.categories[0].slug as PlaceCategory)
+          : 'check-in',
       categories: place.categories,
-      latitude: parseFloat(place.lat),
-      longitude: parseFloat(place.lng),
+      latitude: Number(place.lat) || 0,
+      longitude: Number(place.lng) || 0,
       address: place.address || '',
       rating: parseFloat(place.averageRating) || 0,
       reviewCount: place.reviewCount || 0,

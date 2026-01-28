@@ -136,14 +136,12 @@ export default function MapPage() {
   // Count places per category
   const placeCounts = useMemo(() => {
     const counts: Record<PlaceCategory, number> = {
-      beach: 0,
-      restaurant: 0,
+      'coffee-tea': 0,
+      food: 0,
       hotel: 0,
-      attraction: 0,
-      cafe: 0,
-      shopping: 0,
-      nightlife: 0,
-      landmark: 0,
+      'check-in': 0,
+      history: 0,
+      entertainment: 0,
     }
 
     displayedPlaces.forEach((place) => {

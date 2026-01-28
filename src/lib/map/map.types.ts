@@ -41,8 +41,10 @@ export interface PlaceAPIResponse {
   }
 }
 
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
+
 export interface MarkerConfig {
-  icon: string
+  icon: IconDefinition
   color: string
   label: string
 }

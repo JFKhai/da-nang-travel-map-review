@@ -1,4 +1,6 @@
 import type { PlaceCategory, MarkerConfig } from './map.types'
+import { faMugHot, faUtensils, faHotel, faCamera, faLandmark, faMusic } from '@fortawesome/free-solid-svg-icons'
+import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 
 // Brand colors from globals.css
 export const BRAND_COLORS = {
@@ -20,36 +22,37 @@ export const DEFAULT_MAP_CONFIG = {
   maxZoom: 18,
 } as const
 
-// Category marker configurations
+// Category marker configurations with Font Awesome icons
+// Using distinct colors like Google Maps for easy visual differentiation
 export const CATEGORY_MARKERS: Record<PlaceCategory, MarkerConfig> = {
   'coffee-tea': {
-    icon: '☕',
-    color: '#F59E0B',
+    icon: faMugHot,
+    color: '#D4A574', // Brown/tan for coffee
     label: 'Cà phê & Trà',
   },
   food: {
-    icon: '🍜',
-    color: '#EF4444',
+    icon: faUtensils,
+    color: '#FF6B35', // Orange for restaurants
     label: 'Ẩm thực',
   },
   hotel: {
-    icon: '🏨',
-    color: '#3B82F6',
+    icon: faHotel,
+    color: '#4A90E2', // Blue for hotels
     label: 'Khách sạn',
   },
   'check-in': {
-    icon: '📸',
-    color: '#10B981',
+    icon: faCamera,
+    color: '#9B59B6', // Purple for photo spots
     label: 'Check-in',
   },
   history: {
-    icon: '🏛️',
-    color: '#8B5CF6',
+    icon: faLandmark,
+    color: '#E74C3C', // Red for historical sites
     label: 'Lịch sử',
   },
   entertainment: {
-    icon: '🎢',
-    color: '#EC4899',
+    icon: faMusic,
+    color: '#F39C12', // Yellow/gold for entertainment
     label: 'Vui chơi',
   },
 }

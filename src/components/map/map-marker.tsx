@@ -4,6 +4,7 @@ import { useState, useMemo, useRef, useEffect } from 'react'
 import { Marker } from '@vis.gl/react-google-maps'
 import type { PlaceLocation } from '@/lib/map/map.types'
 import { getCategoryColor, getCategoryIcon } from '@/lib/map/map.utils'
+import { icon as faIcon } from '@fortawesome/fontawesome-svg-core'
 
 /**
  * Props for the MapMarker component
@@ -50,37 +51,48 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
     }
   }, [])
 
-  // Calculate scale based on state - fixed at 1.0 as requested
-  const scale = 1.0
-
   const svgIcon = useMemo(() => {
     const size = 40
+    const iconDefinition = getCategoryIcon(place.category)
+    const color = getCategoryColor(place.category)
+
+    // Convert Font Awesome icon to SVG path
+    const faIconObj = faIcon(iconDefinition)
+    const iconPath = faIconObj.icon[4] as string // SVG path data
+    const iconWidth = faIconObj.icon[0]
+    const iconHeight = faIconObj.icon[1]
+
     const svg = `
-        <svg width="${size}" height="${size + 10}" viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
-              <feOffset dx="0" dy="2" result="offsetblur"/>
-              <feComponentTransfer>
-                <feFuncA type="linear" slope="0.3"/>
-              </feComponentTransfer>
-              <feMerge>
-                <feMergeNode/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-          <circle cx="20" cy="20" r="18" fill="${getCategoryColor(place.category)}" stroke="white" stroke-width="2" filter="url(#shadow)"/>
-          <text x="20" y="26" text-anchor="middle" font-size="16">${getCategoryIcon(place.category)}</text>
-          <path d="M 20 38 L 16 46 L 20 42 L 24 46 Z" fill="${getCategoryColor(place.category)}"/>
-        </svg>
-      `
+      <svg width="${size}" height="${size + 10}" viewBox="0 0 40 50" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="shadow-${place.id}" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+            <feOffset dx="0" dy="2" result="offsetblur"/>
+            <feComponentTransfer>
+              <feFuncA type="linear" slope="0.3"/>
+            </feComponentTransfer>
+            <feMerge>
+              <feMergeNode/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+        <circle cx="20" cy="20" r="18" fill="${color}" stroke="white" stroke-width="2.5" filter="url(#shadow-${place.id})"/>
+        <g transform="translate(20, 20)">
+          <g transform="translate(-8, -8) scale(0.03125)">
+            <path d="${iconPath}" fill="white"/>
+          </g>
+        </g>
+        <path d="M 20 38 L 16 46 L 20 42 L 24 46 Z" fill="${color}"/>
+      </svg>
+    `
+
     return {
       url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
-      scaledSize: new google.maps.Size(40 * scale, 50 * scale),
-      anchor: new google.maps.Point(20 * scale, 50 * scale),
+      scaledSize: new google.maps.Size(40, 50),
+      anchor: new google.maps.Point(20, 50),
     }
-  }, [place.category, scale])
+  }, [place.category, place.id])
 
   return (
     <Marker

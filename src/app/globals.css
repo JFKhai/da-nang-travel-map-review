@@ -75,3 +75,34 @@
     transform: translate(10px, -10px) scale(1.05);
   }
 }
+
+@layer components {
+  /* Goong Maps Popup Styles */
+  .goongjs-popup {
+    z-index: 1000;
+  }
+
+  .goongjs-popup-content {
+    padding: 0 !important;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .goongjs-popup-close-button {
+    font-size: 20px;
+    padding: 4px 8px;
+    color: #666;
+    right: 4px;
+    top: 4px;
+    transition: all 0.2s;
+  }
+
+  .goongjs-popup-close-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+  }
+
+  .goongjs-popup-tip {
+    border-top-color: white !important;
+  }
+}

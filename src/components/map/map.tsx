@@ -1,15 +1,24 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import goongjs, { type Map as GoongMapType } from '@goongmaps/goong-js'
 import '@goongmaps/goong-js/dist/goong-js.css'
 import { DEFAULT_MAP_CONFIG, GOONG_MAP_STYLE } from '@/lib/map/map.config'
 import envConfig from '@/lib/config/env.config'
 import type { MapViewport } from '@/lib/map/map.types'
 import { MapProvider, type GoongMap } from './map-context'
 
-// Export goongjs for use in other components
-export { goongjs }
+// Import goongjs dynamically to avoid SSR issues
+let goongjs: any = null
+const getGoongjs = async () => {
+  if (!goongjs) {
+    const module = await import('@goongmaps/goong-js')
+    goongjs = module.default
+  }
+  return goongjs
+}
+
+// Export goongjs getter for use in other components
+export { getGoongjs }
 
 /**
  * Props for the Map component
@@ -58,44 +67,54 @@ export function Map({
     // Prevent multiple initializations
     if (mapInstanceRef.current) return
 
-    // Initialize map using imported goongjs
-    goongjs.accessToken = goongKey
-    const map = new goongjs.Map({
-      container: mapContainerRef.current,
-      style: GOONG_MAP_STYLE,
-      center: [defaultCenter.lng, defaultCenter.lat],
-      zoom: defaultZoom,
-    })
+    const initializeMap = async () => {
+      try {
+        const goong = await getGoongjs()
 
-    mapInstanceRef.current = map
+        // Initialize map using imported goongjs
+        goong.accessToken = goongKey
+        const map = new goong.Map({
+          container: mapContainerRef.current,
+          style: GOONG_MAP_STYLE,
+          center: [defaultCenter.lng, defaultCenter.lat],
+          zoom: defaultZoom,
+        }) as GoongMap
 
-    map.on('load', () => {
-      // Hide all POI labels and icons
-      const layers = map.getStyle().layers
-      layers.forEach((layer) => {
-        if (layer.id.includes('poi') || layer.id.includes('label')) {
-          // Wrap in try-catch in case layout property doesn't exist or is invalid
-          try {
-            map.setLayoutProperty(layer.id, 'visibility', 'none')
-          } catch (e) {
-            console.warn('Failed to hide layer:', layer.id)
-          }
-        }
-      })
+        mapInstanceRef.current = map
 
-      setMapLoaded(true)
-      onMapReadyRef.current?.(map)
-    })
+        map.on('load', () => {
+          // Hide all POI labels and icons
+          const layers = (map.getStyle() as any).layers
+          layers.forEach((layer: any) => {
+            if (layer.id.includes('poi') || layer.id.includes('label')) {
+              // Wrap in try-catch in case layout property doesn't exist or is invalid
+              try {
+                map.setLayoutProperty(layer.id, 'visibility', 'none')
+              } catch (e) {
+                console.warn('Failed to hide layer:', layer.id)
+              }
+            }
+          })
 
-    // Add event listeners
-    map.on('move', () => {
-      const center = map.getCenter()
-      const zoom = map.getZoom()
-      onCameraChangedRef.current?.({
-        center: { lat: center.lat, lng: center.lng },
-        zoom,
-      })
-    })
+          setMapLoaded(true)
+          onMapReadyRef.current?.(map)
+        })
+
+        // Add event listeners
+        map.on('move', () => {
+          const center = map.getCenter()
+          const zoom = map.getZoom()
+          onCameraChangedRef.current?.({
+            center: { lat: center.lat, lng: center.lng },
+            zoom,
+          })
+        })
+      } catch (error) {
+        console.error('Failed to initialize map:', error)
+      }
+    }
+
+    initializeMap()
 
     return () => {
       if (mapInstanceRef.current) {

@@ -6,7 +6,7 @@ import { getCategoryLabel, isPlaceOpen } from '@/lib/map/map.utils'
 import { POPUP_CONFIG, HOVER_DELAY } from '@/lib/map/map.config'
 import { escapeHtml } from '@/lib/utils'
 import { useMap } from './map-context'
-import { goongjs } from './map'
+import { getGoongjs } from './map'
 
 /**
  * Props for the MapInfoWindow component
@@ -70,31 +70,17 @@ export function MapInfoWindow({ place, onClose, immediate = false }: MapInfoWind
   const isProgrammaticCloseRef = useRef(false)
 
   useEffect(() => {
-    if (!map || !goongjs) return
+    if (!map) return
 
-    // Reset flags
-    isCancelledRef.current = false
-    isProgrammaticCloseRef.current = false
+    const setupPopup = async () => {
+      const goongjs = await getGoongjs()
+      if (!goongjs) return
 
-    // CRITICAL: Clean up any existing popup first to prevent multiple popups
-    if (popupRef.current) {
-      isProgrammaticCloseRef.current = true // Prevent triggering onClose
-      popupRef.current.remove()
-      popupRef.current = null
+      // Reset flags
+      isCancelledRef.current = false
       isProgrammaticCloseRef.current = false
-    }
 
-    // Clear any pending timers
-    if (timerRef.current) {
-      clearTimeout(timerRef.current)
-      timerRef.current = null
-    }
-
-    const createPopup = () => {
-      // CRITICAL: Don't create popup if effect was cancelled
-      if (isCancelledRef.current) return
-
-      // Double-check: remove old popup before creating new one
+      // CRITICAL: Clean up any existing popup first to prevent multiple popups
       if (popupRef.current) {
         isProgrammaticCloseRef.current = true // Prevent triggering onClose
         popupRef.current.remove()
@@ -102,58 +88,79 @@ export function MapInfoWindow({ place, onClose, immediate = false }: MapInfoWind
         isProgrammaticCloseRef.current = false
       }
 
-      // Create popup with configuration from config
-      const popup = new goongjs.Popup({
-        closeButton: true,
-        closeOnClick: false,
-        offset: POPUP_CONFIG.offset,
-        maxWidth: POPUP_CONFIG.maxWidth,
-        className: POPUP_CONFIG.className,
-        anchor: POPUP_CONFIG.anchor,
-      })
-        .setLngLat([place.longitude, place.latitude])
-        .setHTML(buildPopupHTML(place))
-        .addTo(map)
+      // Clear any pending timers
+      if (timerRef.current) {
+        clearTimeout(timerRef.current)
+        timerRef.current = null
+      }
 
-      popup.on('close', () => {
-        // Only trigger onClose if it's NOT a programmatic close (e.g. user clicked X, or cleanup)
-        if (!isProgrammaticCloseRef.current) {
-          onClose()
+      const createPopup = () => {
+        // CRITICAL: Don't create popup if effect was cancelled
+        if (isCancelledRef.current) return
+
+        // Double-check: remove old popup before creating new one
+        if (popupRef.current) {
+          isProgrammaticCloseRef.current = true // Prevent triggering onClose
+          popupRef.current.remove()
+          popupRef.current = null
+          isProgrammaticCloseRef.current = false
         }
-      })
 
-      popupRef.current = popup
-    }
+        // Create popup with configuration from config
+        const popup = new goongjs.Popup({
+          closeButton: true,
+          closeOnClick: false,
+          offset: POPUP_CONFIG.offset,
+          maxWidth: POPUP_CONFIG.maxWidth,
+          className: POPUP_CONFIG.className,
+          anchor: POPUP_CONFIG.anchor,
+        })
+          .setLngLat([place.longitude, place.latitude])
+          .setHTML(buildPopupHTML(place))
+          .addTo(map)
 
-    const showPopup = () => {
-      // CRITICAL: Don't show popup if effect was cancelled
-      if (isCancelledRef.current) return
+        popup.on('close', () => {
+          // Only trigger onClose if it's NOT a programmatic close (e.g. user clicked X, or cleanup)
+          if (!isProgrammaticCloseRef.current) {
+            onClose()
+          }
+        })
 
-      // Preload image first to prevent flickering
-      const img = new Image()
-      img.src = place.image
+        popupRef.current = popup
+      }
 
-      // If image is already cached, show immediately
-      if (img.complete) {
-        createPopup()
+      const showPopup = () => {
+        // CRITICAL: Don't show popup if effect was cancelled
+        if (isCancelledRef.current) return
+
+        // Preload image first to prevent flickering
+        const img = new Image()
+        img.src = place.image
+
+        // If image is already cached, show immediately
+        if (img.complete) {
+          createPopup()
+        } else {
+          // Wait for image to load before showing popup
+          img.onload = () => {
+            if (!isCancelledRef.current) createPopup()
+          }
+          img.onerror = () => {
+            if (!isCancelledRef.current) createPopup()
+          }
+        }
+      }
+
+      if (immediate) {
+        // Show immediately for sidebar hover
+        showPopup()
       } else {
-        // Wait for image to load before showing popup
-        img.onload = () => {
-          if (!isCancelledRef.current) createPopup()
-        }
-        img.onerror = () => {
-          if (!isCancelledRef.current) createPopup()
-        }
+        // Delay for marker hover using configured delay
+        timerRef.current = setTimeout(showPopup, HOVER_DELAY.popup)
       }
     }
 
-    if (immediate) {
-      // Show immediately for sidebar hover
-      showPopup()
-    } else {
-      // Delay for marker hover using configured delay
-      timerRef.current = setTimeout(showPopup, HOVER_DELAY.popup)
-    }
+    setupPopup()
 
     return () => {
       // Mark as cancelled to prevent async callbacks from creating popups

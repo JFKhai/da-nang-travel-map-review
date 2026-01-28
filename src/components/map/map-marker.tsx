@@ -6,7 +6,7 @@ import { getCategoryColor, getCategoryIcon } from '@/lib/map/map.utils'
 import { MARKER_CONFIG, HOVER_DELAY } from '@/lib/map/map.config'
 import { icon as faIcon } from '@fortawesome/fontawesome-svg-core'
 import { useMap } from './map-context'
-import { goongjs } from './map'
+import { getGoongjs } from './map'
 
 /**
  * Props for the MapMarker component
@@ -78,73 +78,82 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
   const hoverTimer = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
-    if (!map || !goongjs) return
+    if (!map) return
 
-    const { size } = MARKER_CONFIG
-    const iconDefinition = getCategoryIcon(place.category)
-    const color = getCategoryColor(place.category)
+    const setupMarker = async () => {
+      const goongjs = await getGoongjs()
+      if (!goongjs) return
 
-    // Convert Font Awesome icon to SVG path
-    const faIconObj = faIcon(iconDefinition)
-    const iconPath = faIconObj.icon[4] as string
+      const { size } = MARKER_CONFIG
+      const iconDefinition = getCategoryIcon(place.category)
+      const color = getCategoryColor(place.category)
 
-    // Create marker element with inline SVG
-    const el = document.createElement('div')
-    el.className = 'custom-marker'
-    el.style.cursor = 'pointer'
-    el.style.width = `${size}px`
-    el.style.height = `${size + 10}px`
+      // Convert Font Awesome icon to SVG path
+      const faIconObj = faIcon(iconDefinition)
+      const iconPath = faIconObj.icon[4] as string
 
-    // Ensure highlighted marker is always on top
-    if (isHighlighted) {
-      el.style.zIndex = '999'
-      el.innerHTML = createHighlightedMarkerSVG()
-    } else {
-      el.innerHTML = createCategoryMarkerSVG(place.id, color, iconPath, size)
-    }
+      // Create marker element with inline SVG
+      const el = document.createElement('div')
+      el.className = 'custom-marker'
+      el.style.cursor = 'pointer'
+      el.style.width = `${size}px`
+      el.style.height = `${size + 10}px`
 
-    // Add event listeners
-    const handleMouseOver = () => {
-      if (hoverTimer.current) clearTimeout(hoverTimer.current)
-      hoverTimer.current = setTimeout(() => {
-        onHover?.(place)
-      }, HOVER_DELAY.marker)
-    }
-
-    const handleMouseOut = () => {
-      if (hoverTimer.current) {
-        clearTimeout(hoverTimer.current)
-        hoverTimer.current = null
+      // Ensure highlighted marker is always on top
+      if (isHighlighted) {
+        el.style.zIndex = '999'
+        el.innerHTML = createHighlightedMarkerSVG()
+      } else {
+        el.innerHTML = createCategoryMarkerSVG(place.id, color, iconPath, size)
       }
-      onHover?.(null)
-    }
 
-    const handleClick = (e: Event) => {
-      e.stopPropagation()
-      onClick?.(place)
-    }
+      // Add event listeners
+      const handleMouseOver = () => {
+        if (hoverTimer.current) clearTimeout(hoverTimer.current)
+        hoverTimer.current = setTimeout(() => {
+          onHover?.(place)
+        }, HOVER_DELAY.marker)
+      }
 
-    el.addEventListener('mouseenter', handleMouseOver)
-    el.addEventListener('mouseleave', handleMouseOut)
-    el.addEventListener('click', handleClick)
+      const handleMouseOut = () => {
+        if (hoverTimer.current) {
+          clearTimeout(hoverTimer.current)
+          hoverTimer.current = null
+        }
+        onHover?.(null)
+      }
 
-    // Create marker
-    const marker = new goongjs.Marker({ element: el, anchor: 'bottom' })
-      .setLngLat([place.longitude, place.latitude])
-      .addTo(map)
+      const handleClick = (e: Event) => {
+        e.stopPropagation()
+        onClick?.(place)
+      }
 
-    markerRef.current = marker
+      el.addEventListener('mouseenter', handleMouseOver)
+      el.addEventListener('mouseleave', handleMouseOut)
+      el.addEventListener('click', handleClick)
 
-    return () => {
-      if (hoverTimer.current) clearTimeout(hoverTimer.current)
-      el.removeEventListener('mouseenter', handleMouseOver)
-      el.removeEventListener('mouseleave', handleMouseOut)
-      el.removeEventListener('click', handleClick)
-      if (markerRef.current) {
-        markerRef.current.remove()
-        markerRef.current = null
+      // Create marker
+      const marker = new goongjs.Marker({ element: el, anchor: 'bottom' })
+        .setLngLat([place.longitude, place.latitude])
+        .addTo(map)
+
+      markerRef.current = marker
+
+      return () => {
+        if (hoverTimer.current) clearTimeout(hoverTimer.current)
+        el.removeEventListener('mouseenter', handleMouseOver)
+        el.removeEventListener('mouseleave', handleMouseOut)
+        el.removeEventListener('click', handleClick)
+        if (markerRef.current) {
+          markerRef.current.remove()
+          markerRef.current = null
+        }
       }
     }
+
+    setupMarker().then((cleanup) => {
+      return cleanup
+    })
   }, [map, place, onClick, onHover, isHighlighted])
 
   return null

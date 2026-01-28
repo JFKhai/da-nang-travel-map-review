@@ -58,15 +58,3 @@ export const CATEGORY_MARKERS: Record<PlaceCategory, MarkerConfig> = {
 }
 
 // Map style configuration (optional - for custom map styling)
-export const MAP_STYLES = [
-  {
-    featureType: 'water',
-    elementType: 'geometry',
-    stylers: [{ color: '#a2daf2' }],
-  },
-  {
-    featureType: 'landscape',
-    elementType: 'geometry',
-    stylers: [{ color: BRAND_COLORS.bg }],
-  },
-]

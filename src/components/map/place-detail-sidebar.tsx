@@ -50,22 +50,6 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
         </div>
       </div>
 
-      <button className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full bg-brand-bg text-brand-dark font-medium hover:bg-brand-teal hover:text-white transition-colors">
-        <span className="text-lg">✎</span> Viết bài đánh giá
-      </button>
-
-      {/* Search/Sort Tabs */}
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Tìm kiếm đánh giá"
-          className="flex-1 bg-gray-50 border-0 rounded-lg px-3 py-1.5 text-xs focus:ring-1 focus:ring-brand-teal"
-        />
-        <button className="px-3 py-1.5 bg-gray-50 rounded-lg text-xs font-medium text-gray-600 border border-gray-100">
-          Mới nhất
-        </button>
-      </div>
-
       {/* Review List */}
       <div className="flex flex-col gap-3 mt-1">
         {isLoading ? (
@@ -150,7 +134,7 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
   const [activeTab, setActiveTab] = useState<TabKey>('info')
 
   const handleShare = async () => {
-    const url = `${window.location.origin}/place/${place.slug || place.id}`
+    const url = `${window.location.origin}/places/${place.id}`
     try {
       await navigator.clipboard.writeText(url)
       alert('Đã copy link địa điểm vào bộ nhớ tạm!')
@@ -224,7 +208,7 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
 
       {/* Detail Page Button */}
       <div className="px-5 pt-4 pb-2">
-        <Link href={`/place/${place.slug || place.id}`}>
+        <Link href={`/places/${place.id}`}>
           <button className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand-teal text-white rounded-lg font-medium hover:bg-brand-dark transition-colors">
             <ExternalLink className="h-4 w-4" />
             <span>Chi tiết địa điểm</span>

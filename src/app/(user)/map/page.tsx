@@ -11,9 +11,8 @@ import { PlaceListSidebar } from '@/components/map/place-list-sidebar'
 import { PlaceDetailSidebar } from '@/components/map/place-detail-sidebar'
 import { SearchInput } from '@/components/map/search-input'
 import { useMapFilters } from '@/components/map/use-map-filters'
-import { MapZoomControls } from '@/components/map/map-zoom-controls'
 import { getPlacesApi } from '@/lib/api/places.api'
-import { getMyFavoritesApi, toggleFavoriteApi } from '@/lib/api/favorites.api'
+// import { getMyFavoritesApi, toggleFavoriteApi } from '@/lib/api/favorites.api' // TODO: Implement by other team member
 import type { PlaceLocation, PlaceCategory, MapViewport } from '@/lib/map/map.types'
 import { isInBounds } from '@/lib/map/map.utils'
 import { useRecentPlaces } from '@/lib/hooks/useRecentPlaces'
@@ -35,8 +34,8 @@ export default function MapPage() {
   const [selectedPlace, setSelectedPlace] = useState<PlaceLocation | null>(null)
   const [activeTab, setActiveTab] = useState<NavTab>('all')
   const [minRating, setMinRating] = useState<number>(0)
-  const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set())
-  const [showLoginDialog, setShowLoginDialog] = useState(false)
+  // const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set()) // TODO: Implement favorites
+  // const [showLoginDialog, setShowLoginDialog] = useState(false) // TODO: Implement favorites
 
   // Fetch places
   useEffect(() => {
@@ -55,57 +54,56 @@ export default function MapPage() {
     fetchPlaces()
   }, [])
 
-  // Fetch favorites if authenticated
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      if (status === 'authenticated') {
-        try {
-          const favorites = await getMyFavoritesApi()
-          setFavoriteIds(new Set(favorites.map((f) => f.id)))
-        } catch (error) {
-          console.error('Failed to fetch favorites:', error)
-        }
-      }
-    }
+  // TODO: Implement favorites feature
+  // useEffect(() => {
+  //   const fetchFavorites = async () => {
+  //     if (status === 'authenticated') {
+  //       try {
+  //         const favorites = await getMyFavoritesApi()
+  //         setFavoriteIds(new Set(favorites.map((f) => f.id)))
+  //       } catch (error) {
+  //         console.error('Failed to fetch favorites:', error)
+  //       }
+  //     }
+  //   }
+  //   fetchFavorites()
+  // }, [status])
 
-    fetchFavorites()
-  }, [status])
-
-  // Toggle favorite
-  const handleToggleFavorite = async (placeId: number) => {
-    if (status !== 'authenticated') {
-      setShowLoginDialog(true)
-      return
-    }
-
-    try {
-      await toggleFavoriteApi(placeId)
-      setFavoriteIds((prev) => {
-        const newSet = new Set(prev)
-        if (newSet.has(placeId)) {
-          newSet.delete(placeId)
-        } else {
-          newSet.add(placeId)
-        }
-        return newSet
-      })
-    } catch (error) {
-      console.error('Failed to toggle favorite:', error)
-    }
-  }
+  // TODO: Implement toggle favorite
+  // const handleToggleFavorite = async (placeId: number) => {
+  //   if (status !== 'authenticated') {
+  //     setShowLoginDialog(true)
+  //     return
+  //   }
+  //   try {
+  //     await toggleFavoriteApi(placeId)
+  //     setFavoriteIds((prev) => {
+  //       const newSet = new Set(prev)
+  //       if (newSet.has(placeId)) {
+  //         newSet.delete(placeId)
+  //       } else {
+  //         newSet.add(placeId)
+  //       }
+  //       return newSet
+  //     })
+  //   } catch (error) {
+  //     console.error('Failed to toggle favorite:', error)
+  //   }
+  // }
 
   // Filter places based on active tab
   const filteredByTab = useMemo(() => {
     if (activeTab === 'all') return places
-    if (activeTab === 'favorites') {
-      return places.filter((p) => favoriteIds.has(p.id))
-    }
+    // TODO: Implement favorites tab
+    // if (activeTab === 'favorites') {
+    //   return places.filter((p) => favoriteIds.has(p.id))
+    // }
     if (activeTab === 'recent') {
       const recentIds = new Set(recentPlaces.map((p) => p.id))
       return places.filter((p) => recentIds.has(p.id))
     }
     return places
-  }, [places, activeTab, favoriteIds, recentPlaces])
+  }, [places, activeTab, recentPlaces])
 
   // Apply filters (categories, search, rating, open-now)
   const displayedPlaces = useMemo(() => {
@@ -189,9 +187,9 @@ export default function MapPage() {
         }}
         minRating={minRating}
         onMinRatingChange={(rating) => setMinRating(rating ?? 0)}
-        showLoginDialog={showLoginDialog}
-        onCloseLoginDialog={() => setShowLoginDialog(false)}
-        onShowLoginDialog={() => setShowLoginDialog(true)}
+        showLoginDialog={false}
+        onCloseLoginDialog={() => {}}
+        onShowLoginDialog={() => {}}
       />
 
       {/* Main Content Area */}
@@ -217,8 +215,8 @@ export default function MapPage() {
               <PlaceDetailSidebar
                 place={selectedPlace}
                 onClose={() => setSelectedPlace(null)}
-                isFavorite={favoriteIds.has(selectedPlace.id)}
-                onToggleFavorite={() => handleToggleFavorite(selectedPlace.id)}
+                isFavorite={false}
+                onToggleFavorite={() => {}}
               />
             ) : (
               <PlaceListSidebar
@@ -247,22 +245,7 @@ export default function MapPage() {
             {hoveredPlace && !selectedPlace && (
               <MapInfoWindow place={hoveredPlace} onClose={() => setHoveredPlace(null)} />
             )}
-            {selectedPlace && <MapInfoWindow place={selectedPlace} onClose={() => setSelectedPlace(null)} />}
           </Map>
-        </div>
-
-        {/* Zoom Controls */}
-        <div className="absolute bottom-6 right-6 z-20">
-          <MapZoomControls
-            onZoomIn={() => {
-              // Zoom in logic will be handled by the map component
-              console.log('Zoom in')
-            }}
-            onZoomOut={() => {
-              // Zoom out logic will be handled by the map component
-              console.log('Zoom out')
-            }}
-          />
         </div>
       </div>
     </div>

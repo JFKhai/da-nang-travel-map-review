@@ -67,9 +67,7 @@ export function MapSidebarNav({
                 )}
                 title={item.label}
               >
-                <item.icon
-                  className={cn('h-6 w-6 transition-transform group-hover:scale-110', isActive && 'fill-current')}
-                />
+                <item.icon className={cn('h-6 w-6 transition-transform group-hover:scale-110')} />
                 <span className="text-[10px] font-medium text-center leading-tight">{item.label}</span>
               </button>
             )
@@ -92,7 +90,7 @@ export function MapSidebarNav({
               )}
               title="Bộ lọc nâng cao"
             >
-              <Filter className={cn('h-5 w-5', (isRatingOpen || minRating) && 'fill-current')} />
+              <Filter className="h-5 w-5" />
               <span className="text-[10px] font-medium text-center leading-tight">Bộ lọc</span>
             </button>
 

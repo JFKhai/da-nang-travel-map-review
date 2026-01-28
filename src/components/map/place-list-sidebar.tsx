@@ -84,13 +84,14 @@ export function PlaceListSidebar({
                         <span className="text-gray-500">({place.reviewCount})</span>
                       </div>
                       <p className="mb-1 text-xs text-gray-500 line-clamp-1">{getCategoryLabel(place.category)}</p>
-                      {openStatus !== null && (
+                      {openStatus !== null ? (
                         <p className={cn('text-xs mt-1 font-medium', openStatus ? 'text-green-700' : 'text-red-700')}>
                           {openStatus ? 'Đang mở cửa' : 'Đã đóng cửa'}
                         </p>
-                      )}
-                      {openStatus === null && place.opening_hours && (
-                        <p className="text-xs text-gray-500 mt-1">Chưa có thông tin</p>
+                      ) : place.opening_hours ? (
+                        <p className="text-xs text-gray-500 mt-1">Giờ mở cửa: {place.opening_hours}</p>
+                      ) : (
+                        <p className="text-xs text-gray-400 mt-1">Chưa có thông tin giờ mở cửa</p>
                       )}
                     </div>
                   </div>

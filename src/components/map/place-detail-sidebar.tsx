@@ -28,6 +28,13 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
     fetchReviews()
   }, [placeId])
 
+  // Calculate rating distribution from actual reviews
+  const ratingDistribution = [5, 4, 3, 2, 1].map((star) => {
+    const count = reviews.filter((r) => r.rating === star).length
+    const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0
+    return { star, count, percentage }
+  })
+
   return (
     <div className="flex flex-col gap-4 animate-in slide-in-from-bottom-2 fade-in">
       {/* Header Summary */}
@@ -35,16 +42,17 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
         <div className="flex flex-col items-center justify-center rounded-lg bg-yellow-50 px-4 py-2 border border-yellow-100">
           <span className="text-3xl font-bold text-yellow-600">{rating}</span>
           <div className="flex text-yellow-500 text-xs">★★★★★</div>
-          <span className="text-[10px] text-gray-500 mt-1">{reviewCount} reviews</span>
+          <span className="text-[10px] text-gray-500 mt-1">{reviewCount} đánh giá</span>
         </div>
-        {/* Distribution Mock */}
+        {/* Rating Distribution */}
         <div className="flex-1 flex flex-col gap-1">
-          {[5, 4, 3, 2, 1].map((star, i) => (
+          {ratingDistribution.map(({ star, count, percentage }) => (
             <div key={star} className="flex items-center gap-2 text-[10px] text-gray-500">
               <span className="w-2">{star}</span>
               <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${60 - i * 10}%` }} />
+                <div className="h-full bg-yellow-400 rounded-full transition-all" style={{ width: `${percentage}%` }} />
               </div>
+              <span className="w-4 text-right">{count}</span>
             </div>
           ))}
         </div>

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAppContext } from '@/components/providers/app-provider'
 import { Map } from '@/components/map/map'
 import { MapMarker } from '@/components/map/map-marker'
 import { MapInfoWindow } from '@/components/map/map-info-window'
+import { MapZoomControls } from '@/components/map/map-zoom-controls'
 import { CategoryFilter } from '@/components/map/category-filter'
 import { PlaceListSidebar } from '@/components/map/place-list-sidebar'
 import { PlaceDetailSidebar } from '@/components/map/place-detail-sidebar'
@@ -26,9 +27,11 @@ export default function MapPage() {
   const [places, setPlaces] = useState<PlaceLocation[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [hoveredPlace, setHoveredPlace] = useState<PlaceLocation | null>(null)
+  const [hoveredFromMarker, setHoveredFromMarker] = useState(false) // Track hover source
   const [selectedPlace, setSelectedPlace] = useState<PlaceLocation | null>(null)
   const [activeTab, setActiveTab] = useState<NavTab>('all')
   const [minRating, setMinRating] = useState<number>(0)
+  const mapInstanceRef = useRef<any>(null)
   // const [favoriteIds, setFavoriteIds] = useState<Set<number>>(new Set()) // TODO: Implement favorites
   // const [showLoginDialog, setShowLoginDialog] = useState(false) // TODO: Implement favorites
 
@@ -51,8 +54,8 @@ export default function MapPage() {
 
   // TODO: Implement favorites feature
   // useEffect(() => {
-  //   const fetchFavorites = async () => {
-  //     if (status === 'authenticated') {
+  //   if (status === 'authenticated') {
+  //     const fetchFavorites = async () => {
   //       try {
   //         const favorites = await getMyFavoritesApi()
   //         setFavoriteIds(new Set(favorites.map((f) => f.id)))
@@ -60,8 +63,8 @@ export default function MapPage() {
   //         console.error('Failed to fetch favorites:', error)
   //       }
   //     }
+  //     fetchFavorites()
   //   }
-  //   fetchFavorites()
   // }, [status])
 
   // TODO: Implement toggle favorite
@@ -98,38 +101,32 @@ export default function MapPage() {
       return places.filter((p) => recentIds.has(p.id))
     }
     return places
-  }, [places, activeTab, recentPlaces])
+  }, [activeTab, places, recentPlaces])
 
-  // Apply filters (categories, search, rating, open-now)
+  // Apply filters
   const displayedPlaces = useMemo(() => {
-    let baseList = filteredByTab
+    return filteredByTab.filter((place) => {
+      // Filter by search
+      if (filters.search && !place.name.toLowerCase().includes(filters.search.toLowerCase())) {
+        return false
+      }
 
-    // Category filter
-    if (filters.categories.length > 0) {
-      baseList = baseList.filter((p) => filters.categories.includes(p.category))
-    }
+      // Filter by categories
+      if (filters.categories.length > 0 && !filters.categories.includes(place.category)) {
+        return false
+      }
 
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase()
-      baseList = baseList.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchLower) ||
-          p.address?.toLowerCase().includes(searchLower) ||
-          p.description?.toLowerCase().includes(searchLower),
-      )
-    }
+      // Filter by minimum rating
+      if (place.rating < minRating) {
+        return false
+      }
 
-    // Rating filter
-    if (minRating > 0) {
-      baseList = baseList.filter((p) => p.rating >= minRating)
-    }
-
-    return baseList
-  }, [filteredByTab, filters.categories, filters.search, minRating])
+      return true
+    })
+  }, [filteredByTab, filters, minRating])
 
   // Count places per category
-  const placeCounts = useMemo(() => {
+  const categoryCounts = useMemo(() => {
     const counts: Record<PlaceCategory, number> = {
       'coffee-tea': 0,
       food: 0,
@@ -149,21 +146,53 @@ export default function MapPage() {
   }, [displayedPlaces])
 
   // Handlers
-  const handleMarkerClick = useCallback(
+  const handleSelectPlace = useCallback(
     (place: PlaceLocation) => {
       setSelectedPlace(place)
       addPlace(place)
+
+      // Focus map on the selected place with "Google Maps-like" fly effect
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.flyTo({
+          center: [place.longitude, place.latitude],
+          padding: { left: 200, top: 50, right: 50, bottom: 50 }, // Account for sidebar
+          speed: 0.4, // Much slower speed for "cinematic" smoothness
+          curve: 1, // Flatter curve (same as zoom)
+          essential: true,
+        })
+      }
     },
     [addPlace],
   )
 
-  const handlePlaceClick = useCallback(
-    (place: PlaceLocation) => {
-      setSelectedPlace(place)
-      addPlace(place)
-    },
-    [addPlace],
-  )
+  const handleMarkerHover = useCallback((place: PlaceLocation | null) => {
+    setHoveredPlace(place)
+    setHoveredFromMarker(!!place)
+  }, [])
+
+  const clearHoverTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const lastPannedPlaceRef = useRef<number | null>(null)
+
+  const handleSidebarHover = useCallback((place: PlaceLocation | null) => {
+    if (clearHoverTimerRef.current) {
+      clearTimeout(clearHoverTimerRef.current)
+      clearHoverTimerRef.current = null
+    }
+
+    if (!place) {
+      // Debounce clearing to prevent popup from closing when moving between items
+      clearHoverTimerRef.current = setTimeout(() => {
+        setHoveredPlace(null)
+        setHoveredFromMarker(false)
+        lastPannedPlaceRef.current = null
+      }, 50) // Short delay to allow mouseenter on next item
+      return
+    }
+
+    // Set hovered place immediately for visual feedback
+    setHoveredPlace(place)
+    setHoveredFromMarker(false)
+  }, [])
 
   return (
     <div className="flex flex-1 h-full w-full overflow-hidden bg-gray-100">
@@ -192,7 +221,7 @@ export default function MapPage() {
             <CategoryFilter
               selectedCategories={filters.categories}
               onCategoryChange={setCategories}
-              placeCounts={placeCounts}
+              placeCounts={categoryCounts}
             />
           </div>
         </div>
@@ -210,9 +239,9 @@ export default function MapPage() {
             ) : (
               <PlaceListSidebar
                 places={displayedPlaces}
-                onPlaceHover={setHoveredPlace}
-                onPlaceClick={handlePlaceClick}
-                hoveredPlaceId={hoveredPlace?.id}
+                onPlaceHover={handleSidebarHover}
+                onPlaceClick={handleSelectPlace}
+                hoveredPlaceId={hoveredFromMarker ? null : hoveredPlace?.id}
                 isLoading={isLoading}
               />
             )}
@@ -221,20 +250,49 @@ export default function MapPage() {
 
         {/* Map */}
         <div className="absolute inset-0 z-0">
-          <Map>
+          <Map onMapReady={(map) => (mapInstanceRef.current = map)}>
             {displayedPlaces.map((place) => (
               <MapMarker
                 key={place.id}
                 place={place}
-                onClick={handleMarkerClick}
-                onHover={setHoveredPlace}
-                isHighlighted={hoveredPlace?.id === place.id}
+                onClick={handleSelectPlace}
+                onHover={handleMarkerHover}
+                isHighlighted={selectedPlace?.id === place.id}
               />
             ))}
             {hoveredPlace && !selectedPlace && (
-              <MapInfoWindow place={hoveredPlace} onClose={() => setHoveredPlace(null)} />
+              <MapInfoWindow
+                key={hoveredPlace.id}
+                place={hoveredPlace}
+                onClose={() => setHoveredPlace(null)}
+                immediate={!hoveredFromMarker}
+              />
             )}
           </Map>
+
+          {/* Zoom Controls */}
+          <div className="absolute bottom-8 right-4 z-10">
+            <MapZoomControls
+              onZoomIn={() => {
+                if (!mapInstanceRef.current) return
+                mapInstanceRef.current.flyTo({
+                  zoom: mapInstanceRef.current.getZoom() + 1,
+                  speed: 0.4,
+                  curve: 1,
+                  essential: true,
+                })
+              }}
+              onZoomOut={() => {
+                if (!mapInstanceRef.current) return
+                mapInstanceRef.current.flyTo({
+                  zoom: mapInstanceRef.current.getZoom() - 1,
+                  speed: 0.4,
+                  curve: 1,
+                  essential: true,
+                })
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

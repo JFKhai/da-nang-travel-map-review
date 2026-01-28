@@ -77,7 +77,13 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
                 <div className="flex items-center gap-2.5">
                   <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200">
                     {review.user.avatar ? (
-                      <Image src={review.user.avatar} alt={review.user.name} fill className="object-cover" />
+                      <Image
+                        src={review.user.avatar}
+                        alt={review.user.name}
+                        fill
+                        className="object-cover"
+                        sizes="32px"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs bg-gray-300">
                         {review.user.name.charAt(0)}
@@ -106,7 +112,7 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
                 <div className="flex gap-2 mt-1 overflow-x-auto pb-1 no-scrollbar">
                   {review.images.map((img, idx) => (
                     <div key={idx} className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-                      <Image src={img} alt="Review" fill className="object-cover" />
+                      <Image src={img} alt="Review" fill className="object-cover" sizes="64px" />
                     </div>
                   ))}
                 </div>
@@ -157,7 +163,15 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
     <div className="flex flex-col h-full bg-white animate-in slide-in-from-left-5 duration-300">
       {/* 1. Header with Cover Image */}
       <div className="relative h-48 w-full flex-shrink-0">
-        <Image src={place.image} alt={place.name} fill className="object-cover" priority />
+        <Image
+          src={place.image}
+          alt={place.name}
+          fill
+          className="object-cover"
+          sizes="400px"
+          loading="eager"
+          priority
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
         {/* Top Actions */}

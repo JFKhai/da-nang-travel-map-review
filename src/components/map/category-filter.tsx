@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import type { PlaceCategory } from '@/lib/map/map.types'
 import { CATEGORY_MARKERS } from '@/lib/map/map.config'
 import { cn } from '@/lib/utils'
@@ -29,21 +28,12 @@ export function CategoryFilter({ selectedCategories, onCategoryChange, placeCoun
     }
   }
 
-  const selectAll = () => {
-    onCategoryChange(categories)
-  }
-
-  const clearAll = () => {
-    onCategoryChange([])
-  }
-
   return (
     <div className="overflow-x-auto py-2 no-scrollbar px-1">
       <div className="flex gap-2">
         {categories.map((category) => {
           const config = CATEGORY_MARKERS[category]
           const isSelected = selectedCategories.includes(category)
-          const count = placeCounts?.[category] || 0
 
           return (
             <button

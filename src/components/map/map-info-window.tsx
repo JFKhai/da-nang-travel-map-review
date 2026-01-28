@@ -45,12 +45,18 @@ export function MapInfoWindow({ place, onClose }: MapInfoWindowProps) {
             </div>
             <span className="text-xs text-gray-400">({place.reviewCount} reviews)</span>
             {place.opening_hours && <span className="text-xs text-gray-300">•</span>}
+            {place.opening_hours && <span className="text-xs text-gray-300">•</span>}
             {place.opening_hours &&
-              (isPlaceOpen(place.opening_hours) ? (
-                <span className="text-xs font-medium text-green-600">Đang mở cửa</span>
-              ) : (
-                <span className="text-xs font-medium text-red-600">Đã đóng cửa</span>
-              ))}
+              (() => {
+                const isOpen = isPlaceOpen(place.opening_hours)
+                if (isOpen === null)
+                  return <span className="text-xs text-gray-500">Giờ mở cửa: {place.opening_hours}</span>
+                return isOpen ? (
+                  <span className="text-xs font-medium text-green-600">Đang mở cửa</span>
+                ) : (
+                  <span className="text-xs font-medium text-red-600">Đã đóng cửa</span>
+                )
+              })()}
           </div>
 
           <p className="line-clamp-2 text-xs text-gray-600">{place.description}</p>

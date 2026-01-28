@@ -14,14 +14,10 @@ import { useMapFilters } from '@/components/map/use-map-filters'
 import { getPlacesApi } from '@/lib/api/client-api/map.api'
 // import { getMyFavoritesApi, toggleFavoriteApi } from '@/lib/api/favorites.api' // TODO: Implement by other team member
 import type { PlaceLocation, PlaceCategory, MapViewport } from '@/lib/map/map.types'
-import { isInBounds } from '@/lib/map/map.utils'
 import { useRecentPlaces } from '@/lib/hooks/useRecentPlaces'
 import { MapSidebarNav, type NavTab } from '@/components/map/map-sidebar-nav'
 
 export default function MapPage() {
-  const router = useRouter()
-  const { user } = useAppContext()
-
   // Custom hooks
   const { filters, setCategories, setSearch } = useMapFilters()
   const { recentPlaces, addPlace } = useRecentPlaces()
@@ -29,7 +25,6 @@ export default function MapPage() {
   // State
   const [places, setPlaces] = useState<PlaceLocation[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [viewport, setViewport] = useState<MapViewport | null>(null)
   const [hoveredPlace, setHoveredPlace] = useState<PlaceLocation | null>(null)
   const [selectedPlace, setSelectedPlace] = useState<PlaceLocation | null>(null)
   const [activeTab, setActiveTab] = useState<NavTab>('all')
@@ -136,14 +131,12 @@ export default function MapPage() {
   // Count places per category
   const placeCounts = useMemo(() => {
     const counts: Record<PlaceCategory, number> = {
-      beach: 0,
-      restaurant: 0,
+      'coffee-tea': 0,
+      food: 0,
       hotel: 0,
-      attraction: 0,
-      cafe: 0,
-      shopping: 0,
-      nightlife: 0,
-      landmark: 0,
+      'check-in': 0,
+      history: 0,
+      entertainment: 0,
     }
 
     displayedPlaces.forEach((place) => {
@@ -156,10 +149,6 @@ export default function MapPage() {
   }, [displayedPlaces])
 
   // Handlers
-  const handleCameraChanged = useCallback((newViewport: MapViewport) => {
-    setViewport(newViewport)
-  }, [])
-
   const handleMarkerClick = useCallback(
     (place: PlaceLocation) => {
       setSelectedPlace(place)
@@ -210,7 +199,7 @@ export default function MapPage() {
 
         {/* Results Sidebar */}
         <div className="absolute bottom-4 left-4 top-[80px] z-20 flex w-[400px] flex-col overflow-hidden rounded-xl bg-white shadow-xl ring-1 ring-black/5">
-          <div className="flex-1 overflow-y-auto bg-white">
+          <div className="flex-1 overflow-hidden bg-white">
             {selectedPlace ? (
               <PlaceDetailSidebar
                 place={selectedPlace}
@@ -232,7 +221,7 @@ export default function MapPage() {
 
         {/* Map */}
         <div className="absolute inset-0 z-0">
-          <Map onCameraChanged={handleCameraChanged}>
+          <Map>
             {displayedPlaces.map((place) => (
               <MapMarker
                 key={place.id}

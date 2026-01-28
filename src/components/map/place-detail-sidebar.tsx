@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Share2, Bookmark, Info, Star, ImageIcon, Heart, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Share2, Info, Star, ImageIcon, Heart, ExternalLink } from 'lucide-react'
 import type { PlaceLocation, PlaceReview } from '@/lib/map/map.types'
 import { getReviewsApi } from '@/lib/api/client-api/map.api'
 import { getCategoryLabel, isPlaceOpen } from '@/lib/map/map.utils'
@@ -220,7 +220,7 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
 
       {/* Content Container */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="p-5 pb-0">
+        <div className="p-5 pb-0 flex-shrink-0">
           {/* Rating & Review Count */}
           <div className="mb-4 flex items-center gap-2 text-sm">
             <span className="font-medium text-orange-500">{place.rating}</span>
@@ -263,120 +263,121 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
               )
             })}
           </div>
-          {/* Scrollable Tab Content */}
-          <div className="flex-1 overflow-y-auto p-5 pt-4">
-            {activeTab === 'info' && (
-              <div className="space-y-4 text-[15px] animate-in fade-in slide-in-from-bottom-2 duration-300">
-                {place.description && <p className="text-gray-600 text-sm leading-relaxed mb-4">{place.description}</p>}
+        </div>
 
-                {place.address && (
-                  <div className="flex items-start gap-4">
-                    <div className="pt-0.5">
-                      <div className="h-5 w-5 text-gray-400 text-center">📍</div>
-                    </div>
-                    <p className="text-gray-700">{place.address}</p>
-                  </div>
-                )}
+        {/* Scrollable Tab Content */}
+        <div className="flex-1 overflow-y-auto p-5 pt-0">
+          {activeTab === 'info' && (
+            <div className="space-y-4 text-[15px] animate-in fade-in slide-in-from-bottom-2 duration-300">
+              {place.description && <p className="text-gray-600 text-sm leading-relaxed mb-4">{place.description}</p>}
 
-                {place.opening_hours ? (
-                  <div className="flex items-start gap-4">
-                    <div className="pt-0.5">
-                      <div className="h-5 w-5 text-gray-400 text-center">🕒</div>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-gray-700 font-medium">Giờ mở cửa</p>
-                      <p className="text-sm text-gray-600">{place.opening_hours}</p>
-                      {isPlaceOpen(place.opening_hours) ? (
-                        <p className="text-xs text-green-700 font-medium mt-1">Đang mở cửa</p>
-                      ) : (
-                        <p className="text-xs text-red-600 font-medium mt-1">Đã đóng cửa</p>
-                      )}
-                    </div>
+              {place.address && (
+                <div className="flex items-start gap-4">
+                  <div className="pt-0.5">
+                    <div className="h-5 w-5 text-gray-400 text-center">📍</div>
                   </div>
-                ) : (
-                  <div className="flex items-start gap-4">
-                    <div className="pt-0.5">
-                      <div className="h-5 w-5 text-gray-400 text-center">🕒</div>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-gray-400 italic">Chưa có thông tin giờ mở cửa</p>
-                    </div>
-                  </div>
-                )}
+                  <p className="text-gray-700">{place.address}</p>
+                </div>
+              )}
 
-                {place.phone ? (
-                  <div className="flex items-start gap-4">
-                    <div className="pt-0.5">
-                      <div className="h-5 w-5 text-gray-400 text-center">📞</div>
-                    </div>
-                    <p className="text-gray-700">{place.phone}</p>
+              {place.opening_hours ? (
+                <div className="flex items-start gap-4">
+                  <div className="pt-0.5">
+                    <div className="h-5 w-5 text-gray-400 text-center">🕒</div>
                   </div>
-                ) : (
-                  <div className="flex items-start gap-4">
-                    <div className="pt-0.5">
-                      <div className="h-5 w-5 text-gray-400 text-center">📞</div>
-                    </div>
-                    <p className="text-gray-400 italic">Chưa có số điện thoại</p>
+                  <div className="flex-1">
+                    <p className="text-gray-700 font-medium">Giờ mở cửa</p>
+                    <p className="text-sm text-gray-600">{place.opening_hours}</p>
+                    {isPlaceOpen(place.opening_hours) ? (
+                      <p className="text-xs text-green-700 font-medium mt-1">Đang mở cửa</p>
+                    ) : (
+                      <p className="text-xs text-red-600 font-medium mt-1">Đã đóng cửa</p>
+                    )}
                   </div>
-                )}
+                </div>
+              ) : (
+                <div className="flex items-start gap-4">
+                  <div className="pt-0.5">
+                    <div className="h-5 w-5 text-gray-400 text-center">🕒</div>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-gray-400 italic">Chưa có thông tin giờ mở cửa</p>
+                  </div>
+                </div>
+              )}
 
-                {place.website && (
-                  <div className="flex items-start gap-4">
-                    <div className="pt-0.5">
-                      <div className="h-5 w-5 text-gray-400 text-center">🌐</div>
+              {place.phone ? (
+                <div className="flex items-start gap-4">
+                  <div className="pt-0.5">
+                    <div className="h-5 w-5 text-gray-400 text-center">📞</div>
+                  </div>
+                  <p className="text-gray-700">{place.phone}</p>
+                </div>
+              ) : (
+                <div className="flex items-start gap-4">
+                  <div className="pt-0.5">
+                    <div className="h-5 w-5 text-gray-400 text-center">📞</div>
+                  </div>
+                  <p className="text-gray-400 italic">Chưa có số điện thoại</p>
+                </div>
+              )}
+
+              {place.website && (
+                <div className="flex items-start gap-4">
+                  <div className="pt-0.5">
+                    <div className="h-5 w-5 text-gray-400 text-center">🌐</div>
+                  </div>
+                  <a
+                    href={place.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline truncate w-full"
+                  >
+                    {place.website.replace(/^https?:\/\//, '')}
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'reviews' && (
+            <ReviewSection placeId={place.id} rating={place.rating} reviewCount={place.reviewCount} />
+          )}
+
+          {activeTab === 'photos' && (
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+              {place.images && place.images.length > 0 ? (
+                <div className="grid grid-cols-2 gap-2">
+                  {place.images.map((img, idx) => (
+                    <div key={idx} className="relative aspect-square overflow-hidden rounded-md bg-gray-100">
+                      <Image
+                        src={img.url}
+                        alt={img.caption || `Ảnh ${idx + 1}`}
+                        fill
+                        className="object-cover transition-transform hover:scale-110"
+                        sizes="(max-width: 400px) 50vw, 200px"
+                      />
                     </div>
-                    <a
-                      href={place.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline truncate w-full"
-                    >
-                      {place.website.replace(/^https?:\/\//, '')}
-                    </a>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {activeTab === 'reviews' && (
-              <ReviewSection placeId={place.id} rating={place.rating} reviewCount={place.reviewCount} />
-            )}
-
-            {activeTab === 'photos' && (
-              <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
-                {place.images && place.images.length > 0 ? (
-                  <div className="grid grid-cols-2 gap-2">
-                    {place.images.map((img, idx) => (
-                      <div key={idx} className="relative aspect-square overflow-hidden rounded-md bg-gray-100">
-                        <Image
-                          src={img.url}
-                          alt={img.caption || `Ảnh ${idx + 1}`}
-                          fill
-                          className="object-cover transition-transform hover:scale-110"
-                          sizes="(max-width: 400px) 50vw, 200px"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 gap-2">
-                    {/* Mock Photos if empty (Using cover image duplicated for demo) */}
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className="relative aspect-square overflow-hidden rounded-md bg-gray-100">
-                        <Image
-                          src={place.image}
-                          alt={`Demo Photo ${i}`}
-                          fill
-                          className="object-cover opacity-80"
-                          sizes="200px"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  {/* Mock Photos if empty (Using cover image duplicated for demo) */}
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="relative aspect-square overflow-hidden rounded-md bg-gray-100">
+                      <Image
+                        src={place.image}
+                        alt={`Demo Photo ${i}`}
+                        fill
+                        className="object-cover opacity-80"
+                        sizes="200px"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

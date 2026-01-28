@@ -1,19 +1,12 @@
-@import url('https://fonts.cdnfonts.com/css/emotional-rescue-personal-use');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.cdnfonts.com/css/cabinet-grotesk');
+@import url('https://fonts.cdnfonts.com/css/emotional-rescue-personal-use');
 
 @layer theme, base, components, primereact, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @import 'primereact/resources/themes/lara-light-blue/theme.css' layer(primereact);
-/* ===== Font Face ===== */
-@font-face {
-  font-family: 'RomanaBT';
-  src: url('/fonts/ROMANAB.TTF') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
 
 @theme {
   --color-brand-light: #d9ed82;
@@ -22,7 +15,7 @@
   --color-brand-border: #1b485a;
   --color-brand-bg: #eef4f7;
 
-  --font-sans: RomanaBT, serif;
+  --font-roboto: 'Roboto', sans-serif;
   --font-emotional: 'Emotional Rescue Personal Use', sans-serif;
   --font-cabinet-grotesk: 'Cabinet Grotesk', sans-serif;
 
@@ -37,7 +30,7 @@
   }
 
   body {
-    font-family: var(--font-cabinet-grotesk);
+    font-family: var(--font-roboto);
   }
 
   button:hover,

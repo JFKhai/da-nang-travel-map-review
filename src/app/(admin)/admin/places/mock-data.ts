@@ -24,10 +24,9 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 1, name: 'Cà phê & Trà', slug: 'coffee-tea' },
+      { id: 2, name: 'Ẩm thực', slug: 'food' },
+      { id: 3, name: 'Check-in', slug: 'check-in' },
     ],
   },
   {
@@ -47,10 +46,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 4, name: 'Lịch sử', slug: 'history' },
+      { id: 5, name: 'Vui chơi', slug: 'entertainment' },
     ],
   },
   {
@@ -70,10 +67,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 4, name: 'Lịch sử', slug: 'history' },
+      { id: 3, name: 'Check-in', slug: 'check-in' },
     ],
   },
   {
@@ -93,10 +88,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 4, name: 'Lịch sử', slug: 'history' },
+      { id: 3, name: 'Check-in', slug: 'check-in' },
     ],
   },
   {
@@ -116,10 +109,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 4, name: 'Lịch sử', slug: 'history' },
+      { id: 5, name: 'Vui chơi', slug: 'entertainment' },
     ],
   },
   {
@@ -139,10 +130,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 4, name: 'Lịch sử', slug: 'history' },
+      { id: 3, name: 'Check-in', slug: 'check-in' },
     ],
   },
   {
@@ -162,10 +151,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 4, name: 'Lịch sử', slug: 'history' },
+      { id: 3, name: 'Check-in', slug: 'check-in' },
     ],
   },
   {
@@ -185,10 +172,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 3, name: 'Check-in', slug: 'check-in' },
+      { id: 5, name: 'Vui chơi', slug: 'entertainment' },
     ],
   },
   {
@@ -208,10 +193,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 4, name: 'Lịch sử', slug: 'history' },
+      { id: 3, name: 'Check-in', slug: 'check-in' },
     ],
   },
   {
@@ -235,10 +218,8 @@ export const places = [
       },
     ],
     categories: [
-      { id: 'food', name: 'Food' },
-      { id: 'coffee', name: 'Coffee' },
-      { id: 'checkin', name: 'Check-in' },
-      { id: 'hotel', name: 'Hotel' },
+      { id: 4, name: 'Lịch sử', slug: 'history' },
+      { id: 3, name: 'Check-in', slug: 'check-in' },
     ],
   },
 ]

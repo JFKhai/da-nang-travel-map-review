@@ -15,7 +15,6 @@ const configProject = configSchema.safeParse({
   NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   NEXTAUTH_URL: process.env.NEXTAUTH_URL || 'http://localhost:3000',
 })
-
 if (!configProject.success) {
   console.error(configProject.error.issues)
   throw new Error('Các giá trị khai báo trong file .env không hợp lệ')

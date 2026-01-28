@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useRef, useEffect } from 'react'
-import { Marker } from '@vis.gl/react-google-maps'
+import { Marker, useMap } from '@vis.gl/react-google-maps'
 import type { PlaceLocation } from '@/lib/map/map.types'
 import { getCategoryColor, getCategoryIcon } from '@/lib/map/map.utils'
 import { icon as faIcon } from '@fortawesome/fontawesome-svg-core'
@@ -51,7 +51,11 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
     }
   }, [])
 
+  const map = useMap()
+
   const svgIcon = useMemo(() => {
+    if (!map) return undefined
+
     const size = 40
     const iconDefinition = getCategoryIcon(place.category)
     const color = getCategoryColor(place.category)
@@ -87,10 +91,10 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
 
     return {
       url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
-      scaledSize: typeof google !== 'undefined' ? new google.maps.Size(40, 50) : undefined,
-      anchor: typeof google !== 'undefined' ? new google.maps.Point(20, 50) : undefined,
+      scaledSize: new google.maps.Size(40, 50),
+      anchor: new google.maps.Point(20, 50),
     }
-  }, [place.category, place.id])
+  }, [place.category, place.id, map])
 
   return (
     <Marker

@@ -80,9 +80,17 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
   useEffect(() => {
     if (!map) return
 
+    let cleanup: (() => void) | undefined
+
     const setupMarker = async () => {
       const goongjs = await getGoongjs()
       if (!goongjs) return
+
+      // Clean up existing marker first
+      if (markerRef.current) {
+        markerRef.current.remove()
+        markerRef.current = null
+      }
 
       const { size } = MARKER_CONFIG
       const iconDefinition = getCategoryIcon(place.category)
@@ -104,6 +112,7 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
         el.style.zIndex = '999'
         el.innerHTML = createHighlightedMarkerSVG()
       } else {
+        el.style.zIndex = '1'
         el.innerHTML = createCategoryMarkerSVG(place.id, color, iconPath, size)
       }
 
@@ -139,7 +148,7 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
 
       markerRef.current = marker
 
-      return () => {
+      cleanup = () => {
         if (hoverTimer.current) clearTimeout(hoverTimer.current)
         el.removeEventListener('mouseenter', handleMouseOver)
         el.removeEventListener('mouseleave', handleMouseOut)
@@ -151,9 +160,11 @@ export function MapMarker({ place, onClick, onHover, isHighlighted = false }: Ma
       }
     }
 
-    setupMarker().then((cleanup) => {
-      return cleanup
-    })
+    setupMarker()
+
+    return () => {
+      if (cleanup) cleanup()
+    }
   }, [map, place, onClick, onHover, isHighlighted])
 
   return null

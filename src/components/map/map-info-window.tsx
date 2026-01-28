@@ -3,17 +3,27 @@
 import { InfoWindow } from '@vis.gl/react-google-maps'
 import Image from 'next/image'
 import type { PlaceLocation } from '@/lib/map/map.types'
-import { getCategoryLabel } from '@/lib/map/map.utils'
+import { getCategoryLabel, isPlaceOpen } from '@/lib/map/map.utils'
 
+/**
+ * Props for the MapInfoWindow component
+ */
 interface MapInfoWindowProps {
+  /** The place to display information for */
   place: PlaceLocation
+  /** Callback fired when the info window is closed */
   onClose: () => void
 }
 
 export function MapInfoWindow({ place, onClose }: MapInfoWindowProps) {
   return (
-    <InfoWindow position={{ lat: place.latitude, lng: place.longitude }} onClose={onClose} headerDisabled>
-      <div className="w-64 overflow-hidden rounded-lg">
+    <InfoWindow
+      position={{ lat: place.latitude, lng: place.longitude }}
+      onClose={onClose}
+      headerDisabled
+      pixelOffset={[0, -45]} // Offset up by 45px to avoid covering the marker (marker height is ~50px)
+    >
+      <div className="w-64 overflow-hidden rounded-lg animate-in fade-in zoom-in-95 duration-500">
         {/* Image */}
         <div className="relative h-32 w-full">
           <Image src={place.image} alt={place.name} fill className="object-cover" sizes="256px" />
@@ -34,6 +44,13 @@ export function MapInfoWindow({ place, onClose }: MapInfoWindowProps) {
               <span className="ml-1 text-xs font-medium">{place.rating}</span>
             </div>
             <span className="text-xs text-gray-400">({place.reviewCount} reviews)</span>
+            {place.opening_hours && <span className="text-xs text-gray-300">•</span>}
+            {place.opening_hours &&
+              (isPlaceOpen(place.opening_hours) ? (
+                <span className="text-xs font-medium text-green-600">Đang mở cửa</span>
+              ) : (
+                <span className="text-xs font-medium text-red-600">Đã đóng cửa</span>
+              ))}
           </div>
 
           <p className="line-clamp-2 text-xs text-gray-600">{place.description}</p>

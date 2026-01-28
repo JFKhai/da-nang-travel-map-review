@@ -1,16 +1,24 @@
 'use client'
 
-import { APIProvider, Map as GoogleMap, MapCameraChangedEvent } from '@vis.gl/react-google-maps'
 import { useState, useCallback, type ReactNode } from 'react'
+import { APIProvider, Map as GoogleMap, MapCameraChangedEvent } from '@vis.gl/react-google-maps'
 import { DEFAULT_MAP_CONFIG } from '@/lib/map/map.config'
 import envConfig from '@/lib/config/env.config'
 import type { MapViewport } from '@/lib/map/map.types'
 
+/**
+ * Props for the Map component
+ */
 interface MapProps {
+  /** Child elements to render inside the map (markers, info windows, etc.) */
   children?: ReactNode
+  /** Callback fired when the map camera (center/zoom) changes */
   onCameraChanged?: (viewport: MapViewport) => void
+  /** Optional CSS class name for the map container */
   className?: string
+  /** Default center position for the map */
   defaultCenter?: { lat: number; lng: number }
+  /** Default zoom level for the map */
   defaultZoom?: number
 }
 

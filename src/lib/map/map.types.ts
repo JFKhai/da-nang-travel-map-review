@@ -1,19 +1,44 @@
 // Map-related TypeScript types
 
-export type PlaceCategory = 'beach' | 'restaurant' | 'hotel' | 'attraction' | 'cafe' | 'shopping' | 'landmark'
+export type PlaceCategory = 'coffee-tea' | 'food' | 'hotel' | 'check-in' | 'history' | 'entertainment'
+
+export interface PlaceImage {
+  id: number
+  url: string
+  caption?: string
+  sort_order?: number
+}
 
 export interface PlaceLocation {
-  id: string
+  id: number
   name: string
-  category: PlaceCategory
+  slug: string
+  category: PlaceCategory // We will map the primary category here for frontend logic
+  categories: { id: number; name: string; slug: string }[] // Full categories from API
   latitude: number
   longitude: number
   address: string
   rating: number
   reviewCount: number
   image: string
+  images: PlaceImage[]
   description: string
-  priceRange?: string // "$", "$$", "$$$"
+  priceRange?: string // Optional, might be added later
+  opening_hours?: string
+  phone?: string
+  website?: string
+}
+
+export interface PlaceAPIResponse {
+  places: PlaceLocation[]
+  pagination: {
+    currentPage: number
+    totalPages: number
+    totalItems: number
+    itemsPerPage: number
+    hasNextPage: boolean
+    hasPrevPage: boolean
+  }
 }
 
 export interface MarkerConfig {
@@ -35,4 +60,20 @@ export interface MapViewport {
     lng: number
   }
   zoom: number
+}
+
+export interface PlaceReview {
+  id: number
+  userId: number
+  placeId: number
+  rating: number
+  content: string
+  images?: string[]
+  createdAt: string
+  user: {
+    id: number
+    name: string
+    avatar?: string
+    level?: string // e.g. "Local Guide"
+  }
 }

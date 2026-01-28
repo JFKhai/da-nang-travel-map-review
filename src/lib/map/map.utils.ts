@@ -64,3 +64,41 @@ export function formatDistance(km: number): string {
   }
   return `${km.toFixed(1)}km`
 }
+
+/**
+ * Check if a place is currently open based on opening hours
+ * @param opening_hours - Format: "HH:MM - HH:MM" (e.g., "08:00 - 22:00")
+ * @returns true if currently open, false if closed or invalid format
+ */
+export function isPlaceOpen(opening_hours: string | undefined): boolean {
+  if (!opening_hours) return false
+
+  try {
+    // Format: "08:00 - 22:00"
+    const [start, end] = opening_hours.split(' - ')
+    if (!start || !end) return false
+
+    const now = new Date()
+    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+
+    const [startH, startM] = start.split(':').map(Number)
+    const [endH, endM] = end.split(':').map(Number)
+
+    if (isNaN(startH) || isNaN(startM) || isNaN(endH) || isNaN(endM)) {
+      return false
+    }
+
+    const startMinutes = startH * 60 + startM
+    const endMinutes = endH * 60 + endM
+
+    // Handle hours crossing midnight (e.g., 18:00 - 02:00)
+    if (endMinutes < startMinutes) {
+      return currentMinutes >= startMinutes || currentMinutes <= endMinutes
+    }
+
+    return currentMinutes >= startMinutes && currentMinutes <= endMinutes
+  } catch (e) {
+    console.error('Error parsing opening hours:', opening_hours, e)
+    return false
+  }
+}

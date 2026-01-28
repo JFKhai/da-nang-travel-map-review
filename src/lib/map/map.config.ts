@@ -22,40 +22,35 @@ export const DEFAULT_MAP_CONFIG = {
 
 // Category marker configurations
 export const CATEGORY_MARKERS: Record<PlaceCategory, MarkerConfig> = {
-  beach: {
-    icon: '🏖️',
-    color: BRAND_COLORS.teal,
-    label: 'Bãi biển',
+  'coffee-tea': {
+    icon: '☕',
+    color: '#F59E0B',
+    label: 'Cà phê & Trà',
   },
-  restaurant: {
+  food: {
     icon: '🍜',
-    color: '#FF6B35',
-    label: 'Nhà hàng',
+    color: '#EF4444',
+    label: 'Ẩm thực',
   },
   hotel: {
     icon: '🏨',
-    color: '#8B5CF6',
+    color: '#3B82F6',
     label: 'Khách sạn',
   },
-  attraction: {
-    icon: '🎭',
-    color: '#EF4444',
-    label: 'Điểm tham quan',
+  'check-in': {
+    icon: '📸',
+    color: '#10B981',
+    label: 'Check-in',
   },
-  cafe: {
-    icon: '☕',
-    color: '#92400E',
-    label: 'Quán cà phê',
+  history: {
+    icon: '🏛️',
+    color: '#8B5CF6',
+    label: 'Lịch sử',
   },
-  shopping: {
-    icon: '🛍️',
+  entertainment: {
+    icon: '🎢',
     color: '#EC4899',
-    label: 'Mua sắm',
-  },
-  landmark: {
-    icon: '🌉',
-    color: '#F59E0B',
-    label: 'Địa danh',
+    label: 'Vui chơi',
   },
 }
 

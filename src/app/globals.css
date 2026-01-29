@@ -7,6 +7,7 @@
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @import 'primereact/resources/themes/lara-light-blue/theme.css' layer(primereact);
+@import '@goongmaps/goong-js/dist/goong-js.css';
 
 @theme {
   --color-brand-light: #d9ed82;
@@ -73,5 +74,47 @@
 
   50% {
     transform: translate(10px, -10px) scale(1.05);
+  }
+}
+
+@layer components {
+  /* Goong Maps Marker Styles */
+  .goongjs-marker {
+    z-index: 10 !important;
+  }
+
+  /* Highlighted marker should be above normal markers but below popups */
+  .custom-marker-highlighted {
+    position: relative;
+    z-index: 100;
+  }
+
+  /* Goong Maps Popup Styles - must be above all markers */
+  .goongjs-popup {
+    z-index: 1000 !important;
+  }
+
+  .goongjs-popup-content {
+    padding: 0 !important;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .goongjs-popup-close-button {
+    font-size: 20px;
+    padding: 4px 8px;
+    color: #666;
+    right: 4px;
+    top: 4px;
+    transition: all 0.2s;
+  }
+
+  .goongjs-popup-close-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+  }
+
+  .goongjs-popup-tip {
+    border-top-color: white !important;
   }
 }

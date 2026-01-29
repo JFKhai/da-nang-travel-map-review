@@ -110,7 +110,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Tìm kiếm địa điểm, khu vực..."
+                placeholder="Search places..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -122,18 +122,18 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
               className="px-6 py-3 bg-brand-teal text-white font-medium rounded-lg hover:bg-brand-teal/90 transition-colors duration-200 flex items-center gap-2 whitespace-nowrap"
             >
               <Search className="w-5 h-5" />
-              Tìm kiếm
+              Search
             </button>
           </div>
 
           {/* Category Filter */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
             <CategoryMultiSelect
               availableCategories={allCategories}
               selectedCategories={selectedCategories}
               setSelectedCategories={handleCategoryChange}
-              placeholder="Chọn danh mục..."
+              placeholder="Select categories..."
             />
           </div>
         </div>
@@ -141,7 +141,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
         {/* Results Count */}
         <div className="mt-4 pt-4 border-t border-gray-100">
           <p className="text-sm text-gray-600">
-            Tìm thấy <span className="font-bold text-brand-teal">{places.length}</span> địa điểm
+            Found <span className="font-bold text-brand-teal">{places.length}</span> places
           </p>
         </div>
       </div>
@@ -175,7 +175,7 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
 
                 <div className="p-5">
                   <div className="flex items-center gap-2 text-brand-teal text-xs font-bold uppercase tracking-widest mb-2">
-                    <MapPin className="w-3.5 h-3.5" />
+                    <MapPin className="w-3.5 h-3.5 shrink-0" />
                     {place.address || 'Chưa có địa chỉ'}
                   </div>
 
@@ -186,9 +186,9 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
                   <p className="text-gray-500 line-clamp-2 text-sm leading-relaxed mb-4">{place.short_description}</p>
 
                   <div className="flex items-center justify-between pt-3 border-t border-gray-50">
-                    <span className="text-xs font-medium text-gray-400">{place.reviewCount} đánh giá</span>
+                    <span className="text-xs font-medium text-gray-400">{place.reviewCount} reviews</span>
                     <span className="text-brand-teal font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-                      Xem chi tiết
+                      Explore
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
@@ -221,8 +221,8 @@ export function PlacesContent({ places, search, categories, page, limit, totalPa
       ) : (
         <div className="bg-white rounded-2xl p-12 text-center border border-gray-100">
           <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-800 mb-2">Không tìm thấy địa điểm nào</h3>
-          <p className="text-gray-500">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc của bạn</p>
+          <h3 className="text-xl font-bold text-gray-800 mb-2">No places found</h3>
+          <p className="text-gray-500">Try changing your search keywords or filters</p>
         </div>
       )}
     </>

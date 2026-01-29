@@ -87,7 +87,7 @@ export default function RelatedPlaces({ places, title }: RelatedPlacesProps) {
           >
             <div className="relative h-48 overflow-hidden">
               <Image
-                src={place.coverImage.url}
+                src={place.images[0].url || ''}
                 alt={place.name}
                 fill
                 className="object-cover group-hover:scale-110 transition-transform duration-300"

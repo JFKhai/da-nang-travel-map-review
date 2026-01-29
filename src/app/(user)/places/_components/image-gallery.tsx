@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { Galleria } from 'primereact/galleria'
 import 'primereact/resources/themes/lara-light-blue/theme.css'
 import 'primereact/resources/primereact.min.css'
@@ -19,17 +18,6 @@ interface ImageGalleryProps {
 }
 
 export default function ImageGallery({ coverImage, images, title }: ImageGalleryProps) {
-  const [mounted, setMounted] = useState(false)
-
-  // Chỉ render Galleria trên client để tránh lỗi hydration (PrimeReact tự sinh id khác nhau giữa server & client)
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
-
   // Combine cover image with other images for gallery
   const allImages = [{ id: 0, url: coverImage.url, caption: title }, ...images]
 

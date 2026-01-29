@@ -1,217 +1,78 @@
-'use client'
+import { cookies } from 'next/headers'
+import DashboardClient from './_components/dashboard-client'
+import { fillMissingDates } from './_components/chart-utils'
 
-import React, { useEffect, useState } from 'react'
-import { Users, MapPin, MessageSquare, List, Heart, Star, TrendingUp, Activity } from 'lucide-react'
-import { StatsCard, StatsCardSkeleton } from './_components/stats-card'
-import { GrowthChart, GrowthChartSkeleton } from './_components/growth-chart'
-import { ReviewChart, ReviewChartSkeleton } from './_components/review-chart'
-import { fillMissingDates, calculateMockTrend, ChartDataPoint } from './_components/chart-utils'
+async function getDashboardData() {
+  const cookieStore = await cookies()
+  const token =
+    cookieStore.get('token')?.value || cookieStore.get('accessToken')?.value || cookieStore.get('auth_token')?.value
 
-interface DashboardResponse {
-  success: boolean
-  data: {
-    summary: {
-      totalUsers: number
-      totalPlaces: number
-      totalReviews: number
-      totalCategories: number
-      totalFavorites: number
-      averageRating: string | number
-    }
-    charts: {
-      userChart: ChartDataPoint[]
-      placeChart: ChartDataPoint[]
-      reviewChart: ChartDataPoint[]
-    }
+  if (!token) return null
+
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:8080/api'
+  const cleanApiUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl
+
+  try {
+    const res = await fetch(`${cleanApiUrl}/admin/dashboard-stats`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    })
+
+    if (!res.ok) return null
+
+    const data = await res.json()
+    return data.success ? data.data : null
+  } catch (error) {
+    console.error('Fetch dashboard error:', error)
+    return null
   }
 }
 
-interface ProcessedChartData {
-  date: string
-  users: number
-  places: number
-}
+export default async function DashboardPage() {
+  const dashboardData = await getDashboardData()
 
-export default function DashboardPage() {
-  const [summary, setSummary] = useState<DashboardResponse['data']['summary'] | null>(null)
-  const [growthData, setGrowthData] = useState<ProcessedChartData[]>([])
-  const [reviewData, setReviewData] = useState<ChartDataPoint[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchDashboardStats = async () => {
-      try {
-        setLoading(true)
-        setError(null)
-
-        // Get token from localStorage
-        const token = localStorage.getItem('token')
-
-        if (!token) {
-          throw new Error('No authentication token found')
-        }
-
-        const response = await fetch('http://localhost:8080/api/admin/dashboard-stats', {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        })
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const data: DashboardResponse = await response.json()
-
-        if (data.success) {
-          setSummary(data.data.summary)
-
-          // Process chart data - fill missing dates for continuous X-axis
-          const filledUserChart = fillMissingDates(data.data.charts.userChart, 7)
-          const filledPlaceChart = fillMissingDates(data.data.charts.placeChart, 7)
-          const filledReviewChart = fillMissingDates(data.data.charts.reviewChart, 7)
-
-          // Combine user and place data for the composed chart
-          const combinedGrowth: ProcessedChartData[] = filledUserChart.map((userItem, index) => ({
-            date: userItem.date,
-            users: userItem.count,
-            places: filledPlaceChart[index]?.count || 0,
-          }))
-
-          setGrowthData(combinedGrowth)
-          setReviewData(filledReviewChart)
-        } else {
-          throw new Error('Failed to fetch dashboard stats')
-        }
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred')
-        console.error('Error fetching dashboard stats:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchDashboardStats()
-  }, [])
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-teal-50/30 to-gray-50 p-8">
-      <div className="mx-auto max-w-7xl">
-        {/* Header Section */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-teal-500 to-teal-600 shadow-lg shadow-teal-500/30">
-              <Activity className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-              <p className="mt-1 text-sm text-gray-600">Real-time insights and performance metrics</p>
-            </div>
+  if (!dashboardData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <div className="bg-white p-8 rounded-2xl shadow-lg max-w-md w-full text-center border border-red-100">
+          <div className="h-16 w-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
           </div>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Access Denied</h2>
+          <p className="text-gray-600 mb-6">
+            Unable to load dashboard data. Please make sure you are logged in as an Admin.
+          </p>
+          <a
+            href="/login"
+            className="inline-block bg-teal-600 text-white px-6 py-2.5 rounded-xl font-medium hover:bg-teal-700 transition-colors shadow-sm shadow-teal-200"
+          >
+            Back to Login
+          </a>
         </div>
-
-        {/* Error State */}
-        {error && (
-          <div className="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
-            <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-red-500"></div>
-              <p className="text-sm font-medium text-red-800">Error: {error}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Summary Stats Grid */}
-        <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {loading ? (
-            <>
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-              <StatsCardSkeleton />
-            </>
-          ) : summary ? (
-            <>
-              <StatsCard
-                title="Total Users"
-                value={summary.totalUsers.toLocaleString()}
-                icon={Users}
-                color="teal"
-                trend={calculateMockTrend()}
-              />
-              <StatsCard
-                title="Total Places"
-                value={summary.totalPlaces.toLocaleString()}
-                icon={MapPin}
-                color="teal"
-                trend={calculateMockTrend()}
-              />
-              <StatsCard
-                title="Total Reviews"
-                value={summary.totalReviews.toLocaleString()}
-                icon={MessageSquare}
-                color="purple"
-                trend={calculateMockTrend()}
-              />
-              <StatsCard
-                title="Total Categories"
-                value={summary.totalCategories.toLocaleString()}
-                icon={List}
-                color="orange"
-                trend={calculateMockTrend()}
-              />
-              <StatsCard
-                title="Total Favorites"
-                value={summary.totalFavorites.toLocaleString()}
-                icon={Heart}
-                color="red"
-                trend={calculateMockTrend()}
-              />
-              <StatsCard
-                title="Average Rating"
-                value={
-                  typeof summary.averageRating === 'number' ? summary.averageRating.toFixed(1) : summary.averageRating
-                }
-                icon={Star}
-                color="yellow"
-                trend={calculateMockTrend()}
-              />
-            </>
-          ) : null}
-        </div>
-
-        {/* Charts Section */}
-        <div className="grid gap-6 lg:grid-cols-1">
-          {loading ? (
-            <>
-              <GrowthChartSkeleton />
-              <ReviewChartSkeleton />
-            </>
-          ) : (
-            <>
-              <GrowthChart data={growthData} />
-              <ReviewChart data={reviewData} />
-            </>
-          )}
-        </div>
-
-        {/* Footer Info */}
-        {!loading && summary && (
-          <div className="mt-8 rounded-2xl border border-teal-100 bg-gradient-to-r from-teal-50 to-emerald-50 p-6">
-            <div className="flex items-center gap-3">
-              <TrendingUp className="h-5 w-5 text-teal-600" />
-              <div>
-                <p className="text-sm font-semibold text-teal-900">Dashboard Updated</p>
-                <p className="mt-0.5 text-xs text-teal-700">Last refreshed: {new Date().toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
-    </div>
-  )
+    )
+  }
+
+  const { summary, charts } = dashboardData
+  const filledUserChart = fillMissingDates(charts.userChart, 7)
+  const filledPlaceChart = fillMissingDates(charts.placeChart, 7)
+  const filledReviewChart = fillMissingDates(charts.reviewChart, 7)
+
+  const growthData = filledUserChart.map((userItem: any, index: number) => ({
+    date: userItem.date,
+    users: userItem.count,
+    places: filledPlaceChart[index]?.count || 0,
+  }))
+
+  return <DashboardClient data={{ summary, growthData, reviewData: filledReviewChart }} />
 }

@@ -16,9 +16,9 @@ const navLinks = [
   { label: 'Home', href: '/' },
   { label: 'Places', href: '/places' },
   { label: 'Map', href: '/map' },
-  { label: 'Reviews', href: '/reviews' },
-  { label: 'About', href: '/about' },
-  { label: 'Blogs', href: '/blogs' },
+  // { label: 'Reviews', href: '/reviews' },
+  // { label: 'About', href: '/about' },
+  // { label: 'Blogs', href: '/blogs' },
 ]
 
 export function Header() {
@@ -50,20 +50,20 @@ export function Header() {
         </Link>
       ),
     },
-    {
-      label: 'Settings',
-      icon: Settings,
-      href: '/settings',
-      template: () => (
-        <Link
-          href="/settings"
-          className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full"
-        >
-          <Settings className="w-4 h-4" />
-          <span className="text-sm font-medium">Settings</span>
-        </Link>
-      ),
-    },
+    // {
+    //   label: 'Settings',
+    //   icon: Settings,
+    //   href: '/settings',
+    //   template: () => (
+    //     <Link
+    //       href="/settings"
+    //       className="flex items-center gap-3 px-4 py-3 text-white hover:bg-brand-light hover:text-teal-900 rounded-md transition-colors w-full"
+    //     >
+    //       <Settings className="w-4 h-4" />
+    //       <span className="text-sm font-medium">Settings</span>
+    //     </Link>
+    //   ),
+    // },
     {
       separator: true,
     },

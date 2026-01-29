@@ -50,18 +50,18 @@ const menuItems: MenuItem[] = [
     icon: ChartBarStacked,
     href: '/admin/categories',
   },
-  {
-    id: 'reviews',
-    label: 'Reviews',
-    icon: MessageCircle,
-    href: '/admin/reviews',
-  },
-  {
-    id: 'locations',
-    label: 'Locations',
-    icon: MapPinPen,
-    href: '/admin/locations',
-  },
+  // {
+  //   id: 'reviews',
+  //   label: 'Reviews',
+  //   icon: MessageCircle,
+  //   href: '/admin/reviews',
+  // },
+  // {
+  //   id: 'locations',
+  //   label: 'Locations',
+  //   icon: MapPinPen,
+  //   href: '/admin/locations',
+  // },
   {
     id: 'users',
     label: 'Users',

@@ -2,7 +2,9 @@
 import { placeApiServerRequest } from '@/lib/api/server-api/place.api'
 import { PlaceWithRelations } from '@/lib/schemas/place.schema'
 import { cn } from '@/lib/utils'
-import { ArrowLeft, ArrowRight, Clock, MapIcon, MapPin } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Clock, MapIcon, MapPin, Star } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 const items = [
@@ -170,51 +172,13 @@ export default function Home() {
         {/* Search bar */}
         <div className="px-0 sm:px-4 lg:px-10 pt-6 sm:pt-8 lg:pt-10 pb-8 sm:pb-12 lg:pb-16 w-full">
           <div className="mx-auto flex flex-col sm:flex-row max-w-5xl items-stretch sm:items-center gap-3 sm:gap-4 lg:gap-6 rounded-xl sm:rounded-2xl bg-white p-4 sm:p-6 shadow-lg">
-            {/* Location */}
-            <div className="flex flex-1 flex-col gap-1">
-              <label className="text-xs font-semibold uppercase text-[#81949D]">Location</label>
-              <input
-                type="text"
-                placeholder="Where are you going?"
-                className="w-full text-sm outline-none placeholder:text-gray-400"
-              />
-            </div>
-
-            <div className="hidden sm:block h-10 w-px bg-gray-200" />
-
-            {/* Activity */}
-            <div className="flex flex-1 flex-col gap-1">
-              <label className="text-xs font-semibold uppercase text-[#81949D]">Activity</label>
-              <input
-                type="text"
-                placeholder="Choose activity"
-                className="w-full text-sm outline-none placeholder:text-gray-400"
-              />
-            </div>
-
-            <div className="hidden sm:block h-10 w-px bg-gray-200" />
-
-            {/* Date */}
-            <div className="flex flex-1 flex-col gap-1">
-              <label className="text-xs font-semibold uppercase text-[#81949D]">Date</label>
-              <input type="date" className="w-full text-sm outline-none text-gray-600" />
-            </div>
-
-            <div className="hidden sm:block h-10 w-px bg-gray-200" />
-
-            {/* Guests */}
-            <div className="flex flex-1 flex-col gap-1">
-              <label className="text-xs font-semibold uppercase text-[#81949D]">Guests</label>
-              <input
-                type="number"
-                placeholder="2"
-                min={1}
-                className="w-full text-sm outline-none placeholder:text-gray-400"
-              />
-            </div>
-
+            <input
+              type="text"
+              placeholder="Search for your destination"
+              className="border-2 border-brand-teal rounded-lg outline-brand-teal flex-1 py-2 pl-4"
+            />
             {/* Search button */}
-            <button className="sm:ml-2 flex px-4 py-3 sm:py-2 items-center justify-center rounded-xl sm:rounded-2xl bg-brand-teal text-white hover:opacity-90 transition text-sm font-medium">
+            <button className="sm:ml-2 flex px-4 py-3  items-center justify-center rounded-lg hover:cursor-pointer bg-brand-teal text-white transition text-sm font-medium">
               SEARCH
             </button>
           </div>
@@ -281,73 +245,58 @@ export default function Home() {
         {/* LIST */}
         {!loading && destinations.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-            {destinations.map((item) => (
-              <div
-                key={item.id}
-                className="bg-white rounded-xl overflow-hidden shadow hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+            {destinations.map((place) => (
+              <Link
+                href={`/places/${place.id}`}
+                key={place.id}
+                className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-brand-border/5 hover:-translate-y-2"
               >
-                {/* Image */}
-                <div className="relative h-40 sm:h-48 w-full overflow-hidden">
-                  <img
-                    src={item.images?.[0]?.url ?? (item as any).image ?? '/images/placeholder.jpg'}
-                    alt={item.name}
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                <div className="relative h-56 w-full overflow-hidden">
+                  <Image
+                    src={place.coverImage.url || '/placeholder.jpg'}
+                    alt={place.name || ''}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                {/* Content */}
-                <div className="p-3 sm:p-4">
-                  <h3 className="font-bold text-sm mb-1 text-brand-teal line-clamp-2 min-h-[2.5rem]">{item.name}</h3>
-                  <p className="text-xs text-gray-500 mb-3 flex items-start gap-1">
-                    <MapPin className="grow-0 shrink-0 w-3 sm:w-4 mt-0.5" />
-                    <span className="line-clamp-1">{item.address}</span>
-                  </p>
-                  <p className="text-xs text-gray-600 mb-3 line-clamp-2 min-h-[2rem]">{item.short_description}</p>
-
-                  {/* Categories */}
-                  <div className="flex flex-wrap gap-1 mb-3 min-h-[1.75rem]">
-                    {item.categories?.slice(0, 2).map((category, idx) => (
-                      <span
-                        key={idx}
-                        className="text-[10px] sm:text-xs font-medium text-white bg-brand-teal px-2 py-1 rounded capitalize"
-                      >
-                        {(category as any).name ?? category}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Info */}
-                  <div className="text-xs text-gray-600 mb-4 pb-3 border-t border-gray-200 pt-3">
-                    <p className="truncate flex gap-1 items-center">
-                      <Clock className="w-3 sm:w-4 grow-0 shrink-0" />
-                      <span className="text-[10px] sm:text-xs truncate">
-                        {(item as any).opening_hours ?? (item as any).openingHours ?? 'Updating'}
-                      </span>
-                    </p>
-                  </div>
-
-                  {/* Footer */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-1">
-                      <span className="text-brand-teal font-semibold text-xs sm:text-sm">
-                        {(item as any).rating ?? '4.5'}
-                      </span>
-                      <span className="text-yellow-400 text-sm">★</span>
-                      <span className="text-[10px] sm:text-xs text-gray-400">
-                        ({(item as any).review_count ?? (item as any).reviewCount ?? 0})
-                      </span>
-                    </div>
+                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-lg border border-white/50">
+                    <Star className="w-4 h-4 fill-orange-400 text-orange-400" />
+                    <span className="font-bold text-brand-border text-sm">
+                      {place.averageRating ? parseFloat(place.averageRating.toFixed(2)) : 0}
+                    </span>
                   </div>
                 </div>
-              </div>
+
+                <div className="p-5">
+                  <div className="flex items-center gap-2 text-brand-teal text-xs font-bold uppercase tracking-widest mb-2">
+                    <MapPin className="w-3.5 h-3.5 shrink-0" />
+                    {place.address || 'Chưa có địa chỉ'}
+                  </div>
+
+                  <h3 className="text-xl font-bold text-brand-border mb-2 group-hover:text-brand-teal transition-colors line-clamp-1">
+                    {place.name}
+                  </h3>
+
+                  <p className="text-gray-500 line-clamp-2 text-sm leading-relaxed mb-4">{place.short_description}</p>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-50">
+                    <span className="text-xs font-medium text-gray-400">{place.reviewCount} reviews</span>
+                    <span className="text-brand-teal font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Explore
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        />
+                      </svg>
+                    </span>
+                  </div>
+                </div>
+              </Link>
             ))}
-          </div>
-        )}
-
-        {/* Pagination info */}
-        {!loading && destinations.length > 0 && (
-          <div className="mt-8 text-center text-sm text-gray-600">
-            Page {page} of {totalPages}
           </div>
         )}
       </section>

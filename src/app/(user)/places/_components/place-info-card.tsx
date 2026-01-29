@@ -31,7 +31,7 @@ export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
                 ))}
               </div>
             </div>
-            <div className="text-gray-600">{place.reviewCount} đánh giá</div>
+            <div className="text-gray-600">{place.reviewCount} reviews</div>
           </div>
 
           {place.categories && place.categories.length > 0 && (
@@ -50,12 +50,12 @@ export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
 
         {/* Contact Info Card */}
         <div className="bg-white border border-brand-teal/20 rounded-2xl p-6 shadow-sm space-y-4">
-          <h3 className="text-lg font-bold mb-4 text-brand-border">Thông tin liên hệ</h3>
+          <h3 className="text-lg font-bold mb-4 text-brand-border">Contact Information</h3>
 
           <div className="flex items-start gap-3">
             <MapPin className="w-5 h-5 text-brand-teal flex-shrink-0 mt-1" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-900 mb-1">Địa chỉ</p>
+              <p className="text-sm font-medium text-gray-900 mb-1">Address</p>
               <p className="text-sm text-gray-600">{place.address}</p>
             </div>
           </div>
@@ -63,7 +63,7 @@ export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
           <div className="flex items-start gap-3 pt-3 border-t border-brand-teal/10">
             <Phone className="w-5 h-5 text-brand-teal flex-shrink-0 mt-1" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-brand-border mb-1">Điện thoại</p>
+              <p className="text-sm font-medium text-brand-border mb-1">Phone</p>
               <a href={`tel:${place.phone}`} className="text-sm text-brand-teal hover:underline">
                 {place.phone}
               </a>
@@ -88,7 +88,7 @@ export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
           <div className="flex items-start gap-3 pt-3 border-t border-brand-teal/10">
             <Clock className="w-5 h-5 text-brand-teal flex-shrink-0 mt-1" />
             <div className="flex-1">
-              <p className="text-sm font-medium text-brand-border mb-1">Giờ mở cửa</p>
+              <p className="text-sm font-medium text-brand-border mb-1">Opening Hours</p>
               <p className="text-sm text-gray-600">{place.opening_hours}</p>
             </div>
           </div>
@@ -96,7 +96,7 @@ export default function PlaceInfoCard({ place }: PlaceInfoCardProps) {
           <div className="pt-4 border-t border-brand-teal/10">
             <button className="w-full bg-brand-teal text-white py-3 rounded-full font-semibold hover:bg-brand-dark transition-colors flex items-center justify-center gap-2">
               <MapPin className="w-5 h-5" />
-              Chỉ đường
+              Get Directions
             </button>
           </div>
         </div>

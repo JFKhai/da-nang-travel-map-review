@@ -107,7 +107,7 @@ export default function CategoriesTable({ initialCategories }: Props) {
 
       <div className="bg-white rounded-lg shadow">
         <DataTable value={categories} className="p-datatable-sm" showGridlines>
-          <Column field="name" header="Tên danh mục" body={emptyBodyTemplate('name')} />
+          <Column field="name" header="Name" body={emptyBodyTemplate('name')} />
           <Column field="slug" header="Slug" body={emptyBodyTemplate('slug')} />
           <Column
             body={(rowData) => <ActionBodyTemplate rowData={rowData} onEdit={handleEdit} onDelete={handleDelete} />}

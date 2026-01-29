@@ -45,6 +45,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ sl
           excludePlaceId: placeDetail.id,
         })
         relatedPlaces = relatedResult.data || []
+        console.log(relatedPlaces)
       } catch (relatedError) {
         console.warn('Error fetching related places:', relatedError)
         relatedPlaces = []
@@ -78,7 +79,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ sl
             {/* Description */}
             {placeDetail.short_description && (
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-teal/10">
-                <h2 className="text-2xl font-bold mb-4 text-brand-border">Mô tả</h2>
+                <h2 className="text-2xl font-bold mb-4 text-brand-border">Description</h2>
                 <p className="text-gray-700 leading-relaxed">{placeDetail.short_description}</p>
               </div>
             )}
@@ -86,7 +87,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ sl
             {/* Location & Map */}
             {(placeDetail.address || (placeDetail.lat && placeDetail.lng)) && (
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-teal/10">
-                <h2 className="text-2xl font-bold mb-4 text-brand-border">Địa điểm</h2>
+                <h2 className="text-2xl font-bold mb-4 text-brand-border">Location</h2>
                 {placeDetail.address && <p className="text-gray-700 mb-4">{placeDetail.address}</p>}
 
                 {placeDetail.lat && placeDetail.lng && (
@@ -122,7 +123,7 @@ export default async function PlaceDetailPage({ params }: { params: Promise<{ sl
         {/* Related Places Section */}
         {relatedPlaces.length > 0 && (
           <div className="mt-12">
-            <RelatedPlaces places={relatedPlaces} title="Địa điểm liên quan" />
+            <RelatedPlaces places={relatedPlaces} title="Related Places" />
           </div>
         )}
       </div>

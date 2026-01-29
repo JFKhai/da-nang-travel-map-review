@@ -94,7 +94,7 @@ export function Sidebar({ popularPlaces, recommendedPlaces }: SidebarProps) {
                     {place.averageRating ? parseFloat(place.averageRating.toFixed(2)) : 0}
                   </span>
                   <span className="text-gray-400">•</span>
-                  <span>{place.reviewCount} đánh giá</span>
+                  <span>{place.reviewCount} reviews</span>
                 </div>
               </div>
             </Link>
@@ -104,12 +104,12 @@ export function Sidebar({ popularPlaces, recommendedPlaces }: SidebarProps) {
 
       {/* CTA Banner */}
       <div className="bg-gradient-to-br from-brand-teal to-brand-dark rounded-2xl p-6 text-white">
-        <h3 className="text-xl font-bold mb-2">Bạn chưa tìm thấy điểm đến lý tưởng?</h3>
+        <h3 className="text-xl font-bold mb-2">Haven&apos;t found your ideal destination yet?</h3>
         <p className="text-brand-light/90 text-sm mb-4">
-          Liên hệ với chúng tôi để được tư vấn và gợi ý những địa điểm phù hợp nhất!
+          Contact us to receive consultation and personalized recommendations for the best places!
         </p>
         <button className="bg-white text-brand-teal px-6 py-2.5 rounded-lg font-bold text-sm hover:bg-brand-light hover:text-brand-border transition-colors">
-          Liên hệ ngay
+          Contact now
         </button>
       </div>
     </div>

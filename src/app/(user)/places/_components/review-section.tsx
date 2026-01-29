@@ -198,7 +198,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-brand-border">Đánh giá</h2>
+        <h2 className="text-2xl font-bold text-brand-border">Review</h2>
         {user?.role === 'user' && (
           <button
             onClick={() => {
@@ -208,7 +208,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
             className="px-6 py-2.5 bg-brand-teal text-white rounded-full hover:bg-brand-teal/90 font-medium transition-colors flex items-center gap-2"
           >
             <Star className="w-4 h-4" />
-            Viết đánh giá
+            Write a Review
           </button>
         )}
       </div>
@@ -226,7 +226,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
                 />
               ))}
             </div>
-            <p className="text-sm text-gray-600">{totalReviews} đánh giá</p>
+            <p className="text-sm text-gray-600">{totalReviews} reviews</p>
           </div>
 
           <div className="flex-1 space-y-2">
@@ -249,16 +249,16 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
       {/* Filter Buttons */}
       <div className="flex gap-3 mb-6 flex-wrap">
         <button className="px-4 py-2 border border-brand-teal/30 rounded-full text-sm hover:bg-brand-light/20 hover:border-brand-teal transition-colors">
-          <Star className="w-4 h-4 inline mr-1" /> Xu hướng
+          <Star className="w-4 h-4 inline mr-1" /> Trending
         </button>
         <button className="px-4 py-2 border border-brand-teal/30 rounded-full text-sm hover:bg-brand-light/20 hover:border-brand-teal transition-colors">
-          Mới nhất
+          Latest
         </button>
         <button className="px-4 py-2 border border-brand-teal/30 rounded-full text-sm hover:bg-brand-light/20 hover:border-brand-teal transition-colors">
-          Cũ nhất
+          Oldest
         </button>
         <button className="px-4 py-2 border border-brand-teal/30 rounded-full text-sm hover:bg-brand-light/20 hover:border-brand-teal transition-colors">
-          <Star className="w-4 h-4 inline mr-1" /> Đánh giá cao
+          <Star className="w-4 h-4 inline mr-1" /> Highest Rating
         </button>
       </div>
 
@@ -330,21 +330,21 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
       </div>
 
       <button className="w-full mt-6 px-6 py-3 border border-brand-teal text-brand-teal rounded-full hover:bg-brand-light/20 font-medium transition-colors">
-        Xem thêm đánh giá
+        Load More Reviews
       </button>
 
       {/* Create/Edit Review Modal */}
       <Dialog
         visible={showModal}
         onHide={handleCloseModal}
-        header={editingReviewId ? 'Chỉnh sửa đánh giá' : 'Viết đánh giá'}
+        header={editingReviewId ? 'Edit review' : 'Write a Review'}
         style={{ width: '600px' }}
         className="review-modal"
       >
         <div className="space-y-6">
           {/* Star Rating */}
           <div>
-            <label className="block text-sm font-semibold mb-3">Đánh giá của bạn</label>
+            <label className="block text-sm font-semibold mb-3">Your Rating</label>
             <div className="flex gap-2">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -363,11 +363,11 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
             </div>
             {newReview.stars > 0 && (
               <p className="text-sm text-gray-600 mt-2">
-                {newReview.stars === 5 && 'Xuất sắc!'}
-                {newReview.stars === 4 && 'Rất tốt!'}
-                {newReview.stars === 3 && 'Tốt'}
-                {newReview.stars === 2 && 'Cần cải thiện'}
-                {newReview.stars === 1 && 'Không hài lòng'}
+                {newReview.stars === 5 && 'Excellent!'}
+                {newReview.stars === 4 && 'Very Good!'}
+                {newReview.stars === 3 && 'Good'}
+                {newReview.stars === 2 && 'Needs Improvement'}
+                {newReview.stars === 1 && 'Not Satisfied'}
               </p>
             )}
           </div>
@@ -375,14 +375,14 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
           {/* Review Title */}
           <div>
             <label htmlFor="review-title" className="block text-sm font-semibold mb-2">
-              Tiêu đề (tùy chọn)
+              Title (optional)
             </label>
             <input
               id="review-title"
               type="text"
               value={newReview.title}
               onChange={(e) => setNewReview({ ...newReview, title: e.target.value })}
-              placeholder="Tiêu đề cho đánh giá của bạn..."
+              placeholder="Title for your review..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent"
             />
           </div>
@@ -390,13 +390,13 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
           {/* Review Content */}
           <div>
             <label htmlFor="review-content" className="block text-sm font-semibold mb-2">
-              Nội dung đánh giá <span className="text-red-500">*</span>
+              Review Content <span className="text-red-500">*</span>
             </label>
             <textarea
               id="review-content"
               value={newReview.content}
               onChange={(e) => setNewReview({ ...newReview, content: e.target.value })}
-              placeholder="Chia sẻ trải nghiệm của bạn về địa điểm này..."
+              placeholder="Share your experience about this place..."
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-teal focus:border-transparent resize-none"
               rows={5}
             />
@@ -404,18 +404,18 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-semibold mb-2">Thêm ảnh</label>
+            <label className="block text-sm font-semibold mb-2">Add Photos</label>
             <div className="space-y-3">
               <label className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-brand-teal/30 rounded-lg cursor-pointer hover:border-brand-teal hover:bg-brand-light/10 transition-colors">
                 <Upload className="w-5 h-5 mr-2 text-brand-teal" />
-                <span className="text-sm text-brand-teal font-medium">Tải ảnh lên</span>
+                <span className="text-sm text-brand-teal font-medium">Upload Images</span>
                 <input type="file" multiple accept="image/*" onChange={handleImageUpload} className="hidden" />
               </label>
 
               {editingReviewId && existingImages.length > 0 && (
                 <div>
                   <p className="text-sm font-medium text-gray-700 mb-2">
-                    Ảnh hiện tại ({existingImages.length - deleteImageIds.length}/{existingImages.length})
+                    Current Images({existingImages.length - deleteImageIds.length}/{existingImages.length})
                   </p>
                   <div className="grid grid-cols-4 gap-3">
                     {existingImages.map((image) => {
@@ -441,7 +441,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
                           {isMarkedForDeletion && (
                             <div className="absolute inset-0 bg-red-500/20 flex items-center justify-center">
                               <span className="text-xs font-medium text-red-600 bg-white px-2 py-1 rounded">
-                                Sẽ xóa
+                                Will be deleted
                               </span>
                             </div>
                           )}
@@ -495,7 +495,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                       </svg>
-                      {deleteImageIds.length} ảnh sẽ bị xóa khi lưu
+                      {deleteImageIds.length} images will be deleted when saved
                     </p>
                   )}
                 </div>
@@ -504,7 +504,7 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
               {/* New Images Preview */}
               {previewImages.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium text-gray-700 mb-2">Ảnh mới ({previewImages.length})</p>
+                  <p className="text-sm font-medium text-gray-700 mb-2">New Images ({previewImages.length})</p>
                   <div className="grid grid-cols-4 gap-3">
                     {previewImages.map((preview, index) => (
                       <div
@@ -544,11 +544,11 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
             >
               {isSubmitting
                 ? editingReviewId
-                  ? 'Đang lưu...'
-                  : 'Đang đăng...'
+                  ? 'Saving...'
+                  : 'Posting...'
                 : editingReviewId
-                  ? 'Lưu thay đổi'
-                  : 'Đăng đánh giá'}
+                  ? 'Save Changes'
+                  : 'Post Review'}
             </button>
           </div>
         </div>
@@ -558,27 +558,29 @@ export default function ReviewSection({ placeId, reviews, rating, totalReviews }
       <Dialog
         visible={deleteDialog.open}
         onHide={() => setDeleteDialog({ open: false, reviewId: null })}
-        header="Xóa đánh giá"
+        header="Delete Review"
         style={{ width: '420px' }}
         className="delete-confirm-dialog"
         modal
       >
         <div className="space-y-4">
-          <p className="text-sm text-gray-700">Bạn có chắc muốn xóa đánh giá này? Hành động này không thể hoàn tác.</p>
+          <p className="text-sm text-gray-700">
+            Are you sure you want to delete this review? This action cannot be undone.
+          </p>
           <div className="flex gap-3 justify-end pt-2">
             <button
               onClick={() => setDeleteDialog({ open: false, reviewId: null })}
               disabled={isDeleting}
               className="px-5 py-2.5 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition disabled:opacity-50"
             >
-              Hủy
+              Cancel
             </button>
             <button
               onClick={confirmDeleteReview}
               disabled={isDeleting}
               className="px-5 py-2.5 bg-red-600 text-white rounded-full hover:bg-red-700 transition disabled:opacity-50"
             >
-              {isDeleting ? 'Đang xóa...' : 'Xóa'}
+              {isDeleting ? 'Deleting...' : 'Delete'}
             </button>
           </div>
         </div>

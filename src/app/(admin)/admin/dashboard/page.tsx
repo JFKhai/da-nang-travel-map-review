@@ -45,14 +45,16 @@ export default function DashboardPage() {
         setLoading(true)
         setError(null)
 
-        // Get token from localStorage
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('token') || localStorage.getItem('accessToken')
 
         if (!token) {
-          throw new Error('No authentication token found')
+          throw new Error('No authentication token found. Please verify login.')
         }
+        const apiBaseUrl = process.env.NEXT_PUBLIC_API_ENDPOINT || 'http://localhost:8080/api'
 
-        const response = await fetch('http://localhost:8080/api/admin/dashboard-stats', {
+        const cleanApiUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl
+
+        const response = await fetch(`${cleanApiUrl}/admin/dashboard-stats`, {
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -61,6 +63,9 @@ export default function DashboardPage() {
         })
 
         if (!response.ok) {
+          if (response.status === 401 || response.status === 403) {
+            throw new Error('Unauthorized access. Please check Admin permissions.')
+          }
           throw new Error(`HTTP error! status: ${response.status}`)
         }
 
@@ -69,12 +74,10 @@ export default function DashboardPage() {
         if (data.success) {
           setSummary(data.data.summary)
 
-          // Process chart data - fill missing dates for continuous X-axis
           const filledUserChart = fillMissingDates(data.data.charts.userChart, 7)
           const filledPlaceChart = fillMissingDates(data.data.charts.placeChart, 7)
           const filledReviewChart = fillMissingDates(data.data.charts.reviewChart, 7)
 
-          // Combine user and place data for the composed chart
           const combinedGrowth: ProcessedChartData[] = filledUserChart.map((userItem, index) => ({
             date: userItem.date,
             users: userItem.count,
@@ -120,6 +123,9 @@ export default function DashboardPage() {
               <div className="h-2 w-2 rounded-full bg-red-500"></div>
               <p className="text-sm font-medium text-red-800">Error: {error}</p>
             </div>
+            <p className="mt-2 text-xs text-red-600 ml-4">
+              *Tip: Try logging out and logging in again to refresh your token.
+            </p>
           </div>
         )}
 

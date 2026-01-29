@@ -28,6 +28,13 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
     fetchReviews()
   }, [placeId])
 
+  // Calculate rating distribution from actual reviews
+  const ratingDistribution = [5, 4, 3, 2, 1].map((star) => {
+    const count = reviews.filter((r) => r.rating === star).length
+    const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0
+    return { star, count, percentage }
+  })
+
   return (
     <div className="flex flex-col gap-4 animate-in slide-in-from-bottom-2 fade-in">
       {/* Header Summary */}
@@ -35,35 +42,20 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
         <div className="flex flex-col items-center justify-center rounded-lg bg-yellow-50 px-4 py-2 border border-yellow-100">
           <span className="text-3xl font-bold text-yellow-600">{rating}</span>
           <div className="flex text-yellow-500 text-xs">★★★★★</div>
-          <span className="text-[10px] text-gray-500 mt-1">{reviewCount} reviews</span>
+          <span className="text-[10px] text-gray-500 mt-1">{reviewCount} đánh giá</span>
         </div>
-        {/* Distribution Mock */}
+        {/* Rating Distribution */}
         <div className="flex-1 flex flex-col gap-1">
-          {[5, 4, 3, 2, 1].map((star, i) => (
+          {ratingDistribution.map(({ star, count, percentage }) => (
             <div key={star} className="flex items-center gap-2 text-[10px] text-gray-500">
               <span className="w-2">{star}</span>
               <div className="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-yellow-400 rounded-full" style={{ width: `${60 - i * 10}%` }} />
+                <div className="h-full bg-yellow-400 rounded-full transition-all" style={{ width: `${percentage}%` }} />
               </div>
+              <span className="w-4 text-right">{count}</span>
             </div>
           ))}
         </div>
-      </div>
-
-      <button className="flex items-center justify-center gap-2 w-full py-2.5 rounded-full bg-brand-bg text-brand-dark font-medium hover:bg-brand-teal hover:text-white transition-colors">
-        <span className="text-lg">✎</span> Viết bài đánh giá
-      </button>
-
-      {/* Search/Sort Tabs */}
-      <div className="flex gap-2">
-        <input
-          type="text"
-          placeholder="Tìm kiếm đánh giá"
-          className="flex-1 bg-gray-50 border-0 rounded-lg px-3 py-1.5 text-xs focus:ring-1 focus:ring-brand-teal"
-        />
-        <button className="px-3 py-1.5 bg-gray-50 rounded-lg text-xs font-medium text-gray-600 border border-gray-100">
-          Mới nhất
-        </button>
       </div>
 
       {/* Review List */}
@@ -77,7 +69,13 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
                 <div className="flex items-center gap-2.5">
                   <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200">
                     {review.user.avatar ? (
-                      <Image src={review.user.avatar} alt={review.user.name} fill className="object-cover" />
+                      <Image
+                        src={review.user.avatar}
+                        alt={review.user.name}
+                        fill
+                        className="object-cover"
+                        sizes="32px"
+                      />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs bg-gray-300">
                         {review.user.name.charAt(0)}
@@ -105,8 +103,8 @@ function ReviewSection({ placeId, rating, reviewCount }: { placeId: number; rati
               {review.images && review.images.length > 0 && (
                 <div className="flex gap-2 mt-1 overflow-x-auto pb-1 no-scrollbar">
                   {review.images.map((img, idx) => (
-                    <div key={idx} className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-                      <Image src={img} alt="Review" fill className="object-cover" />
+                    <div key={idx} className="relative w-16 h-16 shrink-0 rounded-lg overflow-hidden">
+                      <Image src={img} alt="Review" fill className="object-cover" sizes="64px" />
                     </div>
                   ))}
                 </div>
@@ -156,9 +154,17 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
   return (
     <div className="flex flex-col h-full bg-white animate-in slide-in-from-left-5 duration-300">
       {/* 1. Header with Cover Image */}
-      <div className="relative h-48 w-full flex-shrink-0">
-        <Image src={place.image} alt={place.name} fill className="object-cover" priority />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+      <div className="relative h-48 w-full shrink-0">
+        <Image
+          src={place.image}
+          alt={place.name}
+          fill
+          className="object-cover"
+          sizes="400px"
+          loading="eager"
+          priority
+        />
+        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
 
         {/* Top Actions */}
         <div className="absolute left-0 top-0 flex w-full justify-between p-4">
@@ -220,7 +226,7 @@ export function PlaceDetailSidebar({ place, onClose, isFavorite = false, onToggl
 
       {/* Content Container */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="p-5 pb-0 flex-shrink-0">
+        <div className="p-5 pb-0 shrink-0">
           {/* Rating & Review Count */}
           <div className="mb-4 flex items-center gap-2 text-sm">
             <span className="font-medium text-orange-500">{place.rating}</span>

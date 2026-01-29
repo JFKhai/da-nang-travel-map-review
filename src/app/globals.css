@@ -1,19 +1,13 @@
-@import url('https://fonts.cdnfonts.com/css/emotional-rescue-personal-use');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.cdnfonts.com/css/cabinet-grotesk');
+@import url('https://fonts.cdnfonts.com/css/emotional-rescue-personal-use');
 
 @layer theme, base, components, primereact, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @import 'primereact/resources/themes/lara-light-blue/theme.css' layer(primereact);
-/* ===== Font Face ===== */
-@font-face {
-  font-family: 'RomanaBT';
-  src: url('/fonts/ROMANAB.TTF') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+@import '@goongmaps/goong-js/dist/goong-js.css';
 
 @theme {
   --color-brand-light: #d9ed82;
@@ -22,7 +16,7 @@
   --color-brand-border: #1b485a;
   --color-brand-bg: #eef4f7;
 
-  --font-sans: RomanaBT, serif;
+  --font-roboto: 'Roboto', sans-serif;
   --font-emotional: 'Emotional Rescue Personal Use', sans-serif;
   --font-cabinet-grotesk: 'Cabinet Grotesk', sans-serif;
 
@@ -37,7 +31,7 @@
   }
 
   body {
-    font-family: var(--font-cabinet-grotesk);
+    font-family: var(--font-roboto);
   }
 
   button:hover,
@@ -80,5 +74,47 @@
 
   50% {
     transform: translate(10px, -10px) scale(1.05);
+  }
+}
+
+@layer components {
+  /* Goong Maps Marker Styles */
+  .goongjs-marker {
+    z-index: 10 !important;
+  }
+
+  /* Highlighted marker should be above normal markers but below popups */
+  .custom-marker-highlighted {
+    position: relative;
+    z-index: 100;
+  }
+
+  /* Goong Maps Popup Styles - must be above all markers */
+  .goongjs-popup {
+    z-index: 1000 !important;
+  }
+
+  .goongjs-popup-content {
+    padding: 0 !important;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  .goongjs-popup-close-button {
+    font-size: 20px;
+    padding: 4px 8px;
+    color: #666;
+    right: 4px;
+    top: 4px;
+    transition: all 0.2s;
+  }
+
+  .goongjs-popup-close-button:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #333;
+  }
+
+  .goongjs-popup-tip {
+    border-top-color: white !important;
   }
 }

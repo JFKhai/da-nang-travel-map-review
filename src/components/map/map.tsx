@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import '@goongmaps/goong-js/dist/goong-js.css'
 import { DEFAULT_MAP_CONFIG, GOONG_MAP_STYLE } from '@/lib/map/map.config'
 import envConfig from '@/lib/config/env.config'
 import type { MapViewport } from '@/lib/map/map.types'

@@ -7,6 +7,7 @@
 @import 'tailwindcss/preflight.css' layer(base);
 @import 'tailwindcss/utilities.css' layer(utilities);
 @import 'primereact/resources/themes/lara-light-blue/theme.css' layer(primereact);
+@import '@goongmaps/goong-js/dist/goong-js.css';
 
 @theme {
   --color-brand-light: #d9ed82;

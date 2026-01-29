@@ -12,7 +12,7 @@ interface ReviewChartProps {
 }
 
 // Custom Tooltip Component
-const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="rounded-lg border border-purple-200 bg-white p-3 shadow-lg">
